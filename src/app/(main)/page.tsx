@@ -1,8 +1,9 @@
 
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react'; // Corrected import
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import FeaturedProducts from '@/components/commerce/FeaturedProducts';
 import ProductGrid from '@/components/commerce/ProductGrid';
 import SearchBar from '@/components/commerce/SearchBar';
@@ -12,18 +13,24 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen } from 'lucide-react';
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon } from 'lucide-react';
 
 export default function HomePage() {
   const products = mockProducts;
   const { user, isLoggedIn, isLoading: isAuthLoading, logout } = useAuth();
   const router = useRouter();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const featuredSectionRef = useRef<HTMLDivElement>(null);
   const allProductsSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
@@ -49,6 +56,10 @@ export default function HomePage() {
 
   const handleScrollToAllProducts = () => {
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -136,7 +147,7 @@ export default function HomePage() {
           <SearchBar />
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 -mt-2 mb-6 sm:mb-8">
+        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 -mt-2 mb-6 sm:mb-8">
           <Button variant="outline" size="default" onClick={handleScrollToFeatured} className="font-body w-full sm:w-auto">
             <Sparkles className="mr-2 h-4 w-4 text-accent" /> Explore Featured
           </Button>
@@ -146,6 +157,19 @@ export default function HomePage() {
           {isLoggedIn && (
             <Button variant="outline" size="default" onClick={() => router.push('/order-history')} className="font-body w-full sm:w-auto">
               <ListOrdered className="mr-2 h-4 w-4 text-accent" /> Check Order Status
+            </Button>
+          )}
+          <Button variant="outline" size="default" onClick={() => router.push('/cart')} className="font-body w-full sm:w-auto">
+            <ShoppingCart className="mr-2 h-4 w-4 text-accent" /> View Cart
+          </Button>
+          {mounted && (
+            <Button variant="outline" size="default" onClick={toggleTheme} className="font-body w-full sm:w-auto">
+              {resolvedTheme === 'dark' ? (
+                <Sun className="mr-2 h-4 w-4 text-accent" />
+              ) : (
+                <Moon className="mr-2 h-4 w-4 text-accent" />
+              )}
+              {resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </Button>
           )}
         </div>
