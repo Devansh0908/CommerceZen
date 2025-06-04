@@ -45,10 +45,9 @@ export default function ChatbotWidget() {
 
   const handleMouseDown = (event: ReactMouseEvent<HTMLDivElement>) => {
     if (!draggableRef.current) return;
-    event.preventDefault(); // Prevent text selection during drag
+    event.preventDefault(); 
     const rect = draggableRef.current.getBoundingClientRect();
     
-    // Switch to top/left positioning if not already
     setWidgetPosition({
       top: rect.top,
       left: rect.left,
@@ -71,7 +70,6 @@ export default function ChatbotWidget() {
       let newX = event.clientX - dragOffset.current.x;
       let newY = event.clientY - dragOffset.current.y;
 
-      // Constrain to viewport
       const widgetWidth = draggableRef.current.offsetWidth;
       const widgetHeight = draggableRef.current.offsetHeight;
       
@@ -88,16 +86,15 @@ export default function ChatbotWidget() {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      // Apply 'grabbing' cursor to body to indicate system-wide drag operation
       document.body.style.cursor = 'grabbing'; 
     } else {
-      document.body.style.cursor = ''; // Reset cursor
+      document.body.style.cursor = ''; 
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = ''; // Ensure cursor is reset on cleanup
+      document.body.style.cursor = ''; 
     };
   }, [isDragging]);
 
@@ -119,7 +116,7 @@ export default function ChatbotWidget() {
     if (isOpen && inputRef.current) {
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 100);
+      }, 100); 
     }
   }, [isOpen]);
 
@@ -137,13 +134,16 @@ export default function ChatbotWidget() {
     setInputValue('');
     setIsLoading(true);
 
-    const conversationHistory = messages.map(msg => ({ role: msg.role, content: msg.content }));
-    conversationHistory.push({ role: 'user', content: trimmedInput });
+    const conversationHistoryForAI = messages.map(msg => ({ role: msg.role, content: msg.content }));
+    // Add the current user message to the history being sent to the AI
+    conversationHistoryForAI.push({ role: 'user', content: trimmedInput });
+
 
     try {
       const input: ChatWithSupportInput = {
         userInput: trimmedInput,
-        conversationHistory: conversationHistory.slice(-10), 
+        // Send the updated history, including the latest user message
+        conversationHistory: conversationHistoryForAI.slice(-10), 
       };
       const result: ChatWithSupportOutput = await chatWithSupport(input);
       
@@ -201,8 +201,6 @@ export default function ChatbotWidget() {
         align="end" 
         className="w-[350px] h-[500px] p-0 flex flex-col rounded-lg shadow-xl border-border mr-2 mb-1"
         onOpenAutoFocus={(e) => e.preventDefault()}
-        // Prevent closing popover on drag if desired, but usually not necessary if drag target is trigger itself.
-        // onInteractOutside={(e) => { if (isDragging) e.preventDefault(); }} 
         >
         <header className="p-4 border-b bg-card rounded-t-lg">
           <h3 className="font-headline text-lg text-primary">CommerceZen Support</h3>
@@ -263,4 +261,3 @@ export default function ChatbotWidget() {
     </Popover>
   );
 }
-
