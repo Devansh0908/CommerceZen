@@ -2,7 +2,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext';
-import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import { ThemeProvider as NextThemesProvider } from '@/components/layout/ThemeProvider'; // Renamed to avoid conflict
+import { ColorThemeProvider } from '@/contexts/ColorThemeContext'; // Import new ColorThemeProvider
 
 export const metadata: Metadata = {
   title: 'CommerceZen',
@@ -22,17 +23,19 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider
+        <NextThemesProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
         >
-          <AuthProvider>
-            {children}
-            <Toaster />
-          </AuthProvider>
-        </ThemeProvider>
+          <ColorThemeProvider> {/* Wrap with ColorThemeProvider */}
+            <AuthProvider>
+              {children}
+              <Toaster />
+            </AuthProvider>
+          </ColorThemeProvider>
+        </NextThemesProvider>
       </body>
     </html>
   );

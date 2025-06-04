@@ -1,7 +1,7 @@
 
 "use client";
 
-import * as React from 'react'; // Added this line
+import * as React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,14 +9,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { UserCircle, Mail, Edit3, Settings, Palette, Shield, LogIn, KeyRound, Bell, LogOut } from 'lucide-react'; // Added LogOut
+import { UserCircle, Mail, Edit3, Settings, Palette, Shield, LogIn, KeyRound, Bell, LogOut, Paintbrush } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
-import { Switch } from "@/components/ui/switch"; // For mock preference
+import { Switch } from "@/components/ui/switch";
+import { useColorTheme, type ThemeName } from '@/contexts/ColorThemeContext'; // Import useColorTheme
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Import Select components
 
 export default function ProfileClientView() {
   const { user, isLoggedIn, isLoading: isAuthLoading } = useAuth();
-  const { theme, resolvedTheme, setTheme } = useTheme(); // setTheme is correctly destructured here
+  const { resolvedTheme, setTheme } = useTheme();
+  const { colorTheme, setColorTheme, availableThemes } = useColorTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -62,6 +71,7 @@ export default function ProfileClientView() {
   }
 
   const currentDisplayTheme = resolvedTheme === 'system' ? 'System Default' : (resolvedTheme === 'dark' ? 'Dark' : 'Light');
+  const selectedColorThemeDisplayName = availableThemes.find(t => t.name === colorTheme)?.displayName || 'Default';
 
   return (
     <div className="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10">
@@ -119,20 +129,43 @@ export default function ProfileClientView() {
 
         <Card className="shadow-lg animate-subtle-fade-in" style={{animationDelay: '0.2s'}}>
           <CardHeader>
-            <CardTitle className="font-headline text-xl flex items-center text-primary"><Palette className="mr-2 h-5 w-5 text-accent" />Preferences</CardTitle>
+            <CardTitle className="font-headline text-xl flex items-center text-primary"><Palette className="mr-2 h-5 w-5 text-accent" />Appearance Preferences</CardTitle>
             <CardDescription className="font-body">Customize your app experience.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base font-body">Dark Mode</Label>
+                <Label className="text-base font-body">Mode</Label>
                 <p className="text-sm text-muted-foreground font-body">
-                  Current theme: {currentDisplayTheme}
+                  Current mode: {currentDisplayTheme}
                 </p>
               </div>
                <Button variant="outline" size="sm" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} className="font-body">
-                 Toggle Theme
+                 Toggle Mode
                </Button>
+            </div>
+            <Separator />
+             <div className="space-y-2">
+                <Label htmlFor="color-theme-select" className="text-base font-body flex items-center"><Paintbrush className="mr-2 h-4 w-4 text-muted-foreground"/>Color Theme</Label>
+                <Select
+                  value={colorTheme}
+                  onValueChange={(value) => setColorTheme(value as ThemeName)}
+                  disabled={!mounted}
+                >
+                  <SelectTrigger id="color-theme-select" className="w-full font-body">
+                    <SelectValue placeholder="Select a color theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableThemes.map((themeOption) => (
+                      <SelectItem key={themeOption.name} value={themeOption.name} className="font-body">
+                        {themeOption.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                 <p className="text-xs text-muted-foreground font-body">
+                  Selected theme: {selectedColorThemeDisplayName}
+                </p>
             </div>
              <Separator />
             <div className="flex items-center justify-between">
