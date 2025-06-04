@@ -105,7 +105,9 @@ export default function ProfileClientView() {
 
   const handleNotificationToggle = (checked: boolean) => {
     setEmailNotificationsEnabled(checked);
-    localStorage.setItem(`commercezen_notifications_${user?.email}`, JSON.stringify(checked));
+    if(user?.email) { // Ensure user email exists before using it in key
+      localStorage.setItem(`commercezen_notifications_${user.email}`, JSON.stringify(checked));
+    }
     toast({
       title: "Notification Settings Updated",
       description: `Email notifications ${checked ? 'enabled' : 'disabled'}. (Mock)`,
@@ -185,13 +187,13 @@ export default function ProfileClientView() {
         <CardHeader className="pb-4">
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20 border-2 border-primary">
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${user.name.replace(' ','+')}&background=random&size=128`} alt={user.name} />
+              <AvatarImage src={`https://ui-avatars.com/api/?name=${user.name ? user.name.replace(' ','+') : 'User'}&background=random&size=128`} alt={user.name || 'User Avatar'} />
               <AvatarFallback>
                 <UserCircle className="h-full w-full text-muted-foreground" />
               </AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-2xl font-headline text-primary">{user.name}</CardTitle>
+              <CardTitle className="text-2xl font-headline text-primary">{user.name || 'User Name'}</CardTitle>
               <CardDescription className="font-body text-md flex items-center gap-2">
                 <Mail className="h-4 w-4 text-muted-foreground" /> {user.email}
               </CardDescription>
@@ -248,7 +250,7 @@ export default function ProfileClientView() {
             </div>
              <div className="space-y-1">
               <Label htmlFor="profile-name-display" className="font-body text-sm">Current Full Name</Label>
-              <Input id="profile-name-display" type="text" value={user.name} readOnly disabled className="font-body bg-muted/50"/>
+              <Input id="profile-name-display" type="text" value={user.name || ''} readOnly disabled className="font-body bg-muted/50"/>
             </div>
             <div>
                 <Dialog open={showChangePasswordDialog} onOpenChange={setShowChangePasswordDialog}>
