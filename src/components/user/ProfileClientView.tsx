@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch"; // For mock preference
 
 export default function ProfileClientView() {
   const { user, isLoggedIn, isLoading: isAuthLoading } = useAuth();
-  const { theme, resolvedTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme(); // setTheme is correctly destructured here
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -130,7 +130,7 @@ export default function ProfileClientView() {
                   Current theme: {currentDisplayTheme}
                 </p>
               </div>
-               <Button variant="outline" size="sm" onClick={() => theme === 'dark' ? useTheme().setTheme('light') : useTheme().setTheme('dark')} className="font-body">
+               <Button variant="outline" size="sm" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} className="font-body">
                  Toggle Theme
                </Button>
             </div>
