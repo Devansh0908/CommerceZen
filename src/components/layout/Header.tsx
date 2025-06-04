@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered } from 'lucide-react';
+import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered, User } from 'lucide-react'; // Added User icon
 import { useCart } from '@/hooks/useCart';
 import { useEffect, useState } from 'react';
 import SearchBar from '@/components/commerce/SearchBar';
@@ -114,8 +114,11 @@ export default function Header() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-body">My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="font-body cursor-not-allowed text-muted-foreground">
-                  Profile (coming soon)
+                <DropdownMenuItem asChild className="font-body cursor-pointer">
+                  <Link href="/profile">
+                    <User className="mr-2 h-4 w-4" /> 
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="font-body cursor-pointer">
                   <Link href="/order-history">
