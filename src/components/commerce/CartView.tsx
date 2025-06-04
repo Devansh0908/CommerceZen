@@ -96,7 +96,7 @@ export default function CartView() {
       <div className="mt-8 p-6 bg-card rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
           <span className="text-xl font-body text-muted-foreground">Subtotal:</span>
-          <span className="text-2xl font-headline font-bold text-primary">₹{getCartTotal().toFixed(2)}</span>
+          <span className="text-2xl font-headline font-bold text-primary">INR {getCartTotal().toFixed(2)}</span>
         </div>
         <p className="text-sm text-muted-foreground font-body mb-6">Shipping and taxes calculated at checkout.</p>
         <Button asChild size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-headline">

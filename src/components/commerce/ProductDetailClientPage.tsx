@@ -121,7 +121,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
               <span className="text-sm text-muted-foreground font-body">({averageRating} based on {reviewCount + reviews.filter(r => !getInitialMockReviews(product.id).find(mr => mr.id === r.id)).length} reviews)</span>
             </div>
 
-            <p className="text-3xl font-headline font-semibold text-accent">₹{product.price.toFixed(2)}</p>
+            <p className="text-3xl font-headline font-semibold text-accent">INR {product.price.toFixed(2)}</p>
             
             <Separator />
 

@@ -38,7 +38,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </p>
           <div className="flex justify-between items-center my-auto pt-2">
             <p className="text-xl font-headline font-bold text-primary">
-              ₹{product.price.toFixed(2)}
+              INR {product.price.toFixed(2)}
             </p>
             <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full font-body">
               {product.category}
