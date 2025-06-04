@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2 } from 'lucide-react';
+import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered } from 'lucide-react'; // Added ListOrdered
 import { useCart } from '@/hooks/useCart';
 import { useEffect, useState } from 'react';
 import SearchBar from '@/components/commerce/SearchBar';
@@ -107,14 +107,19 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hover:bg-primary/70 hover:text-accent text-sm px-2 sm:px-3">
                   <UserCircle className="mr-0 sm:mr-2 h-5 w-5" />
-                  <span className="hidden sm:inline truncate max-w-[100px]">{user.email}</span>
+                  <span className="hidden sm:inline truncate max-w-[100px]">{user.name || user.email}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-body">My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="font-body cursor-not-allowed text-muted-foreground">Profile (coming soon)</DropdownMenuItem>
-                <DropdownMenuItem className="font-body cursor-not-allowed text-muted-foreground">Order History (soon)</DropdownMenuItem>
+                <DropdownMenuItem asChild className="font-body cursor-pointer">
+                  <Link href="/order-history">
+                    <ListOrdered className="mr-2 h-4 w-4" />
+                    Order History
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="font-body text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />

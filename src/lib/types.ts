@@ -6,7 +6,7 @@ export interface Product {
   price: number;
   category: string;
   image: string;
-  imageHint: string; 
+  imageHint: string;
   featured?: boolean;
 }
 
@@ -30,4 +30,21 @@ export interface Review {
   rating: number; // 1-5
   text: string;
   date: string; // ISO date string
+}
+
+// New Types for Order History
+export interface OrderItem {
+  productId: string;
+  name: string;
+  quantity: number;
+  priceAtPurchase: number; // Price of the item when the order was placed
+}
+
+export interface Order {
+  id: string; // Unique order ID
+  userId: string; // To associate order with a user (e.g., user's email)
+  date: string; // ISO date string when the order was placed
+  items: OrderItem[];
+  totalAmount: number;
+  shippingAddress: UserData; // Capture shipping address used for this order
 }

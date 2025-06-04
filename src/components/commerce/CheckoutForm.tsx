@@ -17,23 +17,26 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useEffect } from "react";
 import { Sparkles } from "lucide-react";
+import type { Order, OrderItem, UserData } from "@/lib/types";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   address: z.string().min(10, { message: "Address must be at least 10 characters." }),
   city: z.string().min(2, { message: "City must be at least 2 characters."}),
-  postalCode: z.string().min(3, {message: "Postal code must be at least 3 characters."}), // Adjusted min length
+  postalCode: z.string().min(3, {message: "Postal code must be at least 3 characters."}),
   country: z.string().min(2, {message: "Country must be at least 2 characters."}),
 });
 
 export default function CheckoutForm() {
   const { toast } = useToast();
   const { cartItems, getCartTotal, clearCart, isCartInitialized } = useCart();
+  const { user, isLoggedIn } = useAuth(); // Get user from AuthContext
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,20 +62,71 @@ export default function CheckoutForm() {
     }
   }, [isCartInitialized, cartItems, router, toast]);
 
+  // Pre-fill form with logged-in user's details if available
+   useEffect(() => {
+    if (isLoggedIn && user) {
+      form.reset({
+        name: user.name || "",
+        email: user.email || "",
+        // Address details are not in AuthUser, so these remain blank or could be fetched if stored elsewhere
+        address: "", 
+        city: "",
+        postalCode: "",
+        country: "",
+      });
+    }
+  }, [isLoggedIn, user, form]);
+
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Simulated Order Data:", {
-      userData: values,
-      cartItems,
-      total: getCartTotal(),
-    });
+    if (!isLoggedIn || !user?.email) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to place an order.",
+        variant: "destructive",
+      });
+      // Optionally redirect to login or show login modal
+      return;
+    }
 
-    toast({
-      title: "Order Placed (Simulated)!",
-      description: "Thank you! Your simulated order details have been logged.",
-    });
-    clearCart();
-    router.push("/"); 
+    const orderShippingAddress: UserData = values;
+
+    const newOrder: Order = {
+      id: `order_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId: user.email, // Associate order with logged-in user's email
+      date: new Date().toISOString(),
+      items: cartItems.map(item => ({
+        productId: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        priceAtPurchase: item.price, // Capture price at time of order
+      })),
+      totalAmount: getCartTotal(),
+      shippingAddress: orderShippingAddress,
+    };
+
+    try {
+      const storageKey = `commercezen_orders_${user.email}`;
+      const existingOrdersJson = localStorage.getItem(storageKey);
+      const existingOrders: Order[] = existingOrdersJson ? JSON.parse(existingOrdersJson) : [];
+      existingOrders.push(newOrder);
+      localStorage.setItem(storageKey, JSON.stringify(existingOrders));
+      
+      console.log("Simulated Order Data Saved:", newOrder);
+      toast({
+        title: "Order Placed (Simulated)!",
+        description: "Thank you! Your order details have been saved to your mock order history.",
+      });
+      clearCart();
+      router.push("/order-history"); // Redirect to order history page
+    } catch (error) {
+        console.error("Failed to save order to localStorage", error);
+        toast({
+            title: "Order Error",
+            description: "There was an issue saving your order. Please try again.",
+            variant: "destructive",
+        });
+    }
   }
 
   if (!isCartInitialized) {
@@ -84,8 +138,7 @@ export default function CheckoutForm() {
     );
   }
   
-  // This check is mostly handled by useEffect, but as a safeguard:
-  if (cartItems.length === 0) {
+  if (cartItems.length === 0 && isCartInitialized) { // Check isCartInitialized here too
     return (
        <div className="text-center py-10">
         <p className="mt-4 text-lg font-body text-muted-foreground">Your cart is empty. Redirecting...</p>
@@ -193,7 +246,7 @@ export default function CheckoutForm() {
         </Card>
       </div>
       <div className="lg:col-span-2 space-y-6">
-        <Card className="shadow-lg sticky top-24"> {/* Sticky for better UX on longer forms */}
+        <Card className="shadow-lg sticky top-24">
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary">Order Summary</CardTitle>
           </CardHeader>
