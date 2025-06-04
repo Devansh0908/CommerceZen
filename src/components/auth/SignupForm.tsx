@@ -19,6 +19,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 const signupSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
   confirmPassword: z.string(),
@@ -42,6 +43,7 @@ export default function SignupForm({ onSignupSuccess, onSwitchToLogin }: SignupF
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -52,11 +54,12 @@ export default function SignupForm({ onSignupSuccess, onSwitchToLogin }: SignupF
     setIsLoading(true);
     setError(null);
     try {
-      const success = await signup(data.email, data.password);
+      // Pass the name to the signup function
+      const success = await signup(data.email, data.password, data.name);
       if (success) {
         onSignupSuccess?.();
       } else {
-        setError("Signup failed. Please try again."); // Mock error
+        setError("Signup failed. Please try again.");
       }
     } catch (err) {
        setError("An unexpected error occurred. Please try again.");
@@ -74,6 +77,20 @@ export default function SignupForm({ onSignupSuccess, onSwitchToLogin }: SignupF
         </DialogDescription>
       </DialogHeader>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+        <div className="grid gap-2">
+          <Label htmlFor="name-signup" className="font-body">Name</Label>
+          <Input
+            id="name-signup"
+            type="text"
+            placeholder="Your Name"
+            {...form.register("name")}
+            className="font-body"
+            disabled={isLoading}
+          />
+          {form.formState.errors.name && (
+            <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
+          )}
+        </div>
         <div className="grid gap-2">
           <Label htmlFor="email-signup" className="font-body">Email</Label>
           <Input
