@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -9,13 +9,13 @@ import { cn } from '@/lib/utils';
 export default function ScrollToTopButton() {
   const [isVisible, setIsVisible] = useState(false);
 
-  const toggleVisibility = () => {
+  const toggleVisibility = useCallback(() => {
     if (window.scrollY > 300) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
     }
-  };
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -26,10 +26,13 @@ export default function ScrollToTopButton() {
 
   useEffect(() => {
     window.addEventListener('scroll', toggleVisibility);
+    // Check visibility on initial mount
+    toggleVisibility();
+
     return () => {
       window.removeEventListener('scroll', toggleVisibility);
     };
-  }, []);
+  }, [toggleVisibility]);
 
   return (
     <Button
@@ -37,7 +40,7 @@ export default function ScrollToTopButton() {
       size="icon"
       onClick={scrollToTop}
       className={cn(
-        "fixed bottom-20 right-5 z-[51] h-12 w-12 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-opacity duration-300 ease-in-out", // Changed z-50 to z-[51]
+        "fixed bottom-20 right-5 z-[51] h-12 w-12 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-opacity duration-300 ease-in-out",
         isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
       aria-label="Scroll to top"
