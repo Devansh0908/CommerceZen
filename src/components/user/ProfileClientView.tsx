@@ -13,14 +13,14 @@ import { UserCircle, Mail, Edit3, Settings, Palette, Shield, LogIn, KeyRound, Be
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Switch } from "@/components/ui/switch";
-import { useColorTheme, type ThemeName } from '@/contexts/ColorThemeContext'; // Import useColorTheme
+import { useColorTheme, type ThemeName } from '@/contexts/ColorThemeContext'; 
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Import Select components
+} from "@/components/ui/select"; 
 
 export default function ProfileClientView() {
   const { user, isLoggedIn, isLoading: isAuthLoading } = useAuth();

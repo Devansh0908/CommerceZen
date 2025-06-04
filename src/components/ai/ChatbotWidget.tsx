@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageSquare, Send, Loader2, CornerDownLeft, GripVertical } from 'lucide-react'; // Added GripVertical
+import { MessageSquare, Send, Loader2, CornerDownLeft, GripVertical } from 'lucide-react';
 import { chatWithSupport, type ChatWithSupportInput, type ChatWithSupportOutput } from '@/ai/flows/customer-support-chat-flow';
 import { cn } from '@/lib/utils';
 
@@ -56,7 +56,7 @@ export default function ChatbotWidget() {
   const initialResizeState = useRef<{ startX: number; startY: number; initialWidth: number; initialHeight: number } | null>(null);
 
   const handleWidgetMouseDown = (event: ReactMouseEvent<HTMLDivElement>) => {
-    if (!draggableRef.current || (event.target as HTMLElement).closest('.resize-handle')) return; // Ignore if clicking resize handle
+    if (!draggableRef.current || (event.target as HTMLElement).closest('.resize-handle')) return; 
     event.preventDefault(); 
     const rect = draggableRef.current.getBoundingClientRect();
     
@@ -98,22 +98,27 @@ export default function ChatbotWidget() {
     if (isDraggingWidget) {
       document.addEventListener('mousemove', handleWidgetMouseMove);
       document.addEventListener('mouseup', handleWidgetMouseUp);
+      document.body.style.userSelect = 'none';
       document.body.style.cursor = 'grabbing'; 
     } else {
+      document.body.style.userSelect = '';
       document.body.style.cursor = ''; 
     }
 
     return () => {
       document.removeEventListener('mousemove', handleWidgetMouseMove);
       document.removeEventListener('mouseup', handleWidgetMouseUp);
-      if(document.body) document.body.style.cursor = ''; 
+      if(document.body) {
+        document.body.style.userSelect = '';
+        document.body.style.cursor = ''; 
+      }
     };
   }, [isDraggingWidget]);
 
 
   const handleResizeMouseDown = (event: ReactMouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    event.stopPropagation(); // Important: Prevent widget drag
+    event.stopPropagation(); 
     setIsResizing(true);
     initialResizeState.current = {
       startX: event.clientX,
@@ -151,17 +156,24 @@ export default function ChatbotWidget() {
     if (isResizing) {
       document.addEventListener('mousemove', handleResizeMouseMove);
       document.addEventListener('mouseup', handleResizeMouseUp);
+      document.body.style.userSelect = 'none';
       document.body.style.cursor = 'nwse-resize';
     } else {
-       if(document.body) document.body.style.cursor = ''; // Reset only if not dragging widget
+       if(document.body && !isDraggingWidget) {
+        document.body.style.userSelect = '';
+        document.body.style.cursor = '';
+       }
     }
 
     return () => {
       document.removeEventListener('mousemove', handleResizeMouseMove);
       document.removeEventListener('mouseup', handleResizeMouseUp);
-      if(document.body && !isDraggingWidget) document.body.style.cursor = ''; 
+      if(document.body && !isDraggingWidget) {
+         document.body.style.userSelect = '';
+         document.body.style.cursor = ''; 
+      }
     };
-  }, [isResizing, isDraggingWidget]); // Added isDraggingWidget to dependencies
+  }, [isResizing, isDraggingWidget]);
 
 
   const scrollToBottom = () => {
@@ -175,7 +187,7 @@ export default function ChatbotWidget() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, chatWindowSize]); // Also scroll on resize
+  }, [messages, chatWindowSize]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -189,8 +201,6 @@ export default function ChatbotWidget() {
     e?.preventDefault();
     const trimmedInput = inputValue.trim();
     
-    console.log('User input for chat (trimmed):', `"${trimmedInput}"`); 
-
     if (!trimmedInput || isLoading) return;
 
     const newUserMessage: ChatMessage = {
@@ -198,7 +208,6 @@ export default function ChatbotWidget() {
       role: 'user',
       content: trimmedInput,
     };
-    console.log('New user message object to be added to state:', newUserMessage); 
 
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
@@ -268,7 +277,7 @@ export default function ChatbotWidget() {
         side="top" 
         align="end" 
         className={cn(
-            "p-0 flex flex-col rounded-lg shadow-xl border-border mr-2 mb-1 overflow-hidden", // Added overflow-hidden
+            "p-0 flex flex-col rounded-lg shadow-xl border-border mr-2 mb-1 overflow-hidden",
             isResizing ? "cursor-nwse-resize" : ""
         )}
         style={{
@@ -276,6 +285,11 @@ export default function ChatbotWidget() {
             height: `${chatWindowSize.height}px`,
         }}
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => { // Allow clicking on resize handle without closing popover
+            if ((e.target as HTMLElement)?.closest('.resize-handle')) {
+                e.preventDefault();
+            }
+        }}
         >
         <header className="p-4 border-b bg-card rounded-t-lg cursor-default">
           <h3 className="font-headline text-lg text-primary">CommerceZen Support</h3>
@@ -287,10 +301,10 @@ export default function ChatbotWidget() {
               <div
                 key={msg.id}
                 className={cn(
-                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words border-2",
+                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words",
                   msg.role === 'user'
-                    ? "ml-auto bg-blue-600 text-white border-red-500" 
-                    : "bg-muted text-muted-foreground border-green-500" 
+                    ? "ml-auto bg-primary text-primary-foreground" 
+                    : "bg-muted text-muted-foreground" 
                 )}
               >
                 {msg.content}
@@ -298,7 +312,7 @@ export default function ChatbotWidget() {
             ))}
              {isLoading && (
               <div className="flex items-center justify-start">
-                <div className="bg-muted text-muted-foreground rounded-lg px-3 py-2 text-sm flex items-center border-2 border-yellow-500">
+                <div className="bg-muted text-muted-foreground rounded-lg px-3 py-2 text-sm flex items-center">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Thinking...
                 </div>
@@ -307,7 +321,7 @@ export default function ChatbotWidget() {
           </div>
         </ScrollArea>
 
-        <footer className="p-3 border-t bg-card rounded-b-lg relative"> {/* Added relative for resize handle positioning */}
+        <footer className="p-3 border-t bg-card rounded-b-lg relative">
           <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <Input
               ref={inputRef}
@@ -328,7 +342,7 @@ export default function ChatbotWidget() {
               <span className="sr-only">Send</span>
             </Button>
           </form>
-           <div className="flex justify-between items-end mt-1.5"> {/* Changed to flex for layout */}
+           <div className="flex justify-between items-end mt-1.5">
             <p className="text-xs text-muted-foreground/70 flex items-center">
               Press <CornerDownLeft className="h-3 w-3 mx-1" /> to send. Shift + <CornerDownLeft className="h-3 w-3 mx-1" /> for new line.
             </p>
@@ -337,7 +351,7 @@ export default function ChatbotWidget() {
               className="resize-handle w-5 h-5 flex items-center justify-center cursor-nwse-resize text-muted-foreground hover:text-foreground"
               title="Resize chat"
             >
-              <GripVertical size={16} className="transform rotate-45" /> {/* Rotated grip icon */}
+              <GripVertical size={16} className="transform rotate-45" />
             </div>
           </div>
         </footer>
@@ -345,5 +359,3 @@ export default function ChatbotWidget() {
     </Popover>
   );
 }
-
-    

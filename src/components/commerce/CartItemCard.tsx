@@ -16,15 +16,10 @@ export default function CartItemCard({ item }: CartItemCardProps) {
   const { updateQuantity, removeFromCart } = useCart();
 
   const handleQuantityChange = (newQuantity: number) => {
-    // Ensure newQuantity is a number and positive.
-    // Input event might pass string, so parseInt is important.
     const numQuantity = parseInt(String(newQuantity), 10);
     if (!isNaN(numQuantity) && numQuantity > 0) {
       updateQuantity(item.id, numQuantity);
     } else if (!isNaN(numQuantity) && numQuantity <= 0) {
-       // If user types 0 or negative, treat as removal or set to 1.
-       // For simplicity, let's remove if 0 or less, or keep it minimum 1.
-       // Current useCart hook handles quantity <= 0 as removal.
        updateQuantity(item.id, numQuantity);
     }
   };
@@ -37,8 +32,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
     if (item.quantity > 1) {
       handleQuantityChange(item.quantity - 1);
     } else {
-      // Optionally, could confirm removal here, or just let updateQuantity handle it (which calls removeFromCart if <=0)
-      handleQuantityChange(0); // This will trigger removal via updateQuantity logic
+      handleQuantityChange(0); 
     }
   };
 

@@ -24,7 +24,6 @@ export default function OrderHistoryClientView() {
         const storedOrdersJson = localStorage.getItem(storageKey);
         if (storedOrdersJson) {
           const parsedOrders: Order[] = JSON.parse(storedOrdersJson);
-          // Sort orders by date, newest first
           parsedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           setOrders(parsedOrders);
         } else {
@@ -32,11 +31,11 @@ export default function OrderHistoryClientView() {
         }
       } catch (error) {
         console.error("Failed to load or parse orders from localStorage", error);
-        setOrders([]); // Set to empty on error
+        setOrders([]); 
       } finally {
         setIsLoadingOrders(false);
       }
-    } else if (!isAuthLoading) { // If not logged in and auth is not loading anymore
+    } else if (!isAuthLoading) { 
       setIsLoadingOrders(false);
       setOrders([]);
     }
@@ -85,7 +84,7 @@ export default function OrderHistoryClientView() {
     <div className="space-y-10 pb-10">
       <h1 className="text-4xl font-headline font-bold text-primary text-center">Your Order History</h1>
       
-      <ScrollArea className="h-[calc(100vh-250px)]"> {/* Adjust height as needed */}
+      <ScrollArea className="h-[calc(100vh-250px)]">
         <div className="space-y-6 pr-4">
           {orders.map((order) => (
             <Card key={order.id} className="shadow-lg animate-subtle-fade-in">

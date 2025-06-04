@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react'; // Added React import
+import React from 'react'; 
 import Image from 'next/image';
 import type { Product } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
   const { isLoggedIn } = useAuth();
   
-  // Memoize or compute isWishlisted only when relevant dependencies change
   const isWishlisted = React.useMemo(() => {
       if (!isLoggedIn || !isWishlistInitialized) return false;
       return isInWishlist(product.id);
@@ -29,7 +28,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/product/${product.id}`} className="block group h-full" aria-label={`View details for ${product.name}`}>
-      <div className="bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl transform hover:-translate-y-1.5 flex flex-col h-full">
+      <div className="bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl transform hover:-translate-y-1.5 flex flex-col h-full animate-subtle-scale-up">
         <div className="relative w-full h-60">
           <Image
             src={product.image}
@@ -75,8 +74,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             variant="default" 
             className="w-full mt-4 bg-primary hover:bg-accent text-primary-foreground hover:text-accent-foreground transition-colors duration-300 font-body"
             onClick={(e) => {
-              e.preventDefault(); // Prevent link navigation when clicking Add to Cart
-              e.stopPropagation(); // Stop event bubbling
+              e.preventDefault(); 
+              e.stopPropagation(); 
               addToCart(product);
             }}
             aria-label={`Add ${product.name} to cart`}
