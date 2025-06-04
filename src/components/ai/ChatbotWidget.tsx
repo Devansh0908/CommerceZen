@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, type FormEvent } from 'react';
+import { useState, useRef, useEffect, type FormEvent, type MouseEvent as ReactMouseEvent } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -16,6 +16,13 @@ interface ChatMessage {
   content: string;
 }
 
+interface WidgetPosition {
+  top: string | number;
+  left: string | number;
+  bottom: string | number;
+  right: string | number;
+}
+
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -25,6 +32,75 @@ export default function ChatbotWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [widgetPosition, setWidgetPosition] = useState<WidgetPosition>({
+    top: 'auto',
+    left: 'auto',
+    bottom: '1.5rem', // 24px
+    right: '1.5rem',  // 24px
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const draggableRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (!draggableRef.current) return;
+    event.preventDefault(); // Prevent text selection during drag
+    const rect = draggableRef.current.getBoundingClientRect();
+    
+    // Switch to top/left positioning if not already
+    setWidgetPosition({
+      top: rect.top,
+      left: rect.left,
+      bottom: 'auto',
+      right: 'auto',
+    });
+
+    dragOffset.current = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+    setIsDragging(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!isDragging || !draggableRef.current) return;
+      event.preventDefault();
+
+      let newX = event.clientX - dragOffset.current.x;
+      let newY = event.clientY - dragOffset.current.y;
+
+      // Constrain to viewport
+      const widgetWidth = draggableRef.current.offsetWidth;
+      const widgetHeight = draggableRef.current.offsetHeight;
+      
+      newX = Math.max(0, Math.min(newX, window.innerWidth - widgetWidth));
+      newY = Math.max(0, Math.min(newY, window.innerHeight - widgetHeight));
+
+      setWidgetPosition({ top: newY, left: newX, bottom: 'auto', right: 'auto' });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      // Apply 'grabbing' cursor to body to indicate system-wide drag operation
+      document.body.style.cursor = 'grabbing'; 
+    } else {
+      document.body.style.cursor = ''; // Reset cursor
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = ''; // Ensure cursor is reset on cleanup
+    };
+  }, [isDragging]);
+
 
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
@@ -41,7 +117,6 @@ export default function ChatbotWidget() {
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
-      // Timeout to allow popover to render before focusing
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
@@ -62,16 +137,12 @@ export default function ChatbotWidget() {
     setInputValue('');
     setIsLoading(true);
 
-    // Prepare conversation history for the flow
     const conversationHistory = messages.map(msg => ({ role: msg.role, content: msg.content }));
-    // Add current user message to history for the flow
     conversationHistory.push({ role: 'user', content: trimmedInput });
-
 
     try {
       const input: ChatWithSupportInput = {
         userInput: trimmedInput,
-        // Pass the last few messages to keep context, adjust as needed
         conversationHistory: conversationHistory.slice(-10), 
       };
       const result: ChatWithSupportOutput = await chatWithSupport(input);
@@ -92,7 +163,6 @@ export default function ChatbotWidget() {
       setMessages(prev => [...prev, errorResponse]);
     } finally {
       setIsLoading(false);
-       // Refocus input after response
       if (isOpen && inputRef.current) {
         inputRef.current.focus();
       }
@@ -101,21 +171,38 @@ export default function ChatbotWidget() {
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="default"
-          size="icon"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-accent hover:bg-accent/90 text-accent-foreground z-50 animate-subtle-scale-up"
-          aria-label="Open Chat"
-        >
-          <MessageSquare className="h-7 w-7" />
-        </Button>
-      </PopoverTrigger>
+      <div
+        ref={draggableRef}
+        style={{
+          position: 'fixed',
+          top: widgetPosition.top,
+          left: widgetPosition.left,
+          bottom: widgetPosition.bottom,
+          right: widgetPosition.right,
+          cursor: isDragging ? 'grabbing' : 'grab',
+          zIndex: 50,
+        }}
+        className="h-14 w-14 rounded-full shadow-lg animate-subtle-scale-up flex items-center justify-center bg-accent hover:bg-accent/90"
+        onMouseDown={handleMouseDown}
+      >
+        <PopoverTrigger asChild>
+          <Button
+            variant="default"
+            size="icon"
+            className="w-full h-full rounded-full bg-transparent hover:bg-transparent text-accent-foreground p-0"
+            aria-label="Open Chat"
+          >
+            <MessageSquare className="h-7 w-7" />
+          </Button>
+        </PopoverTrigger>
+      </div>
       <PopoverContent 
         side="top" 
         align="end" 
         className="w-[350px] h-[500px] p-0 flex flex-col rounded-lg shadow-xl border-border mr-2 mb-1"
-        onOpenAutoFocus={(e) => e.preventDefault()} // Prevent default focus stealing
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        // Prevent closing popover on drag if desired, but usually not necessary if drag target is trigger itself.
+        // onInteractOutside={(e) => { if (isDragging) e.preventDefault(); }} 
         >
         <header className="p-4 border-b bg-card rounded-t-lg">
           <h3 className="font-headline text-lg text-primary">CommerceZen Support</h3>
@@ -176,3 +263,4 @@ export default function ChatbotWidget() {
     </Popover>
   );
 }
+
