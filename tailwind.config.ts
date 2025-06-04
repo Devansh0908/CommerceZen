@@ -55,6 +55,15 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        header: {
+          DEFAULT: 'hsl(var(--header-background))',
+          foreground: 'hsl(var(--header-foreground))',
+        },
+        searchBar: { 
+          DEFAULT: 'hsl(var(--search-bar-background))',
+          placeholder: 'hsl(var(--search-bar-placeholder))',
+          text: 'hsl(var(--search-bar-text))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

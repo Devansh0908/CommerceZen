@@ -36,10 +36,17 @@
     --radius: 0.5rem;
 
     --chart-1: 276 100% 45%;
-    --chart-2: 180 70% 55%; /* Adjusted chart accent */
+    --chart-2: 180 70% 55%; 
     --chart-3: 240 70% 70%;
     --chart-4: 276 60% 55%;
-    --chart-5: 180 70% 40%; /* Adjusted chart accent */
+    --chart-5: 180 70% 40%;
+
+    /* Header & Search Bar Colors */
+    --header-background: 260 80% 92%; /* Lighter, more purplish lavender */
+    --header-foreground: 270 60% 25%; /* Darker purple for text on header */
+    --search-bar-background: 265 35% 65%; /* Muted darker purple for search input bg */
+    --search-bar-placeholder: 260 50% 85%; /* Light purple for placeholder text */
+    --search-bar-text: 270 80% 95%; /* Almost white for typed text in search */
   }
 
   .dark {
@@ -72,10 +79,17 @@
     --ring: 276 100% 75%; /* Lighter Deep Indigo for ring */
     
     --chart-1: 276 100% 65%;
-    --chart-2: 180 70% 70%; /* Adjusted chart accent */
+    --chart-2: 180 70% 70%; 
     --chart-3: 240 70% 60%;
     --chart-4: 276 60% 75%;
-    --chart-5: 180 70% 55%; /* Adjusted chart accent */
+    --chart-5: 180 70% 55%;
+
+    /* Header & Search Bar Colors - Dark Mode */
+    --header-background: 270 30% 18%; /* Dark Slate Purple */
+    --header-foreground: 260 70% 88%; /* Light Lavender text */
+    --search-bar-background: 270 25% 28%; /* Darker purple for search input bg */
+    --search-bar-placeholder: 260 40% 60%; /* Muted purple for placeholder */
+    --search-bar-text: 260 70% 90%; /* Light lavender for typed text */
   }
 }
 

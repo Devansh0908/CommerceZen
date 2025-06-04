@@ -62,40 +62,40 @@ export default function Header() {
 
 
   return (
-    <header className="bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 sm:gap-8">
+    <header className="bg-header text-header-foreground shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 sm:gap-6">
         <Link href="/" className="flex items-center gap-2 text-xl sm:text-2xl font-headline font-bold hover:opacity-80 transition-opacity">
           <Zap className="h-7 w-7 sm:h-8 sm:w-8 text-accent" />
-          CommerceZen
+          <span className="text-primary">CommerceZen</span>
         </Link>
         
-        <div className="flex-grow flex justify-center px-2 sm:px-4 hidden sm:flex">
+        <div className="flex-grow flex justify-center items-center px-2 sm:px-4">
           <SearchBar />
         </div>
         
         <nav className="flex items-center gap-1 sm:gap-2">
-          <Link href="/" className="hover:text-accent transition-colors font-body text-sm sm:text-base hidden sm:block px-2 sm:px-3 py-1.5 rounded-md hover:bg-primary/70">
+          <Link href="/" className="hover:text-accent transition-colors font-body text-sm sm:text-base px-2 sm:px-3 py-1.5 rounded-md hover:bg-header-foreground/10">
             Home
           </Link>
 
           {isAuthLoading && mounted && (
-            <Loader2 className="h-5 w-5 animate-spin text-primary-foreground/70 mx-2" />
+            <Loader2 className="h-5 w-5 animate-spin text-header-foreground/70 mx-2" />
           )}
 
           {!isAuthLoading && mounted && !isLoggedIn && (
             <>
               <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" onClick={openLoginModal} className="hover:bg-primary/70 hover:text-accent text-sm px-2 sm:px-3">
-                    <LogIn className="mr-0 sm:mr-2 h-4 w-4" /> <span className="hidden sm:inline">Login</span>
+                  <Button variant="ghost" onClick={openLoginModal} className="hover:bg-header-foreground/10 hover:text-accent text-header-foreground text-sm px-2 sm:px-3">
+                    <LogIn className="mr-0 sm:mr-2 h-4 w-4 text-header-foreground" /> <span className="hidden sm:inline">Login</span>
                   </Button>
                 </DialogTrigger>
                 <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToSignup={openSignupModal} />
               </Dialog>
               <Dialog open={showSignupModal} onOpenChange={setShowSignupModal}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" onClick={openSignupModal} className="border-accent text-accent hover:bg-accent/10 text-sm px-2 sm:px-3">
-                   <UserPlus className="mr-0 sm:mr-2 h-4 w-4" /> <span className="hidden sm:inline">Sign Up</span>
+                  <Button variant="default" onClick={openSignupModal} className="bg-primary text-primary-foreground hover:bg-primary/80 text-sm px-2 sm:px-3">
+                   <UserPlus className="mr-0 sm:mr-2 h-4 w-4 text-accent" /> <span className="hidden sm:inline">Sign Up</span>
                   </Button>
                 </DialogTrigger>
                 <SignupForm onSignupSuccess={handleSignupSuccess} onSwitchToLogin={openLoginModal}/>
@@ -106,8 +106,8 @@ export default function Header() {
           {!isAuthLoading && mounted && isLoggedIn && user && (
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="hover:bg-primary/70 hover:text-accent text-sm px-2 sm:px-3">
-                  <UserCircle className="mr-0 sm:mr-2 h-5 w-5" />
+                <Button variant="ghost" className="hover:bg-header-foreground/10 hover:text-accent text-header-foreground text-sm px-2 sm:px-3">
+                  <UserCircle className="mr-0 sm:mr-2 h-5 w-5 text-header-foreground" />
                   <span className="hidden sm:inline truncate max-w-[100px]">{user.name || user.email}</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -132,8 +132,8 @@ export default function Header() {
           
           {mounted && <ThemeToggle />}
 
-          <Link href="/cart" className="relative flex items-center hover:text-accent transition-colors font-body p-2 rounded-md hover:bg-primary/70">
-            <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
+          <Link href="/cart" className="relative flex items-center hover:text-accent transition-colors font-body p-2 rounded-md hover:bg-header-foreground/10">
+            <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-header-foreground" />
             {mounted && isCartReady && currentCartItemCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center animate-pulse">
                 {currentCartItemCount}
@@ -142,9 +142,6 @@ export default function Header() {
             <span className="sr-only">Cart ({currentCartItemCount} items)</span>
           </Link>
         </nav>
-      </div>
-      <div className="container mx-auto px-4 pb-3 sm:hidden">
-          <SearchBar />
       </div>
     </header>
   );
