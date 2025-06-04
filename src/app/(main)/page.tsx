@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from 'react'; // Corrected import
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import FeaturedProducts from '@/components/commerce/FeaturedProducts';
@@ -64,18 +64,18 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Full Screen Welcome Section */}
-      <section className="min-h-screen flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-12">
+      {/* Welcome Section - Shortened */}
+      <section className="min-h-[70vh] flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-10">
         {!isAuthLoading && !isLoggedIn && (
           <div className="animate-subtle-fade-in">
-            <Store className="h-24 w-24 sm:h-28 md:h-32 text-accent mb-6 mx-auto" />
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold text-primary">
+            <Store className="h-16 w-16 sm:h-20 md:h-24 text-accent mb-4 mx-auto" />
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold text-primary">
               Welcome to CommerceZen
             </h1>
-            <p className="text-md sm:text-lg md:text-xl text-muted-foreground mt-4 max-w-lg md:max-w-xl mx-auto font-body">
+            <p className="text-sm sm:text-md md:text-lg text-muted-foreground mt-3 max-w-md md:max-w-lg mx-auto font-body">
               Your journey to amazing products starts here. Sign up for exclusive deals or log in to continue.
             </p>
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Button 
                 size="lg" 
                 onClick={openLoginModal} 
@@ -97,14 +97,14 @@ export default function HomePage() {
 
         {!isAuthLoading && isLoggedIn && user && (
           <div className="animate-subtle-fade-in">
-            <UserCircle className="h-24 w-24 sm:h-28 md:h-32 text-accent mb-6 mx-auto" />
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold text-primary">
+            <UserCircle className="h-16 w-16 sm:h-20 md:h-24 text-accent mb-4 mx-auto" />
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold text-primary">
               Welcome Back, {user.name || user.email}!
             </h1>
-            <p className="text-md sm:text-lg md:text-xl text-muted-foreground mt-4 max-w-lg md:max-w-xl mx-auto font-body">
+            <p className="text-sm sm:text-md md:text-lg text-muted-foreground mt-3 max-w-md md:max-w-lg mx-auto font-body">
               Ready to continue your shopping journey or manage your account?
             </p>
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Button 
                 size="lg" 
                 onClick={handleScrollToAllProducts} 
