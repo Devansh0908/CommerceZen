@@ -62,11 +62,10 @@ export default function ProfileClientView() {
   const [mounted, setMounted] = React.useState(false);
   const [showEditNameDialog, setShowEditNameDialog] = React.useState(false);
   const [showChangePasswordDialog, setShowChangePasswordDialog] = React.useState(false);
-  const [emailNotificationsEnabled, setEmailNotificationsEnabled] = React.useState(false); // Mock state
+  const [emailNotificationsEnabled, setEmailNotificationsEnabled] = React.useState(false); 
 
   React.useEffect(() => {
     setMounted(true);
-    // In a real app, you'd fetch this preference from the user's settings
     const storedNotificationPref = localStorage.getItem(`commercezen_notifications_${user?.email}`);
     if (storedNotificationPref) {
       setEmailNotificationsEnabled(JSON.parse(storedNotificationPref));
@@ -116,7 +115,14 @@ export default function ProfileClientView() {
   const handleManageData = () => {
     toast({
         title: "Manage Data (Mock)",
-        description: "Data export and account deletion options would be available here in a real application.",
+        description: "Data export and account activity log options would be available here in a real application.",
+    });
+  };
+  
+  const handleSetup2FA = () => {
+    toast({
+      title: "Two-Factor Authentication (Mock)",
+      description: "This is where you would configure Two-Factor Authentication for enhanced account security.",
     });
   };
 
@@ -126,9 +132,6 @@ export default function ProfileClientView() {
         description: "Account deletion is a critical feature and would require further confirmation. This is a mock action.",
         variant: "destructive",
     });
-    // In a real app, this would involve a more complex flow and backend interaction.
-    // For now, we can simulate by logging out.
-    // authLogout(); // Or keep it as a pure mock without logout for now
   };
 
 
@@ -359,13 +362,22 @@ export default function ProfileClientView() {
             <CardTitle className="font-headline text-xl flex items-center text-primary"><Shield className="mr-2 h-5 w-5 text-accent" />Security & Privacy</CardTitle>
             <CardDescription className="font-body">Review your security settings and privacy options.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="link" onClick={handleManageData} className="p-0 h-auto font-body text-primary hover:text-accent">Manage Data (Mock)</Button>
-            <p className="text-xs text-muted-foreground font-body">This would include options for data export or viewing activity.</p>
-            <Button variant="link" className="p-0 h-auto font-body text-primary hover:text-accent">Two-Factor Authentication (mock)</Button>
-             <p className="text-xs text-muted-foreground font-body">Set up an additional layer of security for your account.</p>
+          <CardContent className="space-y-4">
+            <div>
+              <Button variant="outline" onClick={handleSetup2FA} className="w-full sm:w-auto font-body">
+                <Shield className="mr-2 h-4 w-4" /> Set Up Two-Factor Authentication (mock)
+              </Button>
+              <p className="text-xs text-muted-foreground font-body mt-1">Add an extra layer of security to your account.</p>
+            </div>
+             <Separator />
+            <div>
+              <Button variant="outline" onClick={handleManageData} className="w-full sm:w-auto font-body">
+                Manage Your Data (mock)
+              </Button>
+              <p className="text-xs text-muted-foreground font-body mt-1">Download your data or review activity logs.</p>
+            </div>
           </CardContent>
-           <CardFooter>
+           <CardFooter className="border-t pt-4 mt-4">
              <Button variant="destructive" onClick={handleDeleteAccount} className="w-full sm:w-auto font-body">
                 <LogOut className="mr-2 h-4 w-4" /> Delete Account (mock)
             </Button>
@@ -374,3 +386,5 @@ export default function ProfileClientView() {
     </div>
   );
 }
+
+    
