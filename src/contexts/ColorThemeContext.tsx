@@ -5,7 +5,15 @@ import type React from 'react';
 import { createContext, useContext, useState, useEffect, useCallback }
 from 'react';
 
-export type ThemeName = 'theme-default' | 'theme-oceanic' | 'theme-forest' | 'theme-crimson';
+export type ThemeName = 
+  'theme-default' | 
+  'theme-oceanic' | 
+  'theme-forest' | 
+  'theme-crimson' |
+  'theme-sunset' |
+  'theme-minty' |
+  'theme-ruby' |
+  'theme-sepia';
 
 interface ColorTheme {
   name: ThemeName;
@@ -17,6 +25,10 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'theme-oceanic', displayName: 'Oceanic Bliss' },
   { name: 'theme-forest', displayName: 'Forest Harmony' },
   { name: 'theme-crimson', displayName: 'Crimson Royal' },
+  { name: 'theme-sunset', displayName: 'Sunset Glow' },
+  { name: 'theme-minty', displayName: 'Minty Fresh' },
+  { name: 'theme-ruby', displayName: 'Ruby Radiance' },
+  { name: 'theme-sepia', displayName: 'Vintage Sepia' },
 ];
 
 const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme';
@@ -38,7 +50,6 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
     try {
       const storedTheme = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
       
-      // Always remove any existing theme-* classes first to ensure a clean slate
       availableColorThemes.forEach(t => {
         document.documentElement.classList.remove(t.name);
       });
@@ -48,37 +59,31 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
         document.documentElement.classList.add(storedTheme);
       } else {
         _setColorTheme('theme-default');
-        document.documentElement.classList.add('theme-default'); // Apply default if nothing stored or invalid
+        document.documentElement.classList.add('theme-default'); 
       }
     } catch (error) {
       console.error("Error loading color theme from localStorage", error);
       _setColorTheme('theme-default');
-      // Ensure cleanup and default class on error
       availableColorThemes.forEach(t => {
         document.documentElement.classList.remove(t.name);
       });
       document.documentElement.classList.add('theme-default');
     }
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []); 
 
   const setColorTheme = useCallback((newThemeName: ThemeName) => {
     if (!mounted) return;
     
-    // Remove all known theme classes from <html>
     availableColorThemes.forEach(t => {
       document.documentElement.classList.remove(t.name);
     });
     
-    // Add the newly selected theme class to <html>
     document.documentElement.classList.add(newThemeName);
     
-    _setColorTheme(newThemeName); // Update React state
-    localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName); // Persist the choice
+    _setColorTheme(newThemeName); 
+    localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName); 
   }, [mounted]);
 
-  // The useEffect that was previously here (listening to [colorTheme, mounted])
-  // has been removed as its logic is now handled by the initial load useEffect
-  // and the setColorTheme callback. This prevents potential conflicts.
 
   const value = {
     colorTheme,
@@ -100,3 +105,4 @@ export function useColorTheme() {
   }
   return context;
 }
+

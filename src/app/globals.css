@@ -269,6 +269,267 @@
     --search-bar-text: 0 0% 90%; /* Light grey text */
   }
 
+  /* Theme: Sunset Glow */
+  .theme-sunset {
+    --background: 30 100% 97%; /* Soft Peach */
+    --foreground: 25 60% 25%; /* Dark Warm Brown */
+    --card: 30 100% 99%;
+    --card-foreground: 25 60% 25%;
+    --popover: 30 100% 99%;
+    --popover-foreground: 25 60% 25%;
+    --primary: 20 90% 55%; /* Warm Orange */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 35 90% 85%; /* Light Orange/Yellow */
+    --secondary-foreground: 20 70% 30%;
+    --muted: 35 80% 90%;
+    --muted-foreground: 25 50% 45%;
+    --accent: 45 100% 60%; /* Golden Yellow */
+    --accent-foreground: 25 70% 20%; /* Darker brown on yellow */
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 70% 85%;
+    --input: 30 70% 85%;
+    --ring: 20 90% 55%;
+    --chart-1: 20 90% 65%;
+    --chart-2: 45 100% 70%;
+    --chart-3: 280 50% 60%; /* Muted Purple */
+    --chart-4: 15 80% 60%;
+    --chart-5: 50 90% 65%;
+    --header-background: 25 100% 95%; /* Very Light Peach */
+    --header-foreground: 20 80% 40%; /* Medium Orange */
+    --search-bar-background: 25 50% 70%; /* Muted Orange-Brown */
+    --search-bar-placeholder: 30 40% 80%; /* Faint Peach */
+    --search-bar-text: 20 70% 95%; /* Off-White/Light Yellow */
+  }
+
+  .theme-sunset.dark {
+    --background: 270 40% 12%; /* Deep Indigo/Purple */
+    --foreground: 30 100% 90%; /* Light Peach/Orange */
+    --card: 270 35% 16%;
+    --card-foreground: 30 100% 90%;
+    --popover: 270 35% 16%;
+    --popover-foreground: 30 100% 90%;
+    --primary: 30 100% 70%; /* Vibrant Orange */
+    --primary-foreground: 270 50% 15%;
+    --secondary: 280 30% 25%; /* Darker Purple */
+    --secondary-foreground: 35 90% 80%;
+    --muted: 280 25% 20%;
+    --muted-foreground: 35 70% 70%;
+    --accent: 50 100% 75%; /* Bright Golden Yellow */
+    --accent-foreground: 270 60% 10%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 270 20% 30%;
+    --input: 270 20% 30%;
+    --ring: 30 100% 70%;
+    --chart-1: 30 100% 65%;
+    --chart-2: 50 100% 80%;
+    --chart-3: 15 80% 70%; /* Warm Red/Orange */
+    --chart-4: 280 50% 75%;
+    --chart-5: 40 90% 70%;
+    --header-background: 270 30% 14%; /* Dark Purple Night */
+    --header-foreground: 30 90% 85%; /* Soft Orange Glow */
+    --search-bar-background: 275 20% 25%; /* Dusky Purple */
+    --search-bar-placeholder: 280 15% 50%; /* Muted Dark Purple */
+    --search-bar-text: 35 100% 92%; /* Pale Yellow */
+  }
+
+  /* Theme: Minty Fresh */
+  .theme-minty {
+    --background: 150 60% 96%; /* Very Light Mint */
+    --foreground: 160 50% 20%; /* Dark Teal/Green */
+    --card: 150 55% 98%;
+    --card-foreground: 160 50% 20%;
+    --popover: 150 55% 98%;
+    --popover-foreground: 160 50% 20%;
+    --primary: 170 65% 45%; /* Soft Teal */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 160 50% 90%; /* Lighter Mint/Aqua */
+    --secondary-foreground: 170 60% 25%;
+    --muted: 160 40% 88%;
+    --muted-foreground: 170 40% 40%;
+    --accent: 210 80% 90%; /* Very Light Sky Blue / Almost White */
+    --accent-foreground: 170 60% 30%; /* Teal on light accent */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 30% 85%;
+    --input: 150 30% 85%;
+    --ring: 170 65% 45%;
+    --chart-1: 170 65% 55%;
+    --chart-2: 210 80% 80%; /* Light Blue */
+    --chart-3: 140 50% 60%; /* Soft Green */
+    --chart-4: 180 60% 65%;
+    --chart-5: 200 70% 75%;
+    --header-background: 155 60% 94%; /* Pale Mint Green */
+    --header-foreground: 165 50% 30%; /* Medium Teal */
+    --search-bar-background: 160 30% 70%; /* Muted Mint */
+    --search-bar-placeholder: 150 25% 83%; /* Faint Mint */
+    --search-bar-text: 170 50% 95%; /* Off-White */
+  }
+
+  .theme-minty.dark {
+    --background: 170 40% 10%; /* Dark Teal/Forest Green */
+    --foreground: 150 60% 90%; /* Light Mint/Off-White */
+    --card: 170 35% 14%;
+    --card-foreground: 150 60% 90%;
+    --popover: 170 35% 14%;
+    --popover-foreground: 150 60% 90%;
+    --primary: 160 70% 65%; /* Brighter Mint Green */
+    --primary-foreground: 170 50% 10%;
+    --secondary: 170 30% 20%; /* Darker Teal */
+    --secondary-foreground: 150 50% 80%;
+    --muted: 170 25% 17%;
+    --muted-foreground: 150 40% 65%;
+    --accent: 140 60% 75%; /* Soft Lime Green */
+    --accent-foreground: 170 40% 15%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 170 20% 25%;
+    --input: 170 20% 25%;
+    --ring: 160 70% 65%;
+    --chart-1: 160 70% 60%;
+    --chart-2: 140 60% 70%;
+    --chart-3: 180 50% 55%; /* Darker Seafoam */
+    --chart-4: 170 50% 70%;
+    --chart-5: 150 65% 75%;
+    --header-background: 170 30% 12%; /* Deep Forest Teal */
+    --header-foreground: 150 50% 85%; /* Light Mint Text */
+    --search-bar-background: 175 20% 22%; /* Dark Bluish Green */
+    --search-bar-placeholder: 160 15% 50%; /* Muted Dark Mint */
+    --search-bar-text: 150 60% 92%; /* Pale Mint */
+  }
+
+  /* Theme: Ruby Radiance */
+  .theme-ruby {
+    --background: 0 0% 97%; /* Very Light Gray / Almost White */
+    --foreground: 0 0% 10%; /* Near Black / Dark Charcoal */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 350 75% 50%; /* Strong Ruby Red */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 0 0% 90%; /* Light Gray */
+    --secondary-foreground: 350 60% 20%; /* Darker Red */
+    --muted: 0 0% 85%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 0 0% 70%; /* Silver / Medium Gray */
+    --accent-foreground: 0 0% 5%; /* Very Dark Gray on Silver */
+    --destructive: 340 80% 45%; /* Slightly different red */
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+    --ring: 350 75% 50%;
+    --chart-1: 350 75% 60%;
+    --chart-2: 0 0% 65%; /* Medium-Light Gray */
+    --chart-3: 10 70% 55%; /* Warm Red/Orange */
+    --chart-4: 345 70% 70%;
+    --chart-5: 0 0% 50%; /* Darker Gray */
+    --header-background: 0 0% 95%; /* Off-White Header */
+    --header-foreground: 350 65% 35%; /* Deep Red Header Text */
+    --search-bar-background: 0 0% 60%; /* Medium Dark Gray Search */
+    --search-bar-placeholder: 0 0% 80%; /* Light Gray Placeholder */
+    --search-bar-text: 0 0% 97%; /* Very Light Gray Text */
+  }
+
+  .theme-ruby.dark {
+    --background: 0 0% 8%; /* Charcoal Black */
+    --foreground: 0 0% 92%; /* Light Gray / Off-White */
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 92%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 92%;
+    --primary: 350 80% 65%; /* Vibrant Ruby Red */
+    --primary-foreground: 0 0% 5%; /* Near Black on Ruby */
+    --secondary: 0 0% 18%; /* Dark Gray */
+    --secondary-foreground: 0 0% 80%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 0 0% 80%; /* Light Silver / Bright Gray */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 340 70% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
+    --ring: 350 80% 65%;
+    --chart-1: 350 80% 60%;
+    --chart-2: 0 0% 75%;
+    --chart-3: 10 70% 60%;
+    --chart-4: 345 75% 75%;
+    --chart-5: 0 0% 40%;
+    --header-background: 0 0% 6%; /* Very Dark Gray Header */
+    --header-foreground: 350 70% 75%; /* Lighter Ruby Header Text */
+    --search-bar-background: 0 0% 18%; /* Dark Gray Search */
+    --search-bar-placeholder: 0 0% 45%; /* Medium Gray Placeholder */
+    --search-bar-text: 0 0% 90%; /* Off-White Text */
+  }
+
+  /* Theme: Vintage Sepia */
+  .theme-sepia {
+    --background: 35 30% 94%; /* Cream / Beige */
+    --foreground: 30 40% 20%; /* Dark Sepia Brown */
+    --card: 35 25% 97%;
+    --card-foreground: 30 40% 20%;
+    --popover: 35 25% 97%;
+    --popover-foreground: 30 40% 20%;
+    --primary: 30 60% 40%; /* Warm Brown */
+    --primary-foreground: 40 50% 95%; /* Light Cream on Brown */
+    --secondary: 30 30% 88%; /* Lighter Beige/Tan */
+    --secondary-foreground: 30 50% 30%;
+    --muted: 30 25% 82%;
+    --muted-foreground: 30 35% 45%;
+    --accent: 25 80% 60%; /* Muted Orange */
+    --accent-foreground: 30 60% 15%; /* Dark Brown on Orange */
+    --destructive: 15 70% 50%; /* Earthy Red/Brown */
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 20% 80%;
+    --input: 35 20% 80%;
+    --ring: 30 60% 40%;
+    --chart-1: 30 60% 50%;
+    --chart-2: 25 80% 65%;
+    --chart-3: 45 50% 55%; /* Muted Yellow/Ochre */
+    --chart-4: 35 55% 60%;
+    --chart-5: 20 70% 60%;
+    --header-background: 35 35% 92%; /* Pale Beige Header */
+    --header-foreground: 30 50% 35%; /* Medium Sepia Brown Header Text */
+    --search-bar-background: 30 20% 70%; /* Muted Tan Search */
+    --search-bar-placeholder: 35 15% 80%; /* Faint Beige Placeholder */
+    --search-bar-text: 30 40% 95%; /* Off-White/Light Cream Text */
+  }
+
+  .theme-sepia.dark {
+    --background: 30 25% 10%; /* Dark Brown */
+    --foreground: 40 30% 85%; /* Light Cream/Beige */
+    --card: 30 20% 14%;
+    --card-foreground: 40 30% 85%;
+    --popover: 30 20% 14%;
+    --popover-foreground: 40 30% 85%;
+    --primary: 35 50% 65%; /* Lighter Sepia/Tan */
+    --primary-foreground: 30 30% 10%;
+    --secondary: 30 15% 20%; /* Darker Brown */
+    --secondary-foreground: 40 25% 75%;
+    --muted: 30 10% 17%;
+    --muted-foreground: 40 20% 60%;
+    --accent: 25 70% 70%; /* Brighter Muted Orange */
+    --accent-foreground: 30 40% 15%;
+    --destructive: 15 60% 45%; /* Darker Earthy Red/Brown */
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 10% 25%;
+    --input: 30 10% 25%;
+    --ring: 35 50% 65%;
+    --chart-1: 35 50% 60%;
+    --chart-2: 25 70% 75%;
+    --chart-3: 45 50% 60%;
+    --chart-4: 30 45% 70%;
+    --chart-5: 20 60% 65%;
+    --header-background: 30 15% 12%; /* Deep Brown Header */
+    --header-foreground: 35 40% 80%; /* Soft Beige Header Text */
+    --search-bar-background: 30 10% 22%; /* Dark Tan Search */
+    --search-bar-placeholder: 35 5% 50%; /* Muted Dark Beige Placeholder */
+    --search-bar-text: 40 30% 90%; /* Pale Cream Text */
+  }
+
+
   /* 
     The ColorThemeContext handles applying the correct theme class (e.g., 'theme-default')
     to the <html> element. The CSS variables defined in .theme-default, .theme-oceanic, etc.,
