@@ -54,4 +54,3 @@ export const getProductInformation = ai.defineTool(
     return null;
   }
 );
-
