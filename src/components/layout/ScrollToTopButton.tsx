@@ -37,7 +37,7 @@ export default function ScrollToTopButton() {
       size="icon"
       onClick={scrollToTop}
       className={cn(
-        "fixed bottom-20 right-5 z-50 h-12 w-12 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-opacity duration-300 ease-in-out",
+        "fixed bottom-20 right-5 z-[51] h-12 w-12 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-opacity duration-300 ease-in-out", // Changed z-50 to z-[51]
         isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
       aria-label="Scroll to top"
