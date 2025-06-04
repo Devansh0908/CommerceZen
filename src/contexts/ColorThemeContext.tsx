@@ -67,15 +67,32 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
   const [colorTheme, _setColorTheme] = useState<ThemeName>(DEFAULT_LIGHT_THEME_NAME);
   const [currentModeThemes, setCurrentModeThemes] = useState<ColorTheme[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [lastAppliedCustomTheme, setLastAppliedCustomTheme] = useState<ThemeName | null>(null);
 
-  const applyCustomThemeClass = useCallback((themeNameToApply: ThemeName) => {
+
+  const applyCustomThemeClass = useCallback((themeNameToApply: ThemeName | null) => {
     if (typeof window !== 'undefined') {
-      availableColorThemes.forEach(t => {
-        document.documentElement.classList.remove(t.name);
-      });
-      document.documentElement.classList.add(themeNameToApply);
+      // console.log('[ColorThemeContext] Attempting to apply theme class:', themeNameToApply);
+      // console.log('[ColorThemeContext] HTML classes BEFORE:', document.documentElement.className);
+      
+      if (lastAppliedCustomTheme && lastAppliedCustomTheme !== themeNameToApply) {
+        document.documentElement.classList.remove(lastAppliedCustomTheme);
+        // console.log('[ColorThemeContext] Removed old custom theme:', lastAppliedCustomTheme);
+      }
+      
+      if (themeNameToApply) {
+        document.documentElement.classList.add(themeNameToApply);
+        setLastAppliedCustomTheme(themeNameToApply); // Track the currently applied custom theme
+        // console.log('[ColorThemeContext] Added new custom theme:', themeNameToApply);
+      } else if (lastAppliedCustomTheme) {
+        // If no new theme to apply (e.g. reverting to pure light/dark), remove the last custom one
+        document.documentElement.classList.remove(lastAppliedCustomTheme);
+        setLastAppliedCustomTheme(null);
+        // console.log('[ColorThemeContext] No new custom theme, removed:', lastAppliedCustomTheme);
+      }
+      // console.log('[ColorThemeContext] HTML classes AFTER:', document.documentElement.className);
     }
-  }, []);
+  }, [lastAppliedCustomTheme]);
 
   useEffect(() => {
     setMounted(true);
@@ -85,51 +102,36 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     if (!mounted || !actualResolvedMode) return;
 
-    let themeToApply: ThemeName;
+    let themeToSetInState: ThemeName;
+    let themeToApplyToHtml: ThemeName;
+
     const storedThemeName = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
     const storedThemeDetails = storedThemeName ? availableColorThemes.find(t => t.name === storedThemeName) : null;
 
-    if (storedThemeDetails && storedThemeDetails.mode === actualResolvedMode) {
-      themeToApply = storedThemeDetails.name;
-    } else {
-      themeToApply = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
-    }
+    // console.log(`[ColorThemeContext] Mode/Initial Load. Current Mode: ${actualResolvedMode}, Stored: ${storedThemeName}`);
 
-    _setColorTheme(themeToApply);
-    applyCustomThemeClass(themeToApply);
-    if(themeToApply) localStorage.setItem(COLOR_THEME_STORAGE_KEY, themeToApply);
+    if (storedThemeDetails && storedThemeDetails.mode === actualResolvedMode) {
+      themeToSetInState = storedThemeDetails.name;
+      themeToApplyToHtml = storedThemeDetails.name;
+      // console.log(`[ColorThemeContext] Using stored theme: ${themeToApplyToHtml}`);
+    } else {
+      themeToSetInState = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
+      themeToApplyToHtml = themeToSetInState; // Apply the default theme class
+      // console.log(`[ColorThemeContext] Stored theme incompatible or missing. Applying default: ${themeToApplyToHtml}`);
+      if(themeToApplyToHtml) localStorage.setItem(COLOR_THEME_STORAGE_KEY, themeToApplyToHtml);
+    }
+    
+    _setColorTheme(themeToSetInState);
+    applyCustomThemeClass(themeToApplyToHtml);
     
     setCurrentModeThemes(availableColorThemes.filter(t => t.mode === actualResolvedMode));
 
   }, [mounted, actualResolvedMode, applyCustomThemeClass]);
 
 
-  // Effect to react if `colorTheme` state somehow becomes incompatible with `actualResolvedMode`
-  // This primarily handles edge cases or direct state manipulation not through `setColorTheme`.
-  useEffect(() => {
-    if (!mounted || !actualResolvedMode || !colorTheme) return;
-    
-    // Update currentModeThemes whenever actualResolvedMode changes (also done above, but good for consistency)
-    setCurrentModeThemes(availableColorThemes.filter(t => t.mode === actualResolvedMode));
-
-    const currentSelectedCustomThemeDetails = availableColorThemes.find(t => t.name === colorTheme);
-
-    if (!currentSelectedCustomThemeDetails || currentSelectedCustomThemeDetails.mode !== actualResolvedMode) {
-      // The current `colorTheme` state is incompatible, revert to default for the active mode
-      const newDefaultForMode = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
-      
-      // Only update if it's actually different to avoid loops
-      if (colorTheme !== newDefaultForMode) {
-        _setColorTheme(newDefaultForMode);
-        applyCustomThemeClass(newDefaultForMode);
-        localStorage.setItem(COLOR_THEME_STORAGE_KEY, newDefaultForMode);
-      }
-    }
-  }, [mounted, actualResolvedMode, colorTheme, applyCustomThemeClass]);
-
-
   const setColorTheme = useCallback((newThemeName: ThemeName) => {
     if (!mounted || !actualResolvedMode) return;
+    // console.log(`[ColorThemeContext] User selected theme: ${newThemeName}. Current mode: ${actualResolvedMode}`);
     
     const themeDetails = availableColorThemes.find(t => t.name === newThemeName);
 
@@ -138,7 +140,8 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
       applyCustomThemeClass(newThemeName);
       localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName);
     } else {
-      console.warn(`Attempted to set theme ${newThemeName} which is incompatible with current mode ${actualResolvedMode}. Reverting to default for mode.`);
+      console.warn(`Attempted to set theme ${newThemeName} which is incompatible with current mode ${actualResolvedMode}. This shouldn't happen if UI is correct.`);
+      // Fallback to default for the current mode if somehow an incompatible theme is selected
       const fallbackTheme = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
       _setColorTheme(fallbackTheme);
       applyCustomThemeClass(fallbackTheme);
