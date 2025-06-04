@@ -71,7 +71,7 @@ export default function HomePage() {
       );
     }
 
-    let sortedProducts = [...productsToFilter]; // Create a new array for sorting
+    let sortedProducts = [...productsToFilter]; 
 
     switch (sortOption) {
       case 'price-asc':
@@ -87,9 +87,6 @@ export default function HomePage() {
         sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
         break;
       default:
-        // For 'default', we can keep the order from filtering or sort by ID for stability
-        // For now, it keeps the filtered order. If mockProducts had an inherent order, it would be preserved.
-        // Optionally, sort by ID: sortedProducts.sort((a, b) => a.id.localeCompare(b.id));
         break;
     }
 
@@ -132,7 +129,6 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Welcome Section - Shortened to ~20vh */}
       <section className="min-h-[20vh] flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-4">
         {!isAuthLoading && !isLoggedIn && (
           <div className="animate-subtle-fade-in">
@@ -220,21 +216,6 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-3 pt-4 sm:pt-6">
           <SearchBar value={searchQuery} onValueChange={setSearchQuery} />
           <div className="w-full md:w-auto">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full md:w-[220px] bg-card font-body text-sm h-9">
-                <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Filter by category..." />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category} className="font-body">
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="w-full md:w-auto">
             <Select value={sortOption} onValueChange={setSortOption}>
               <SelectTrigger className="w-full md:w-[220px] bg-card font-body text-sm h-9">
                 <ArrowUpDown className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -244,6 +225,21 @@ export default function HomePage() {
                 {sortOptions.map(option => (
                   <SelectItem key={option.value} value={option.value} className="font-body">
                     {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full md:w-auto">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full md:w-[220px] bg-card font-body text-sm h-9">
+                <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Filter by category..." />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category} className="font-body">
+                    {category}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -279,7 +275,7 @@ export default function HomePage() {
         </div>
 
         <div ref={featuredSectionRef}>
-          <FeaturedProducts products={allProducts} /> {/* Consider if featured should also be filtered, for now, it shows all featured from allProducts */}
+          <FeaturedProducts products={allProducts} /> 
         </div>
         <div ref={allProductsSectionRef}>
           <ProductGrid products={filteredProducts} />
@@ -288,3 +284,4 @@ export default function HomePage() {
     </div>
   );
 }
+
