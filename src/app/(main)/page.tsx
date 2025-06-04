@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react'; // Added useRef
+import { useRouter } from 'next/navigation'; // Added useRouter
 import FeaturedProducts from '@/components/commerce/FeaturedProducts';
 import ProductGrid from '@/components/commerce/ProductGrid';
 import SearchBar from '@/components/commerce/SearchBar';
@@ -12,14 +13,18 @@ import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Zap, UserPlus, LogIn, UserCircle, LogOut } from 'lucide-react';
+import { Zap, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered } from 'lucide-react'; // Added new icons
 
 export default function HomePage() {
   const products = mockProducts;
   const { user, isLoggedIn, isLoading: isAuthLoading, logout } = useAuth();
+  const router = useRouter(); // Initialize useRouter
   
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+
+  const featuredSectionRef = useRef<HTMLDivElement>(null);
+  const allProductsSectionRef = useRef<HTMLDivElement>(null);
 
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
@@ -38,6 +43,14 @@ export default function HomePage() {
     setShowLoginModal(false); 
     setShowSignupModal(true);
   }
+
+  const handleScrollToFeatured = () => {
+    featuredSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleScrollToAllProducts = () => {
+    allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <div className="space-y-12">
@@ -82,7 +95,7 @@ export default function HomePage() {
       {!isAuthLoading && isLoggedIn && user && (
         <Card className="mx-auto max-w-xl bg-gradient-to-br from-primary/5 via-background to-background shadow-xl border-primary/20 p-4 sm:p-6 md:p-8">
           <CardHeader className="items-center text-center p-0 mb-6">
-            <UserCircle className="h-14 w-14 sm:h-16 sm:h-16 text-accent mb-3" />
+            <UserCircle className="h-14 w-14 sm:h-16 sm:w-16 text-accent mb-3" />
             <CardTitle className="text-3xl sm:text-4xl font-headline text-primary">Welcome Back, {user.name || user.email}!</CardTitle>
             <CardDescription className="text-md sm:text-lg text-muted-foreground font-body max-w-md mt-2">
               You are currently logged in. Explore our products or manage your account settings.
@@ -104,8 +117,28 @@ export default function HomePage() {
       <div className="flex justify-center py-8">
         <SearchBar />
       </div>
-      <FeaturedProducts products={products} />
-      <ProductGrid products={products} />
+
+      {/* New Functionality Buttons Section */}
+      <div className="my-2 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 -mt-4 mb-8">
+        <Button variant="outline" size="default" onClick={handleScrollToFeatured} className="font-body w-full sm:w-auto">
+          <Sparkles className="mr-2 h-4 w-4 text-accent" /> Explore Featured
+        </Button>
+        <Button variant="outline" size="default" onClick={handleScrollToAllProducts} className="font-body w-full sm:w-auto">
+          <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> Shop All Products
+        </Button>
+        {isLoggedIn && (
+          <Button variant="outline" size="default" onClick={() => router.push('/order-history')} className="font-body w-full sm:w-auto">
+            <ListOrdered className="mr-2 h-4 w-4 text-accent" /> Check Order Status
+          </Button>
+        )}
+      </div>
+
+      <div ref={featuredSectionRef}>
+        <FeaturedProducts products={products} />
+      </div>
+      <div ref={allProductsSectionRef}>
+        <ProductGrid products={products} />
+      </div>
     </div>
   );
 }
