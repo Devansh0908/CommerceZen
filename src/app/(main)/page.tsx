@@ -250,7 +250,7 @@ export default function HomePage() {
                 variant="outline"
                 size="lg"
                 onClick={() => handleQuickCategorySelect(category.name)}
-                className="font-body border-primary/30 hover:border-primary text-primary hover:bg-primary/5 shadow-sm hover:shadow-md transition-all duration-200 w-full sm:w-auto"
+                className="font-body border-primary/30 text-primary hover:border-primary hover:bg-accent hover:text-accent-foreground shadow-sm hover:shadow-md transition-all duration-200 w-full sm:w-auto"
               >
                 <category.icon className="mr-2 h-5 w-5 text-accent" />
                 {category.name}
@@ -296,22 +296,22 @@ export default function HomePage() {
         </div>
         
         <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 pt-2">
-          <Button variant="ghost" size="sm" onClick={handleScrollToFeatured} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+          <Button variant="ghost" size="sm" onClick={handleScrollToFeatured} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <Sparkles className="mr-2 h-4 w-4 text-accent" /> View Featured
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleScrollToAllProducts} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+          <Button variant="ghost" size="sm" onClick={handleScrollToAllProducts} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> View All Products
           </Button>
           {isLoggedIn && (
-            <Button variant="ghost" size="sm" onClick={() => router.push('/order-history')} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+            <Button variant="ghost" size="sm" onClick={() => router.push('/order-history')} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
               <ListOrdered className="mr-2 h-4 w-4 text-accent" /> Order Status
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={() => router.push('/cart')} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+          <Button variant="ghost" size="sm" onClick={() => router.push('/cart')} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <ShoppingCart className="mr-2 h-4 w-4 text-accent" /> View Cart
           </Button>
           {mounted && (
-            <Button variant="ghost" size="sm" onClick={toggleTheme} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+            <Button variant="ghost" size="sm" onClick={toggleTheme} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
               {resolvedTheme === 'dark' ? (
                 <Sun className="mr-2 h-4 w-4 text-accent" />
               ) : (
