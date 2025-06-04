@@ -9,32 +9,32 @@
     --radius: 0.5rem;
   }
 
-  /* Theme: Default Zen (Lavender/Indigo/Teal) - Light mode adjusted */
+  /* Theme: Default Zen (Lavender/Indigo/Magenta) - Light mode adjusted to PRD */
   .theme-default {
-    --background: 220 20% 98%; /* Very Light Cool Gray */
+    --background: 240 67% 97%; /* Light Lavender - PRD */
     --foreground: 276 100% 10%; /* Dark Indigo */
     --card: 240 60% 99%;
     --card-foreground: 276 100% 10%;
     --popover: 240 60% 99%;
     --popover-foreground: 276 100% 10%;
-    --primary: 276 100% 25%; /* Deep Indigo */
+    --primary: 276 100% 25%; /* Deep Indigo - PRD */
     --primary-foreground: 0 0% 100%; /* White */
     --secondary: 240 50% 92%;
     --secondary-foreground: 276 100% 15%;
     --muted: 240 40% 88%;
     --muted-foreground: 276 50% 35%;
-    --accent: 210 80% 60%; /* Soft Blue */
-    --accent-foreground: 0 0% 100%; /* White */
+    --accent: 300 100% 50%; /* Vibrant Magenta - PRD */
+    --accent-foreground: 0 0% 100%; /* White (for contrast on Magenta) */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 20% 90%;
     --input: 240 20% 90%;
-    --ring: 276 100% 25%;
+    --ring: 300 100% 50%; /* Ring color to match new accent */
     --chart-1: 276 100% 45%;
-    --chart-2: 210 80% 70%; /* Adjusted chart color to match new accent */
+    --chart-2: 300 100% 70%; /* Adjusted chart color for new accent */
     --chart-3: 240 70% 70%;
     --chart-4: 276 60% 55%;
-    --chart-5: 210 80% 55%; /* Adjusted chart color */
+    --chart-5: 300 80% 55%; /* Adjusted chart color for new accent */
     --header-background: 260 80% 92%;
     --header-foreground: 270 60% 25%;
     --search-bar-background: 265 35% 65%;
@@ -55,18 +55,18 @@
     --secondary-foreground: 240 50% 85%;
     --muted: 276 30% 20%;
     --muted-foreground: 240 40% 70%;
-    --accent: 180 70% 65%; /* Lighter Teal (original dark accent) */
-    --accent-foreground: 276 100% 10%;
+    --accent: 300 100% 70%; /* Lighter Vibrant Magenta for dark mode */
+    --accent-foreground: 276 100% 10%; /* Dark Indigo text (for contrast on Lighter Magenta) */
     --destructive: 0 70% 40%;
     --destructive-foreground: 0 0% 98%;
     --border: 276 30% 30%;
     --input: 276 30% 30%;
-    --ring: 276 100% 75%;
+    --ring: 300 100% 70%; /* Ring color to match new accent */
     --chart-1: 276 100% 65%;
-    --chart-2: 180 70% 70%;
+    --chart-2: 300 100% 75%;
     --chart-3: 240 70% 60%;
     --chart-4: 276 60% 75%;
-    --chart-5: 180 70% 55%;
+    --chart-5: 300 80% 65%;
     --header-background: 270 30% 18%;
     --header-foreground: 260 70% 88%;
     --search-bar-background: 270 25% 28%;
@@ -595,7 +595,7 @@
   }
 
 
-  /* 
+  /*
     The ColorThemeContext handles applying the correct theme class (e.g., 'theme-default')
     to the <html> element. The CSS variables defined in .theme-default, .theme-oceanic, etc.,
     will then be available globally. We don't need to @apply them here again.
