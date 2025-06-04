@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { UserCircle, Mail, Edit3, Settings, Palette, Shield, LogIn, KeyRound, Bell } from 'lucide-react';
+import { UserCircle, Mail, Edit3, Settings, Palette, Shield, LogIn, KeyRound, Bell, LogOut } from 'lucide-react'; // Added LogOut
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Switch } from "@/components/ui/switch"; // For mock preference
