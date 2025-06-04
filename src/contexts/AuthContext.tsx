@@ -22,6 +22,8 @@ interface AuthContextType {
   signup: (email: string, pass: string, name: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  updateUserName: (newName: string) => Promise<boolean>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,7 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const storedUserSession = localStorage.getItem(CURRENT_USER_SESSION_KEY);
       if (storedUserSession) {
         const parsedUser = JSON.parse(storedUserSession) as AuthUser;
-         // Ensure name exists, provide fallback if migrating (less likely now but good practice)
         if (!parsedUser.name && parsedUser.email) {
             parsedUser.name = parsedUser.email.split('@')[0];
             parsedUser.name = parsedUser.name.charAt(0).toUpperCase() + parsedUser.name.slice(1);
@@ -117,9 +118,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const currentUserName = user?.name || 'User';
     setUser(null);
     localStorage.removeItem(CURRENT_USER_SESSION_KEY); // Clear only the current session
+    // Note: We are not clearing USERS_DB_KEY on logout, users still "exist"
     toast({ title: "Logged Out", description: `Goodbye, ${currentUserName}! You have been successfully logged out.` });
     setIsLoading(false);
   }, [toast, user]);
+
+  const updateUserName = useCallback(async (newName: string): Promise<boolean> => {
+    if (!user) return false;
+    setIsLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API call
+
+    const usersDb = getStoredUsers();
+    const userIndex = usersDb.findIndex(u => u.email === user.email);
+
+    if (userIndex > -1) {
+      usersDb[userIndex].name = newName;
+      saveStoredUsers(usersDb);
+
+      const updatedUserSession = { ...user, name: newName };
+      setUser(updatedUserSession);
+      localStorage.setItem(CURRENT_USER_SESSION_KEY, JSON.stringify(updatedUserSession));
+      
+      toast({ title: "Profile Updated", description: "Your name has been successfully updated." });
+      setIsLoading(false);
+      return true;
+    }
+    
+    toast({ title: "Update Failed", description: "Could not update your name.", variant: "destructive" });
+    setIsLoading(false);
+    return false;
+  }, [user, toast]);
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<boolean> => {
+    if (!user) return false;
+    setIsLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
+
+    const usersDb = getStoredUsers();
+    const userInDb = usersDb.find(u => u.email === user.email);
+
+    if (userInDb && userInDb.password_DO_NOT_USE_IN_PROD === currentPassword) {
+      userInDb.password_DO_NOT_USE_IN_PROD = newPassword;
+      saveStoredUsers(usersDb);
+      toast({ title: "Password Changed", description: "Your password has been successfully updated." });
+      setIsLoading(false);
+      return true;
+    }
+    
+    toast({ title: "Password Change Failed", description: "Incorrect current password.", variant: "destructive" });
+    setIsLoading(false);
+    return false;
+  }, [user, toast]);
+
 
   const value = {
     user,
@@ -128,6 +178,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signup,
     logout,
     isLoading,
+    updateUserName,
+    changePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
