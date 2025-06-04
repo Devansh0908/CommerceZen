@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon } from 'lucide-react';
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon, User } from 'lucide-react';
 
 export default function HomePage() {
   const products = mockProducts;
@@ -111,6 +111,14 @@ export default function HomePage() {
                 className="bg-accent text-accent-foreground hover:bg-accent/90 font-headline w-full sm:w-auto text-sm py-2 px-4"
               >
                 <ShoppingBag className="mr-2 h-4 w-4" /> Shop Now
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/profile')}
+                className="font-headline w-full sm:w-auto text-sm py-2 px-4 border-primary/50 hover:border-primary text-primary hover:bg-primary/5"
+              >
+                <User className="mr-2 h-4 w-4" /> My Profile
               </Button>
               <Button
                 variant="outline"
