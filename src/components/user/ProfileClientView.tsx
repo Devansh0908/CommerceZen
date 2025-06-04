@@ -55,8 +55,8 @@ type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 export default function ProfileClientView() {
   const { user, isLoggedIn, isLoading: isAuthLoading, updateUserName, changePassword, logout: authLogout } = useAuth();
-  const { resolvedTheme, setTheme } = useTheme();
-  const { colorTheme, setColorTheme, availableThemes } = useColorTheme();
+  const { resolvedTheme, setTheme } = useTheme(); // from next-themes
+  const { colorTheme, setColorTheme, currentModeThemes } = useColorTheme(); // from our ColorThemeContext
   const { toast } = useToast();
   
   const [mounted, setMounted] = React.useState(false);
@@ -66,15 +66,17 @@ export default function ProfileClientView() {
 
   React.useEffect(() => {
     setMounted(true);
-    const storedNotificationPref = localStorage.getItem(`commercezen_notifications_${user?.email}`);
-    if (storedNotificationPref) {
-      setEmailNotificationsEnabled(JSON.parse(storedNotificationPref));
+    if (user?.email) {
+      const storedNotificationPref = localStorage.getItem(`commercezen_notifications_${user.email}`);
+      if (storedNotificationPref) {
+        setEmailNotificationsEnabled(JSON.parse(storedNotificationPref));
+      }
     }
   }, [user?.email]);
 
   const nameForm = useForm<EditNameFormValues>({
     resolver: zodResolver(editNameSchema),
-    defaultValues: { newName: user?.name || "" },
+    defaultValues: { newName: "" },
   });
 
   const passwordForm = useForm<ChangePasswordFormValues>({
@@ -83,10 +85,10 @@ export default function ProfileClientView() {
   });
 
   React.useEffect(() => {
-    if (user) {
-      nameForm.reset({ newName: user.name });
+    if (user && mounted) {
+      nameForm.reset({ newName: user.name || "" });
     }
-  }, [user, nameForm]);
+  }, [user, nameForm, mounted]);
 
   const handleEditNameSubmit = async (values: EditNameFormValues) => {
     const success = await updateUserName(values.newName);
@@ -105,7 +107,7 @@ export default function ProfileClientView() {
 
   const handleNotificationToggle = (checked: boolean) => {
     setEmailNotificationsEnabled(checked);
-    if(user?.email) { // Ensure user email exists before using it in key
+    if(user?.email) { 
       localStorage.setItem(`commercezen_notifications_${user.email}`, JSON.stringify(checked));
     }
     toast({
@@ -325,21 +327,24 @@ export default function ProfileClientView() {
              <div className="space-y-2">
                 <Label htmlFor="color-theme-select" className="text-base font-body flex items-center"><Paintbrush className="mr-2 h-4 w-4 text-muted-foreground"/>Color Theme</Label>
                 <Select
-                  value={colorTheme}
+                  value={colorTheme} // Current active color theme
                   onValueChange={(value) => setColorTheme(value as ThemeName)}
-                  disabled={!mounted}
+                  disabled={!mounted || currentModeThemes.length === 0}
                 >
                   <SelectTrigger id="color-theme-select" className="w-full font-body">
                     <SelectValue placeholder="Select a color theme" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableThemes.map((themeOption) => (
+                    {currentModeThemes.map((themeOption) => (
                       <SelectItem key={themeOption.name} value={themeOption.name} className="font-body">
                         {themeOption.displayName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {currentModeThemes.length === 0 && mounted && (
+                  <p className="text-xs text-muted-foreground font-body">Loading themes for current mode...</p>
+                )}
             </div>
              <Separator />
             <div className="flex items-center justify-between">
@@ -388,5 +393,3 @@ export default function ProfileClientView() {
     </div>
   );
 }
-
-    

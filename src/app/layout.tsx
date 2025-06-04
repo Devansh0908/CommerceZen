@@ -1,9 +1,10 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext';
-import { ThemeProvider as NextThemesProvider } from '@/components/layout/ThemeProvider'; // Renamed to avoid conflict
-import { ColorThemeProvider } from '@/contexts/ColorThemeContext'; // Import new ColorThemeProvider
+import { ThemeProvider as NextThemesProvider } from '@/components/layout/ThemeProvider';
+import { ColorThemeProvider } from '@/contexts/ColorThemeContext';
 
 export const metadata: Metadata = {
   title: 'CommerceZen',
@@ -25,11 +26,11 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <NextThemesProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="system" // next-themes handles system light/dark mode
             enableSystem
             disableTransitionOnChange
         >
-          <ColorThemeProvider> {/* Wrap with ColorThemeProvider */}
+          <ColorThemeProvider> {/* Our custom color theme provider */}
             <AuthProvider>
               {children}
               <Toaster />
