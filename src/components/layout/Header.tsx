@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered } from 'lucide-react'; // Added ListOrdered
+import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useEffect, useState } from 'react';
 import SearchBar from '@/components/commerce/SearchBar';
@@ -18,7 +18,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 
 export default function Header() {
@@ -72,13 +73,13 @@ export default function Header() {
           <SearchBar />
         </div>
         
-        <nav className="flex items-center gap-2 sm:gap-4">
-          <Link href="/" className="hover:text-accent transition-colors font-body text-sm sm:text-base hidden sm:block">
+        <nav className="flex items-center gap-1 sm:gap-2">
+          <Link href="/" className="hover:text-accent transition-colors font-body text-sm sm:text-base hidden sm:block px-2 sm:px-3 py-1.5 rounded-md hover:bg-primary/70">
             Home
           </Link>
 
           {isAuthLoading && mounted && (
-            <Loader2 className="h-5 w-5 animate-spin text-primary-foreground/70" />
+            <Loader2 className="h-5 w-5 animate-spin text-primary-foreground/70 mx-2" />
           )}
 
           {!isAuthLoading && mounted && !isLoggedIn && (
@@ -128,11 +129,13 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          
+          {mounted && <ThemeToggle />}
 
-          <Link href="/cart" className="relative flex items-center hover:text-accent transition-colors font-body">
-            <ShoppingCart className="h-6 w-6" />
+          <Link href="/cart" className="relative flex items-center hover:text-accent transition-colors font-body p-2 rounded-md hover:bg-primary/70">
+            <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
             {mounted && isCartReady && currentCartItemCount > 0 && (
-              <span className="absolute -top-2 -right-3 bg-accent text-accent-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+              <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center animate-pulse">
                 {currentCartItemCount}
               </span>
             )}
