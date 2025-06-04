@@ -214,7 +214,7 @@ export default function ChatbotWidget() {
               <div
                 key={msg.id}
                 className={cn(
-                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm",
+                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words",
                   msg.role === 'user'
                     ? "ml-auto bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground"
