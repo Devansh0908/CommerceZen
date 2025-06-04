@@ -13,9 +13,17 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon, User, Filter } from 'lucide-react';
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon, User, Filter, ArrowUpDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Product } from '@/lib/types';
+
+const sortOptions = [
+  { value: 'default', label: 'Default Sorting' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'name-asc', label: 'Name: A-Z' },
+  { value: 'name-desc', label: 'Name: Z-A' },
+];
 
 export default function HomePage() {
   const allProducts = mockProducts;
@@ -29,6 +37,7 @@ export default function HomePage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
+  const [sortOption, setSortOption] = useState<string>('default');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
 
   const featuredSectionRef = useRef<HTMLDivElement>(null);
@@ -61,8 +70,31 @@ export default function HomePage() {
           product.description.toLowerCase().includes(lowerCaseQuery)
       );
     }
-    setFilteredProducts(productsToFilter);
-  }, [searchQuery, selectedCategory, allProducts]);
+
+    let sortedProducts = [...productsToFilter]; // Create a new array for sorting
+
+    switch (sortOption) {
+      case 'price-asc':
+        sortedProducts.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        sortedProducts.sort((a, b) => b.price - a.price);
+        break;
+      case 'name-asc':
+        sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        // For 'default', we can keep the order from filtering or sort by ID for stability
+        // For now, it keeps the filtered order. If mockProducts had an inherent order, it would be preserved.
+        // Optionally, sort by ID: sortedProducts.sort((a, b) => a.id.localeCompare(b.id));
+        break;
+    }
+
+    setFilteredProducts(sortedProducts);
+  }, [searchQuery, selectedCategory, sortOption, allProducts]);
 
 
   const handleLoginSuccess = () => {
@@ -91,6 +123,7 @@ export default function HomePage() {
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setSearchQuery('');
     setSelectedCategory("All Categories");
+    setSortOption("default");
   };
 
   const toggleTheme = () => {
@@ -184,7 +217,7 @@ export default function HomePage() {
       </section>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-10">
-        <div className="flex flex-col md:flex-row justify-center items-center gap-3 pt-4 sm:pt-6">
+        <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-3 pt-4 sm:pt-6">
           <SearchBar value={searchQuery} onValueChange={setSearchQuery} />
           <div className="w-full md:w-auto">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -196,6 +229,21 @@ export default function HomePage() {
                 {categories.map(category => (
                   <SelectItem key={category} value={category} className="font-body">
                     {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full md:w-auto">
+            <Select value={sortOption} onValueChange={setSortOption}>
+              <SelectTrigger className="w-full md:w-[220px] bg-card font-body text-sm h-9">
+                <ArrowUpDown className="mr-2 h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Sort by..." />
+              </SelectTrigger>
+              <SelectContent>
+                {sortOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value} className="font-body">
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>
