@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useTheme as useNextTheme } from 'next-themes'; // Renamed to avoid conflict
+import { useTheme as useNextTheme } from 'next-themes';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -50,20 +50,20 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'dark-theme-neon-pulse', displayName: 'Neon Pulse (Dark)', mode: 'dark' },
 ];
 
-const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme_v3'; // Incremented version
+const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme_v3';
 const DEFAULT_LIGHT_THEME_NAME: ThemeName = 'light-theme-brighter-zen';
 const DEFAULT_DARK_THEME_NAME: ThemeName = 'dark-theme-deep-indigo';
 
 interface ColorThemeContextType {
-  colorTheme: ThemeName; // The name of the currently active custom theme
+  colorTheme: ThemeName;
   setColorTheme: (themeName: ThemeName) => void;
-  currentModeThemes: ColorTheme[]; // Themes filtered for current light/dark mode (from next-themes)
+  currentModeThemes: ColorTheme[];
 }
 
 const ColorThemeContext = createContext<ColorThemeContextType | undefined>(undefined);
 
 export function ColorThemeProvider({ children }: { children: React.ReactNode }) {
-  const { resolvedTheme: actualResolvedMode } = useNextTheme(); // e.g., 'light' or 'dark'
+  const { resolvedTheme: actualResolvedMode } = useNextTheme();
   const [colorTheme, _setColorTheme] = useState<ThemeName>(DEFAULT_LIGHT_THEME_NAME);
   const [currentModeThemes, setCurrentModeThemes] = useState<ColorTheme[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -73,9 +73,6 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
       availableColorThemes.forEach(t => {
         document.documentElement.classList.remove(t.name);
       });
-      // Only add the class if it's not one of the base themes handled by :root or .dark
-      // Or, always add it for consistency, as it won't hurt if vars are identical.
-      // For simplicity and explicit state, always add the chosen theme class.
       document.documentElement.classList.add(themeNameToApply);
     }
   }, []);
@@ -84,42 +81,51 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
     setMounted(true);
   }, []);
 
+  // Effect for initial theme load and when OS/next-themes mode changes
   useEffect(() => {
-    if (!mounted || !actualResolvedMode) return; // Wait for mount and next-themes to resolve mode
+    if (!mounted || !actualResolvedMode) return;
 
-    let initialThemeName: ThemeName;
+    let themeToApply: ThemeName;
     const storedThemeName = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
     const storedThemeDetails = storedThemeName ? availableColorThemes.find(t => t.name === storedThemeName) : null;
 
     if (storedThemeDetails && storedThemeDetails.mode === actualResolvedMode) {
-      initialThemeName = storedThemeDetails.name;
+      themeToApply = storedThemeDetails.name;
     } else {
-      initialThemeName = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
+      themeToApply = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
     }
 
-    _setColorTheme(initialThemeName);
-    applyCustomThemeClass(initialThemeName);
-    localStorage.setItem(COLOR_THEME_STORAGE_KEY, initialThemeName);
+    _setColorTheme(themeToApply);
+    applyCustomThemeClass(themeToApply);
+    if(themeToApply) localStorage.setItem(COLOR_THEME_STORAGE_KEY, themeToApply);
+    
     setCurrentModeThemes(availableColorThemes.filter(t => t.mode === actualResolvedMode));
 
   }, [mounted, actualResolvedMode, applyCustomThemeClass]);
 
 
+  // Effect to react if `colorTheme` state somehow becomes incompatible with `actualResolvedMode`
+  // This primarily handles edge cases or direct state manipulation not through `setColorTheme`.
   useEffect(() => {
-    if (!mounted || !actualResolvedMode) return;
-
-    // Update available themes for the current mode
+    if (!mounted || !actualResolvedMode || !colorTheme) return;
+    
+    // Update currentModeThemes whenever actualResolvedMode changes (also done above, but good for consistency)
     setCurrentModeThemes(availableColorThemes.filter(t => t.mode === actualResolvedMode));
 
-    // If the current custom theme (`colorTheme`) is not compatible with the OS/next-themes mode, switch to default for that mode.
-    const currentCustomThemeDetails = availableColorThemes.find(t => t.name === colorTheme);
-    if (currentCustomThemeDetails && currentCustomThemeDetails.mode !== actualResolvedMode) {
+    const currentSelectedCustomThemeDetails = availableColorThemes.find(t => t.name === colorTheme);
+
+    if (!currentSelectedCustomThemeDetails || currentSelectedCustomThemeDetails.mode !== actualResolvedMode) {
+      // The current `colorTheme` state is incompatible, revert to default for the active mode
       const newDefaultForMode = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
-      _setColorTheme(newDefaultForMode);
-      applyCustomThemeClass(newDefaultForMode);
-      localStorage.setItem(COLOR_THEME_STORAGE_KEY, newDefaultForMode);
+      
+      // Only update if it's actually different to avoid loops
+      if (colorTheme !== newDefaultForMode) {
+        _setColorTheme(newDefaultForMode);
+        applyCustomThemeClass(newDefaultForMode);
+        localStorage.setItem(COLOR_THEME_STORAGE_KEY, newDefaultForMode);
+      }
     }
-  }, [actualResolvedMode, colorTheme, mounted, applyCustomThemeClass]);
+  }, [mounted, actualResolvedMode, colorTheme, applyCustomThemeClass]);
 
 
   const setColorTheme = useCallback((newThemeName: ThemeName) => {
@@ -127,15 +133,12 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
     
     const themeDetails = availableColorThemes.find(t => t.name === newThemeName);
 
-    // Ensure the selected theme is compatible with the current light/dark mode
     if (themeDetails && themeDetails.mode === actualResolvedMode) {
       _setColorTheme(newThemeName);
       applyCustomThemeClass(newThemeName);
       localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName);
     } else {
-      // This case should ideally be prevented by the UI (ProfileClientView filters themes)
-      // If it happens, fall back to the default for the current mode
-      console.warn(`Theme ${newThemeName} is not compatible with current mode ${actualResolvedMode}. Falling back to default.`);
+      console.warn(`Attempted to set theme ${newThemeName} which is incompatible with current mode ${actualResolvedMode}. Reverting to default for mode.`);
       const fallbackTheme = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
       _setColorTheme(fallbackTheme);
       applyCustomThemeClass(fallbackTheme);
@@ -163,5 +166,3 @@ export function useColorTheme() {
   }
   return context;
 }
-
-    

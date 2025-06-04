@@ -71,9 +71,9 @@
     --search-bar-text: 260 70% 90%;
   }
 
-  /* --- CUSTOM LIGHT THEMES (Applied on top of .light via JS) --- */
+  /* --- CUSTOM LIGHT THEMES --- */
 
-  /* 1. Brighter Zen Light (This class is for explicit selection, vars are same as :root) */
+  /* 1. Brighter Zen Light (Matches :root, explicitly selectable) */
   .light-theme-brighter-zen {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -134,9 +134,9 @@
     --chart-5: 35 80% 70%;
     --header-background: 205 75% 93%;
     --header-foreground: 215 50% 30%;
-    --search-bar-background: 210 40% 70%;
-    --search-bar-placeholder: 200 30% 85%;
-    --search-bar-text: 220 60% 95%;
+    --search-bar-background: 210 40% 70%; /* Adjusted for visibility */
+    --search-bar-placeholder: 200 30% 85%; /* Adjusted for visibility */
+    --search-bar-text: 220 60% 95%; /* Adjusted for visibility */
   }
 
   /* 3. Forest Harmony Light */
@@ -167,9 +167,9 @@
     --chart-5: 40 70% 60%;
     --header-background: 110 45% 92%;
     --header-foreground: 125 50% 25%;
-    --search-bar-background: 120 25% 68%;
-    --search-bar-placeholder: 100 20% 80%;
-    --search-bar-text: 130 40% 95%;
+    --search-bar-background: 120 25% 68%; /* Adjusted for visibility */
+    --search-bar-placeholder: 100 20% 80%; /* Adjusted for visibility */
+    --search-bar-text: 130 40% 95%; /* Adjusted for visibility */
   }
 
   /* 4. Crimson Royal Light */
@@ -200,9 +200,9 @@
     --chart-5: 50 70% 60%;
     --header-background: 0 5% 94%;
     --header-foreground: 0 60% 30%;
-    --search-bar-background: 0 0% 65%;
-    --search-bar-placeholder: 0 0% 85%;
-    --search-bar-text: 0 0% 95%;
+    --search-bar-background: 0 0% 65%; /* Adjusted for visibility */
+    --search-bar-placeholder: 0 0% 85%; /* Adjusted for visibility */
+    --search-bar-text: 0 0% 95%; /* Adjusted for visibility */
   }
 
   /* 5. Sunset Glow Light */
@@ -233,9 +233,9 @@
     --chart-5: 50 90% 65%;
     --header-background: 25 100% 95%;
     --header-foreground: 20 80% 40%;
-    --search-bar-background: 25 50% 70%;
-    --search-bar-placeholder: 30 40% 80%;
-    --search-bar-text: 20 70% 95%;
+    --search-bar-background: 25 50% 70%; /* Adjusted for visibility */
+    --search-bar-placeholder: 30 40% 80%; /* Adjusted for visibility */
+    --search-bar-text: 20 70% 95%; /* Adjusted for visibility */
   }
 
   /* 6. Minty Fresh Light */
@@ -252,8 +252,8 @@
     --secondary-foreground: 170 60% 25%;
     --muted: 160 40% 88%;
     --muted-foreground: 170 40% 40%;
-    --accent: 210 80% 90%;
-    --accent-foreground: 170 60% 30%;
+    --accent: 210 80% 90%; /* Light blue accent for minty */
+    --accent-foreground: 170 60% 30%; /* Darker text for light blue */
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
     --border: 150 30% 85%;
@@ -266,9 +266,9 @@
     --chart-5: 200 70% 75%;
     --header-background: 155 60% 94%;
     --header-foreground: 165 50% 30%;
-    --search-bar-background: 160 30% 70%;
-    --search-bar-placeholder: 150 25% 83%;
-    --search-bar-text: 170 50% 95%;
+    --search-bar-background: 160 30% 70%; /* Adjusted for visibility */
+    --search-bar-placeholder: 150 25% 83%; /* Adjusted for visibility */
+    --search-bar-text: 170 50% 95%; /* Adjusted for visibility */
   }
 
   /* 7. Ruby Radiance Light */
@@ -285,8 +285,8 @@
     --secondary-foreground: 350 60% 20%;
     --muted: 0 0% 85%;
     --muted-foreground: 0 0% 35%;
-    --accent: 0 0% 70%;
-    --accent-foreground: 0 0% 5%;
+    --accent: 0 0% 70%; /* Grey accent for Ruby */
+    --accent-foreground: 0 0% 5%; /* Very dark text for grey */
     --destructive: 340 80% 45%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 80%;
@@ -299,9 +299,9 @@
     --chart-5: 0 0% 50%;
     --header-background: 0 0% 95%;
     --header-foreground: 350 65% 35%;
-    --search-bar-background: 0 0% 60%;
-    --search-bar-placeholder: 0 0% 80%;
-    --search-bar-text: 0 0% 97%;
+    --search-bar-background: 0 0% 60%; /* Adjusted for visibility */
+    --search-bar-placeholder: 0 0% 80%; /* Adjusted for visibility */
+    --search-bar-text: 0 0% 97%; /* Adjusted for visibility */
   }
 
   /* 8. Vintage Sepia Light */
@@ -332,14 +332,14 @@
     --chart-5: 20 70% 60%;
     --header-background: 35 35% 92%;
     --header-foreground: 30 50% 35%;
-    --search-bar-background: 30 20% 70%;
-    --search-bar-placeholder: 35 15% 80%;
-    --search-bar-text: 30 40% 95%;
+    --search-bar-background: 30 20% 70%; /* Adjusted for visibility */
+    --search-bar-placeholder: 35 15% 80%; /* Adjusted for visibility */
+    --search-bar-text: 30 40% 95%; /* Adjusted for visibility */
   }
 
-  /* --- CUSTOM DARK THEMES (Applied on top of .dark via JS) --- */
+  /* --- CUSTOM DARK THEMES --- */
 
-  /* 1. Deep Indigo Dark (This class is for explicit selection, vars are same as .dark) */
+  /* 1. Deep Indigo Dark (Matches .dark, explicitly selectable) */
   .dark-theme-deep-indigo {
     --background: 276 30% 10%;
     --foreground: 240 67% 97%;
@@ -608,10 +608,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    /* transition: background 0.3s ease-in-out, color 0.3s ease-in-out; */ /* Removed for diagnostics */
   }
 }
-
-    
-
-
