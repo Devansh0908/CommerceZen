@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { ListOrdered, ShoppingBag, LogIn } from 'lucide-react';
+import { ListOrdered, ShoppingBag, LogIn, CalendarDays, User } from 'lucide-react'; // Added CalendarDays and User
 
 export default function OrderHistoryClientView() {
   const { user, isLoggedIn, isLoading: isAuthLoading } = useAuth();
@@ -24,6 +24,7 @@ export default function OrderHistoryClientView() {
         const storedOrdersJson = localStorage.getItem(storageKey);
         if (storedOrdersJson) {
           const parsedOrders: Order[] = JSON.parse(storedOrdersJson);
+          // Sort orders by date, newest first
           parsedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           setOrders(parsedOrders);
         } else {
@@ -36,6 +37,7 @@ export default function OrderHistoryClientView() {
         setIsLoadingOrders(false);
       }
     } else if (!isAuthLoading) { 
+      // If not loading auth and not logged in, then stop loading orders
       setIsLoadingOrders(false);
       setOrders([]);
     }
@@ -84,33 +86,36 @@ export default function OrderHistoryClientView() {
     <div className="space-y-10 pb-10">
       <h1 className="text-4xl font-headline font-bold text-primary text-center">Your Order History</h1>
       
-      <ScrollArea className="h-[calc(100vh-250px)]">
+      <ScrollArea className="h-[calc(100vh-250px)]"> {/* Defined height for ScrollArea */}
         <div className="space-y-6 pr-4">
           {orders.map((order) => (
-            <Card key={order.id} className="shadow-lg animate-subtle-fade-in">
-              <CardHeader className="pb-3">
+            <Card key={order.id} className="shadow-lg animate-subtle-fade-in bg-card">
+              <CardHeader className="pb-3 border-b">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                    <CardTitle className="font-headline text-xl text-primary">Order ID: {order.id}</CardTitle>
-                    <CardDescription className="font-body text-sm text-muted-foreground">
-                        Placed on: {new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                         {' at '}
-                        {new Date(order.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
-                    </CardDescription>
+                    <CardTitle className="font-headline text-xl text-primary">Order ID: {order.id.substring(order.id.length - 7)}</CardTitle>
+                    <div className="flex items-center text-sm text-muted-foreground font-body">
+                        <CalendarDays className="mr-1.5 h-4 w-4" />
+                        <span>
+                            {new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            {' at '}
+                            {new Date(order.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                        </span>
+                    </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="pt-4 space-y-4">
                 <div>
                   <h4 className="font-body font-semibold text-md text-primary mb-2">Items:</h4>
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {order.items.map((item, index) => (
-                      <li key={`${item.productId}-${index}`} className="flex justify-between items-start text-sm font-body border-b border-border/50 pb-2 last:border-b-0 last:pb-0">
-                        <div className="flex-grow">
-                          <span className="font-medium text-foreground">{item.name}</span>
-                          <span className="text-muted-foreground"> (x{item.quantity})</span>
+                      <li key={`${item.productId}-${index}`} className="flex justify-between items-start text-sm font-body border-b border-border/50 pb-3 last:border-b-0 last:pb-0">
+                        <div className="flex-grow pr-2">
+                          <Link href={`/product/${item.productId}`} className="font-medium text-primary hover:text-accent transition-colors">{item.name}</Link>
+                          <span className="text-muted-foreground ml-1">(x{item.quantity})</span>
+                          <p className="text-xs text-muted-foreground">INR {item.priceAtPurchase.toFixed(2)} each</p>
                         </div>
-                        <div className="text-right shrink-0 ml-4">
-                            <p className="text-muted-foreground">INR {item.priceAtPurchase.toFixed(2)} each</p>
-                            <p className="font-semibold text-primary">INR {(item.priceAtPurchase * item.quantity).toFixed(2)}</p>
+                        <div className="text-right shrink-0 ml-2">
+                            <p className="font-semibold text-foreground">INR {(item.priceAtPurchase * item.quantity).toFixed(2)}</p>
                         </div>
                       </li>
                     ))}
@@ -118,8 +123,10 @@ export default function OrderHistoryClientView() {
                 </div>
                 <Separator />
                  <div>
-                  <h4 className="font-body font-semibold text-md text-primary mb-1">Shipping Address:</h4>
-                  <address className="text-sm font-body text-muted-foreground not-italic leading-relaxed">
+                  <h4 className="font-body font-semibold text-md text-primary mb-2 flex items-center">
+                    <User className="mr-2 h-4 w-4 text-muted-foreground" /> Shipping Address:
+                  </h4>
+                  <address className="text-sm font-body text-muted-foreground not-italic leading-relaxed pl-6">
                     {order.shippingAddress.name}<br />
                     {order.shippingAddress.address}<br />
                     {order.shippingAddress.city}, {order.shippingAddress.postalCode}<br />
@@ -128,7 +135,7 @@ export default function OrderHistoryClientView() {
                   </address>
                 </div>
               </CardContent>
-              <CardFooter className="bg-muted/50 py-3 px-6 rounded-b-lg mt-2">
+              <CardFooter className="bg-muted/30 py-4 px-6 rounded-b-lg mt-4 border-t">
                 <div className="flex justify-between items-center w-full">
                   <span className="font-body text-lg font-semibold text-primary">Order Total:</span>
                   <span className="font-headline text-xl font-bold text-accent">INR {order.totalAmount.toFixed(2)}</span>
