@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -201,15 +202,15 @@ export default function CheckoutForm() {
               <div key={item.id} className="flex justify-between items-start font-body border-b pb-3 last:border-b-0">
                 <div className="flex-grow pr-2">
                   <p className="font-semibold leading-tight">{item.name} <span className="text-xs text-muted-foreground">x {item.quantity}</span></p>
-                  <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                  <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)} each</p>
                 </div>
-                <p className="font-semibold shrink-0">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold shrink-0">₹{(item.price * item.quantity).toFixed(2)}</p>
               </div>
             ))}
           </CardContent>
           <CardFooter className="flex justify-between items-center text-xl font-headline font-bold text-primary border-t pt-4 mt-4">
             <span>Total:</span>
-            <span>${getCartTotal().toFixed(2)}</span>
+            <span>₹{getCartTotal().toFixed(2)}</span>
           </CardFooter>
         </Card>
       </div>

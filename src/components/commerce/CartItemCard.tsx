@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -57,7 +58,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
       <div className="flex-grow text-center sm:text-left">
         <h3 className="text-lg font-headline font-semibold text-primary">{item.name}</h3>
         <p className="text-sm text-muted-foreground font-body">{item.category}</p>
-        <p className="text-md font-headline font-semibold text-primary mt-1">${item.price.toFixed(2)}</p>
+        <p className="text-md font-headline font-semibold text-primary mt-1">₹{item.price.toFixed(2)}</p>
       </div>
       <div className="flex items-center gap-2 my-2 sm:my-0">
         <Button variant="outline" size="icon" onClick={decrementQuantity} aria-label="Decrease quantity">
@@ -76,7 +77,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
         </Button>
       </div>
       <p className="text-lg font-headline font-semibold text-primary w-24 text-center sm:text-right">
-        ${(item.price * item.quantity).toFixed(2)}
+        ₹{(item.price * item.quantity).toFixed(2)}
       </p>
       <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-destructive hover:bg-destructive/10 hover:text-destructive" aria-label="Remove item">
         <Trash2 className="h-5 w-5" />
