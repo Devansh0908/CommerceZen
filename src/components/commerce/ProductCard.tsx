@@ -1,12 +1,15 @@
 
 "use client";
 
+import React from 'react'; // Added React import
 import Image from 'next/image';
 import type { Product } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
-import { ShoppingCart } from 'lucide-react';
+import { useWishlist } from '@/hooks/useWishlist';
+import { ShoppingCart, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +17,15 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
+  const { isLoggedIn } = useAuth();
+  
+  // Memoize or compute isWishlisted only when relevant dependencies change
+  const isWishlisted = React.useMemo(() => {
+      if (!isLoggedIn || !isWishlistInitialized) return false;
+      return isInWishlist(product.id);
+  }, [isLoggedIn, isWishlistInitialized, product.id, isInWishlist]);
+
 
   return (
     <Link href={`/product/${product.id}`} className="block group h-full" aria-label={`View details for ${product.name}`}>
@@ -28,6 +40,21 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="transition-transform duration-500 group-hover:scale-105"
             data-ai-hint={product.imageHint}
           />
+          {isLoggedIn && isWishlistInitialized && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 bg-card/70 hover:bg-card text-primary rounded-full h-9 w-9 z-10"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleWishlist(product);
+              }}
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <Heart className={`h-5 w-5 transition-colors duration-200 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-primary hover:text-red-400'}`} />
+            </Button>
+          )}
         </div>
         <div className="p-5 flex flex-col flex-grow">
           <h3 className="text-lg font-headline font-semibold text-primary mb-1.5 truncate group-hover:text-accent transition-colors">

@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useEffect, type FormEvent } from 'react';
+import React, { useState, useEffect, type FormEvent } from 'react';
 import Image from 'next/image';
 import type { Product, Review } from '@/lib/types';
-import { Tag, Info, Package, Star, MessageSquare, User, CalendarDays } from 'lucide-react';
+import { Tag, Info, Package, Star, MessageSquare, User, CalendarDays, Heart } from 'lucide-react';
 import ProductDetailAddToCartButton from '@/components/commerce/ProductDetailAddToCartButton';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -15,11 +15,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWishlist } from '@/hooks/useWishlist';
 
-// Simplified initial review data
 const staticReviewData = {
-  reviewCount: 15, // This will be a mix of mock and dynamic eventually
-  averageRating: '4.5', // This would also be calculated if reviews were persistent
+  reviewCount: 15,
+  averageRating: '4.5',
 };
 
 const getInitialMockReviews = (productId: string): Review[] => [
@@ -34,6 +34,12 @@ interface ProductDetailClientPageProps {
 export default function ProductDetailClientPage({ product }: ProductDetailClientPageProps) {
   const { toast } = useToast();
   const { user, isLoggedIn } = useAuth();
+  const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
+  
+  const isWishlisted = React.useMemo(() => {
+      if (!isLoggedIn || !isWishlistInitialized) return false;
+      return isInWishlist(product.id);
+  }, [isLoggedIn, isWishlistInitialized, product.id, isInWishlist]);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewerName, setReviewerName] = useState('');
@@ -48,10 +54,13 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
   }, [product]);
 
   useEffect(() => {
-    if (isLoggedIn && user?.email) {
+    if (isLoggedIn && user?.name) { // Use user.name for prefill
+      setReviewerName(user.name);
+    } else if (isLoggedIn && user?.email) {
       const namePart = user.email.split('@')[0];
       setReviewerName(namePart.charAt(0).toUpperCase() + namePart.slice(1));
-    } else {
+    }
+     else {
       setReviewerName('');
     }
   }, [isLoggedIn, user]);
@@ -88,6 +97,8 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
   };
   
   const { reviewCount, averageRating } = staticReviewData;
+  const totalReviews = reviewCount + reviews.filter(r => !getInitialMockReviews(product.id).find(mr => mr.id === r.id)).length;
+
 
   return (
     <div className="py-8 space-y-12">
@@ -107,6 +118,21 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
             {product.featured && (
               <Badge variant="default" className="absolute top-4 right-4 bg-accent text-accent-foreground shadow-md">FEATURED</Badge>
             )}
+             {isLoggedIn && isWishlistInitialized && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-4 left-4 bg-card/80 hover:bg-card text-primary rounded-full h-10 w-10 z-10 shadow-md"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleWishlist(product);
+                  }}
+                  aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  <Heart className={`h-6 w-6 transition-colors duration-200 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-primary hover:text-red-400'}`} />
+                </Button>
+              )}
           </div>
           
           <div className="p-6 lg:p-8 space-y-5 flex flex-col">
@@ -118,7 +144,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
                   <Star key={i} className={`h-5 w-5 ${i < Math.floor(parseFloat(averageRating)) ? 'fill-current' : 'stroke-current opacity-50'}`} />
                 ))}
               </div>
-              <span className="text-sm text-muted-foreground font-body">({averageRating} based on {reviewCount + reviews.filter(r => !getInitialMockReviews(product.id).find(mr => mr.id === r.id)).length} reviews)</span>
+              <span className="text-sm text-muted-foreground font-body">({averageRating} based on {totalReviews} reviews)</span>
             </div>
 
             <p className="text-3xl font-headline font-semibold text-accent">INR {product.price.toFixed(2)}</p>
@@ -163,7 +189,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
                 onChange={(e) => setReviewerName(e.target.value)} 
                 placeholder="e.g., Jane Doe or Anonymous" 
                 className="font-body"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (isLoggedIn && !!user?.name)} // Disable if logged in and name is prefilled from auth
               />
             </div>
             <div>

@@ -2,10 +2,10 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered, User } from 'lucide-react'; // Added User icon
+import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered, User, Heart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
-import { useEffect, useState } from 'react';
-import SearchBar from '@/components/commerce/SearchBar';
+import React, { useEffect, useState } from 'react';
+import SearchBar from '@/components/commerce/SearchBar'; // Assuming SearchBar doesn't need router, keep it simple
 import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
@@ -20,14 +20,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { useWishlist } from '@/hooks/useWishlist';
 
 
 export default function Header() {
-  const { getItemCount, isCartInitialized: isCartReady, cartItems } = useCart();
+  const { getItemCount: getCartItemCount, isCartInitialized: isCartReady, cartItems } = useCart();
+  const { getWishlistItemCount, isWishlistInitialized: isWishlistReady, wishlistItems: currentWishlistItems } = useWishlist(); // Use wishlistItems for dependency
   const { user, isLoggedIn, logout, isLoading: isAuthLoading } = useAuth();
   
   const [mounted, setMounted] = useState(false);
   const [currentCartItemCount, setCurrentCartItemCount] = useState(0);
+  const [currentWishlistItemCount, setCurrentWishlistItemCount] = useState(0);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
@@ -38,9 +41,18 @@ export default function Header() {
 
   useEffect(() => {
     if (mounted && isCartReady) {
-        setCurrentCartItemCount(getItemCount());
+        setCurrentCartItemCount(getCartItemCount());
     }
-  }, [getItemCount, mounted, isCartReady, cartItems]);
+  }, [getCartItemCount, mounted, isCartReady, cartItems]);
+
+  useEffect(() => {
+    if (mounted && isWishlistReady && isLoggedIn) {
+        setCurrentWishlistItemCount(getWishlistItemCount());
+    } else if (mounted && !isLoggedIn) {
+        setCurrentWishlistItemCount(0);
+    }
+  }, [getWishlistItemCount, mounted, isWishlistReady, isLoggedIn, currentWishlistItems]); // Added currentWishlistItems as dep
+
 
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
@@ -70,7 +82,7 @@ export default function Header() {
         </Link>
         
         <div className="flex-grow flex justify-center items-center px-2 sm:px-4">
-          <SearchBar />
+          <SearchBar value="" onValueChange={() => {}} /> {/* Simplified SearchBar for header */}
         </div>
         
         <nav className="flex items-center gap-1 sm:gap-2">
@@ -135,6 +147,18 @@ export default function Header() {
             </DropdownMenu>
           )}
           
+          {mounted && isLoggedIn && isWishlistReady && (
+            <Link href="/wishlist" className="relative flex items-center hover:text-accent transition-colors font-body p-2 rounded-md hover:bg-header-foreground/10">
+              <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-header-foreground" />
+              {currentWishlistItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center animate-pulse">
+                  {currentWishlistItemCount}
+                </span>
+              )}
+              <span className="sr-only">Wishlist ({currentWishlistItemCount} items)</span>
+            </Link>
+          )}
+
           {mounted && <ThemeToggle />}
 
           <Link href="/cart" className="relative flex items-center hover:text-accent transition-colors font-body p-2 rounded-md hover:bg-header-foreground/10">
