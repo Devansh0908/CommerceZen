@@ -13,9 +13,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon, User, Filter, ArrowUpDown } from 'lucide-react';
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, ShoppingCart, Sun, Moon, User, Filter, ArrowUpDown, Laptop, Shirt, Home, Watch } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Product } from '@/lib/types';
+import { Separator } from '@/components/ui/separator';
 
 const sortOptions = [
   { value: 'default', label: 'Default Sorting' },
@@ -24,6 +25,19 @@ const sortOptions = [
   { value: 'name-asc', label: 'Name: A-Z' },
   { value: 'name-desc', label: 'Name: Z-A' },
 ];
+
+interface CategoryQuickLink {
+  name: string;
+  icon: React.ElementType;
+}
+
+const quickLinkCategories: CategoryQuickLink[] = [
+  { name: "Electronics", icon: Laptop },
+  { name: "Apparel", icon: Shirt },
+  { name: "Home Goods", icon: Home },
+  { name: "Accessories", icon: Watch },
+];
+
 
 export default function HomePage() {
   const allProducts = mockProducts;
@@ -87,6 +101,12 @@ export default function HomePage() {
         sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
         break;
       default:
+        // Default sort is by featured status first, then by original order (or ID)
+        sortedProducts.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return 0; // Maintain original order for non-featured or same-featured items
+        });
         break;
     }
 
@@ -118,9 +138,16 @@ export default function HomePage() {
 
   const handleScrollToAllProducts = () => {
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setSearchQuery('');
-    setSelectedCategory("All Categories");
+    setSearchQuery(''); // Reset search
+    setSelectedCategory("All Categories"); // Reset category
+    setSortOption("default"); // Reset sort
+  };
+
+  const handleQuickCategorySelect = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    setSearchQuery(''); // Clear search query when a category is selected
     setSortOption("default");
+    allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const toggleTheme = () => {
@@ -137,7 +164,7 @@ export default function HomePage() {
               Welcome to CommerceZen
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xs md:max-w-sm mx-auto font-body">
-              Sign up for deals or log in.
+              Sign up for deals or log in to explore.
             </p>
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
               <Button
@@ -213,7 +240,28 @@ export default function HomePage() {
       </section>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-10">
-        <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-3 pt-4 sm:pt-6">
+        
+        <section className="text-center animate-subtle-fade-in">
+          <h2 className="text-2xl font-headline font-semibold text-primary mb-4">Quick Explore Our Categories</h2>
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+            {quickLinkCategories.map((category) => (
+              <Button
+                key={category.name}
+                variant="outline"
+                size="lg"
+                onClick={() => handleQuickCategorySelect(category.name)}
+                className="font-body border-primary/30 hover:border-primary text-primary hover:bg-primary/5 shadow-sm hover:shadow-md transition-all duration-200 w-full sm:w-auto"
+              >
+                <category.icon className="mr-2 h-5 w-5 text-accent" />
+                {category.name}
+              </Button>
+            ))}
+          </div>
+        </section>
+
+        <Separator />
+
+        <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-3">
           <SearchBar value={searchQuery} onValueChange={setSearchQuery} />
           <div className="w-full md:w-auto">
             <Select value={sortOption} onValueChange={setSortOption}>
@@ -246,37 +294,40 @@ export default function HomePage() {
             </Select>
           </div>
         </div>
-
-        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 -mt-2 mb-4 sm:mb-6">
-          <Button variant="outline" size="sm" onClick={handleScrollToFeatured} className="font-body w-full sm:w-auto">
-            <Sparkles className="mr-2 h-4 w-4 text-accent" /> Featured
+        
+        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 pt-2">
+          <Button variant="ghost" size="sm" onClick={handleScrollToFeatured} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+            <Sparkles className="mr-2 h-4 w-4 text-accent" /> View Featured
           </Button>
-          <Button variant="outline" size="sm" onClick={handleScrollToAllProducts} className="font-body w-full sm:w-auto">
-            <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> All Products
+          <Button variant="ghost" size="sm" onClick={handleScrollToAllProducts} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
+            <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> View All Products
           </Button>
           {isLoggedIn && (
-            <Button variant="outline" size="sm" onClick={() => router.push('/order-history')} className="font-body w-full sm:w-auto">
+            <Button variant="ghost" size="sm" onClick={() => router.push('/order-history')} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
               <ListOrdered className="mr-2 h-4 w-4 text-accent" /> Order Status
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => router.push('/cart')} className="font-body w-full sm:w-auto">
+          <Button variant="ghost" size="sm" onClick={() => router.push('/cart')} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
             <ShoppingCart className="mr-2 h-4 w-4 text-accent" /> View Cart
           </Button>
           {mounted && (
-            <Button variant="outline" size="sm" onClick={toggleTheme} className="font-body w-full sm:w-auto">
+            <Button variant="ghost" size="sm" onClick={toggleTheme} className="font-body text-muted-foreground hover:text-primary w-full sm:w-auto">
               {resolvedTheme === 'dark' ? (
                 <Sun className="mr-2 h-4 w-4 text-accent" />
               ) : (
                 <Moon className="mr-2 h-4 w-4 text-accent" />
               )}
-              {resolvedTheme === 'dark' ? 'Light' : 'Dark'}
+              {resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </Button>
           )}
         </div>
 
+        <Separator />
+
         <div ref={featuredSectionRef}>
           <FeaturedProducts products={allProducts} /> 
         </div>
+        <Separator />
         <div ref={allProductsSectionRef}>
           <ProductGrid products={filteredProducts} />
         </div>
