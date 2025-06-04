@@ -4,15 +4,8 @@
 @tailwind utilities;
 
 @layer base {
-  /* Base variables shared across themes if any (e.g., radius) */
   :root {
-    --radius: 0.5rem;
-  }
-
-  /* --- LIGHT THEMES --- */
-
-  /* 1. Brighter Zen Light (Default Light) */
-  .light-theme-brighter-zen {
+    /* Default Light Theme: Brighter Zen Light */
     --background: 0 0% 100%; /* White */
     --foreground: 240 10% 3.9%; /* Near Black */
     --card: 0 0% 100%; /* White */
@@ -42,243 +35,11 @@
     --search-bar-background: 0 0% 95%; /* Light gray for search bar */
     --search-bar-placeholder: 240 3.8% 60%; /* Medium gray placeholder */
     --search-bar-text: 240 10% 3.9%; /* Near black text */
+    --radius: 0.5rem;
   }
 
-  /* 2. Oceanic Bliss Light */
-  .light-theme-oceanic-bliss {
-    --background: 200 70% 95%; /* Soft cyan/light blue */
-    --foreground: 220 40% 20%; /* Dark blue/slate */
-    --card: 200 65% 98%;
-    --card-foreground: 220 40% 20%;
-    --popover: 200 65% 98%;
-    --popover-foreground: 220 40% 20%;
-    --primary: 210 80% 50%; /* Medium blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 190 60% 90%; /* Lighter cyan */
-    --secondary-foreground: 210 70% 25%;
-    --muted: 190 50% 85%;
-    --muted-foreground: 210 50% 40%;
-    --accent: 45 90% 60%; /* Sandy yellow/gold */
-    --accent-foreground: 30 60% 15%; /* Dark brown on accent */
-    --destructive: 0 80% 55%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 200 40% 88%;
-    --input: 200 40% 88%;
-    --ring: 210 80% 50%;
-    --chart-1: 210 80% 60%;
-    --chart-2: 45 90% 65%;
-    --chart-3: 180 60% 50%; /* Seafoam green */
-    --chart-4: 220 70% 70%;
-    --chart-5: 35 80% 70%;
-    --header-background: 205 75% 93%; /* Light sky blue for header */
-    --header-foreground: 215 50% 30%; /* Deeper blue for header text */
-    --search-bar-background: 210 40% 70%; /* Muted water blue */
-    --search-bar-placeholder: 200 30% 85%; /* Faint blue placeholder */
-    --search-bar-text: 220 60% 95%; /* Off-white text */
-  }
-
-  /* 3. Forest Harmony Light */
-  .light-theme-forest-harmony {
-    --background: 90 30% 95%; /* Pale green/beige */
-    --foreground: 120 60% 15%; /* Dark forest green/brown */
-    --card: 90 25% 98%;
-    --card-foreground: 120 60% 15%;
-    --popover: 90 25% 98%;
-    --popover-foreground: 120 60% 15%;
-    --primary: 130 50% 40%; /* Rich green */
-    --primary-foreground: 80 60% 95%; /* Light beige on primary */
-    --secondary: 100 40% 90%; /* Lighter moss green */
-    --secondary-foreground: 120 50% 20%;
-    --muted: 100 30% 85%;
-    --muted-foreground: 120 40% 35%;
-    --accent: 30 80% 55%; /* Warm orange/amber */
-    --accent-foreground: 20 50% 10%; /* Dark brown on accent */
-    --destructive: 15 75% 50%; /* Earthy red */
-    --destructive-foreground: 0 0% 98%;
-    --border: 90 20% 88%;
-    --input: 90 20% 88%;
-    --ring: 130 50% 40%;
-    --chart-1: 130 50% 50%;
-    --chart-2: 30 80% 60%;
-    --chart-3: 70 40% 55%; /* Olive green */
-    --chart-4: 140 45% 65%;
-    --chart-5: 40 70% 60%;
-    --header-background: 110 45% 92%; /* Light forest canopy green */
-    --header-foreground: 125 50% 25%; /* Dark tree trunk brown */
-    --search-bar-background: 120 25% 68%; /* Muted leaf green */
-    --search-bar-placeholder: 100 20% 80%; /* Faint moss green */
-    --search-bar-text: 130 40% 95%; /* Off-white */
-  }
-
-  /* 4. Crimson Royal Light */
-  .light-theme-crimson-royal {
-    --background: 0 0% 96%; /* Off-white / very light grey */
-    --foreground: 0 0% 15%; /* Dark charcoal */
-    --card: 0 0% 99%;
-    --card-foreground: 0 0% 15%;
-    --popover: 0 0% 99%;
-    --popover-foreground: 0 0% 15%;
-    --primary: 0 70% 45%; /* Deep crimson red */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 10% 92%; /* Light grey */
-    --secondary-foreground: 0 50% 20%;
-    --muted: 0 5% 88%;
-    --muted-foreground: 0 20% 40%;
-    --accent: 40 80% 50%; /* Gold / muted brass */
-    --accent-foreground: 30 50% 10%;
-    --destructive: 350 70% 50%; /* Slightly different red for destructive */
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 10% 90%;
-    --input: 0 10% 90%;
-    --ring: 0 70% 45%;
-    --chart-1: 0 70% 55%;
-    --chart-2: 40 80% 55%;
-    --chart-3: 0 0% 50%; /* Medium Grey */
-    --chart-4: 350 60% 65%;
-    --chart-5: 50 70% 60%;
-    --header-background: 0 5% 94%; /* Light stone grey for header */
-    --header-foreground: 0 60% 30%; /* Darker crimson for header text */
-    --search-bar-background: 0 0% 65%; /* Medium grey for search */
-    --search-bar-placeholder: 0 0% 85%; /* Light grey placeholder */
-    --search-bar-text: 0 0% 95%; /* Off-white text */
-  }
-
-  /* 5. Sunset Glow Light */
-  .light-theme-sunset-glow {
-    --background: 30 100% 97%; /* Soft Peach */
-    --foreground: 25 60% 25%; /* Dark Warm Brown */
-    --card: 30 100% 99%;
-    --card-foreground: 25 60% 25%;
-    --popover: 30 100% 99%;
-    --popover-foreground: 25 60% 25%;
-    --primary: 20 90% 55%; /* Warm Orange */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 35 90% 85%; /* Light Orange/Yellow */
-    --secondary-foreground: 20 70% 30%;
-    --muted: 35 80% 90%;
-    --muted-foreground: 25 50% 45%;
-    --accent: 45 100% 60%; /* Golden Yellow */
-    --accent-foreground: 25 70% 20%; /* Darker brown on yellow */
-    --destructive: 0 80% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 30 70% 85%;
-    --input: 30 70% 85%;
-    --ring: 20 90% 55%;
-    --chart-1: 20 90% 65%;
-    --chart-2: 45 100% 70%;
-    --chart-3: 280 50% 60%; /* Muted Purple */
-    --chart-4: 15 80% 60%;
-    --chart-5: 50 90% 65%;
-    --header-background: 25 100% 95%; /* Very Light Peach */
-    --header-foreground: 20 80% 40%; /* Medium Orange */
-    --search-bar-background: 25 50% 70%; /* Muted Orange-Brown */
-    --search-bar-placeholder: 30 40% 80%; /* Faint Peach */
-    --search-bar-text: 20 70% 95%; /* Off-White/Light Yellow */
-  }
-
-  /* 6. Minty Fresh Light */
-  .light-theme-minty-fresh {
-    --background: 150 60% 96%; /* Very Light Mint */
-    --foreground: 160 50% 20%; /* Dark Teal/Green */
-    --card: 150 55% 98%;
-    --card-foreground: 160 50% 20%;
-    --popover: 150 55% 98%;
-    --popover-foreground: 160 50% 20%;
-    --primary: 170 65% 45%; /* Soft Teal */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 160 50% 90%; /* Lighter Mint/Aqua */
-    --secondary-foreground: 170 60% 25%;
-    --muted: 160 40% 88%;
-    --muted-foreground: 170 40% 40%;
-    --accent: 210 80% 90%; /* Very Light Sky Blue / Almost White */
-    --accent-foreground: 170 60% 30%; /* Teal on light accent */
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 150 30% 85%;
-    --input: 150 30% 85%;
-    --ring: 170 65% 45%;
-    --chart-1: 170 65% 55%;
-    --chart-2: 210 80% 80%; /* Light Blue */
-    --chart-3: 140 50% 60%; /* Soft Green */
-    --chart-4: 180 60% 65%;
-    --chart-5: 200 70% 75%;
-    --header-background: 155 60% 94%; /* Pale Mint Green */
-    --header-foreground: 165 50% 30%; /* Medium Teal */
-    --search-bar-background: 160 30% 70%; /* Muted Mint */
-    --search-bar-placeholder: 150 25% 83%; /* Faint Mint */
-    --search-bar-text: 170 50% 95%; /* Off-White */
-  }
-
-  /* 7. Ruby Radiance Light */
-  .light-theme-ruby-radiance {
-    --background: 0 0% 97%; /* Very Light Gray / Almost White */
-    --foreground: 0 0% 10%; /* Near Black / Dark Charcoal */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 350 75% 50%; /* Strong Ruby Red */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 0 0% 90%; /* Light Gray */
-    --secondary-foreground: 350 60% 20%; /* Darker Red */
-    --muted: 0 0% 85%;
-    --muted-foreground: 0 0% 35%;
-    --accent: 0 0% 70%; /* Silver / Medium Gray */
-    --accent-foreground: 0 0% 5%; /* Very Dark Gray on Silver */
-    --destructive: 340 80% 45%; /* Slightly different red */
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 80%;
-    --input: 0 0% 80%;
-    --ring: 350 75% 50%;
-    --chart-1: 350 75% 60%;
-    --chart-2: 0 0% 65%; /* Medium-Light Gray */
-    --chart-3: 10 70% 55%; /* Warm Red/Orange */
-    --chart-4: 345 70% 70%;
-    --chart-5: 0 0% 50%; /* Darker Gray */
-    --header-background: 0 0% 95%; /* Off-White Header */
-    --header-foreground: 350 65% 35%; /* Deep Red Header Text */
-    --search-bar-background: 0 0% 60%; /* Medium Dark Gray Search */
-    --search-bar-placeholder: 0 0% 80%; /* Light Gray Placeholder */
-    --search-bar-text: 0 0% 97%; /* Very Light Gray Text */
-  }
-
-  /* 8. Vintage Sepia Light */
-  .light-theme-vintage-sepia {
-    --background: 35 30% 94%; /* Cream / Beige */
-    --foreground: 30 40% 20%; /* Dark Sepia Brown */
-    --card: 35 25% 97%;
-    --card-foreground: 30 40% 20%;
-    --popover: 35 25% 97%;
-    --popover-foreground: 30 40% 20%;
-    --primary: 30 60% 40%; /* Warm Brown */
-    --primary-foreground: 40 50% 95%; /* Light Cream on Brown */
-    --secondary: 30 30% 88%; /* Lighter Beige/Tan */
-    --secondary-foreground: 30 50% 30%;
-    --muted: 30 25% 82%;
-    --muted-foreground: 30 35% 45%;
-    --accent: 25 80% 60%; /* Muted Orange */
-    --accent-foreground: 30 60% 15%; /* Dark Brown on Orange */
-    --destructive: 15 70% 50%; /* Earthy Red/Brown */
-    --destructive-foreground: 0 0% 98%;
-    --border: 35 20% 80%;
-    --input: 35 20% 80%;
-    --ring: 30 60% 40%;
-    --chart-1: 30 60% 50%;
-    --chart-2: 25 80% 65%;
-    --chart-3: 45 50% 55%; /* Muted Yellow/Ochre */
-    --chart-4: 35 55% 60%;
-    --chart-5: 20 70% 60%;
-    --header-background: 35 35% 92%; /* Pale Beige Header */
-    --header-foreground: 30 50% 35%; /* Medium Sepia Brown Header Text */
-    --search-bar-background: 30 20% 70%; /* Muted Tan Search */
-    --search-bar-placeholder: 35 15% 80%; /* Faint Beige Placeholder */
-    --search-bar-text: 30 40% 95%; /* Off-White/Light Cream Text */
-  }
-
-  /* --- DARK THEMES --- */
-
-  /* 1. Deep Indigo Dark (Default Dark) */
-  .dark-theme-deep-indigo {
+  .dark {
+    /* Default Dark Theme: Deep Indigo Dark */
     --background: 276 30% 10%; /* Dark Indigo background */
     --foreground: 240 67% 97%; /* Light Lavender text */
     --card: 276 30% 15%;
@@ -308,24 +69,326 @@
     --search-bar-background: 270 25% 28%;
     --search-bar-placeholder: 260 40% 60%;
     --search-bar-text: 260 70% 90%;
+    /* --radius: 0.5rem; /* Radius is already in :root */ */
+  }
+
+  /* --- CUSTOM LIGHT THEMES (Applied on top of .light via JS) --- */
+
+  /* 1. Brighter Zen Light (This class is for explicit selection, vars are same as :root) */
+  .light-theme-brighter-zen {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 265 80% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 330 90% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 330 90% 55%;
+    --chart-1: 265 80% 50%;
+    --chart-2: 330 90% 65%;
+    --chart-3: 240 70% 70%;
+    --chart-4: 265 60% 60%;
+    --chart-5: 330 80% 60%;
+    --header-background: 0 0% 98%;
+    --header-foreground: 265 80% 30%;
+    --search-bar-background: 0 0% 95%;
+    --search-bar-placeholder: 240 3.8% 60%;
+    --search-bar-text: 240 10% 3.9%;
+  }
+
+  /* 2. Oceanic Bliss Light */
+  .light-theme-oceanic-bliss {
+    --background: 200 70% 95%;
+    --foreground: 220 40% 20%;
+    --card: 200 65% 98%;
+    --card-foreground: 220 40% 20%;
+    --popover: 200 65% 98%;
+    --popover-foreground: 220 40% 20%;
+    --primary: 210 80% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 190 60% 90%;
+    --secondary-foreground: 210 70% 25%;
+    --muted: 190 50% 85%;
+    --muted-foreground: 210 50% 40%;
+    --accent: 45 90% 60%;
+    --accent-foreground: 30 60% 15%;
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 200 40% 88%;
+    --input: 200 40% 88%;
+    --ring: 210 80% 50%;
+    --chart-1: 210 80% 60%;
+    --chart-2: 45 90% 65%;
+    --chart-3: 180 60% 50%;
+    --chart-4: 220 70% 70%;
+    --chart-5: 35 80% 70%;
+    --header-background: 205 75% 93%;
+    --header-foreground: 215 50% 30%;
+    --search-bar-background: 210 40% 70%;
+    --search-bar-placeholder: 200 30% 85%;
+    --search-bar-text: 220 60% 95%;
+  }
+
+  /* 3. Forest Harmony Light */
+  .light-theme-forest-harmony {
+    --background: 90 30% 95%;
+    --foreground: 120 60% 15%;
+    --card: 90 25% 98%;
+    --card-foreground: 120 60% 15%;
+    --popover: 90 25% 98%;
+    --popover-foreground: 120 60% 15%;
+    --primary: 130 50% 40%;
+    --primary-foreground: 80 60% 95%;
+    --secondary: 100 40% 90%;
+    --secondary-foreground: 120 50% 20%;
+    --muted: 100 30% 85%;
+    --muted-foreground: 120 40% 35%;
+    --accent: 30 80% 55%;
+    --accent-foreground: 20 50% 10%;
+    --destructive: 15 75% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 90 20% 88%;
+    --input: 90 20% 88%;
+    --ring: 130 50% 40%;
+    --chart-1: 130 50% 50%;
+    --chart-2: 30 80% 60%;
+    --chart-3: 70 40% 55%;
+    --chart-4: 140 45% 65%;
+    --chart-5: 40 70% 60%;
+    --header-background: 110 45% 92%;
+    --header-foreground: 125 50% 25%;
+    --search-bar-background: 120 25% 68%;
+    --search-bar-placeholder: 100 20% 80%;
+    --search-bar-text: 130 40% 95%;
+  }
+
+  /* 4. Crimson Royal Light */
+  .light-theme-crimson-royal {
+    --background: 0 0% 96%;
+    --foreground: 0 0% 15%;
+    --card: 0 0% 99%;
+    --card-foreground: 0 0% 15%;
+    --popover: 0 0% 99%;
+    --popover-foreground: 0 0% 15%;
+    --primary: 0 70% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 10% 92%;
+    --secondary-foreground: 0 50% 20%;
+    --muted: 0 5% 88%;
+    --muted-foreground: 0 20% 40%;
+    --accent: 40 80% 50%;
+    --accent-foreground: 30 50% 10%;
+    --destructive: 350 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 10% 90%;
+    --input: 0 10% 90%;
+    --ring: 0 70% 45%;
+    --chart-1: 0 70% 55%;
+    --chart-2: 40 80% 55%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 350 60% 65%;
+    --chart-5: 50 70% 60%;
+    --header-background: 0 5% 94%;
+    --header-foreground: 0 60% 30%;
+    --search-bar-background: 0 0% 65%;
+    --search-bar-placeholder: 0 0% 85%;
+    --search-bar-text: 0 0% 95%;
+  }
+
+  /* 5. Sunset Glow Light */
+  .light-theme-sunset-glow {
+    --background: 30 100% 97%;
+    --foreground: 25 60% 25%;
+    --card: 30 100% 99%;
+    --card-foreground: 25 60% 25%;
+    --popover: 30 100% 99%;
+    --popover-foreground: 25 60% 25%;
+    --primary: 20 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 35 90% 85%;
+    --secondary-foreground: 20 70% 30%;
+    --muted: 35 80% 90%;
+    --muted-foreground: 25 50% 45%;
+    --accent: 45 100% 60%;
+    --accent-foreground: 25 70% 20%;
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 70% 85%;
+    --input: 30 70% 85%;
+    --ring: 20 90% 55%;
+    --chart-1: 20 90% 65%;
+    --chart-2: 45 100% 70%;
+    --chart-3: 280 50% 60%;
+    --chart-4: 15 80% 60%;
+    --chart-5: 50 90% 65%;
+    --header-background: 25 100% 95%;
+    --header-foreground: 20 80% 40%;
+    --search-bar-background: 25 50% 70%;
+    --search-bar-placeholder: 30 40% 80%;
+    --search-bar-text: 20 70% 95%;
+  }
+
+  /* 6. Minty Fresh Light */
+  .light-theme-minty-fresh {
+    --background: 150 60% 96%;
+    --foreground: 160 50% 20%;
+    --card: 150 55% 98%;
+    --card-foreground: 160 50% 20%;
+    --popover: 150 55% 98%;
+    --popover-foreground: 160 50% 20%;
+    --primary: 170 65% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 50% 90%;
+    --secondary-foreground: 170 60% 25%;
+    --muted: 160 40% 88%;
+    --muted-foreground: 170 40% 40%;
+    --accent: 210 80% 90%;
+    --accent-foreground: 170 60% 30%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 30% 85%;
+    --input: 150 30% 85%;
+    --ring: 170 65% 45%;
+    --chart-1: 170 65% 55%;
+    --chart-2: 210 80% 80%;
+    --chart-3: 140 50% 60%;
+    --chart-4: 180 60% 65%;
+    --chart-5: 200 70% 75%;
+    --header-background: 155 60% 94%;
+    --header-foreground: 165 50% 30%;
+    --search-bar-background: 160 30% 70%;
+    --search-bar-placeholder: 150 25% 83%;
+    --search-bar-text: 170 50% 95%;
+  }
+
+  /* 7. Ruby Radiance Light */
+  .light-theme-ruby-radiance {
+    --background: 0 0% 97%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 350 75% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 350 60% 20%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 0 0% 70%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 340 80% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+    --ring: 350 75% 50%;
+    --chart-1: 350 75% 60%;
+    --chart-2: 0 0% 65%;
+    --chart-3: 10 70% 55%;
+    --chart-4: 345 70% 70%;
+    --chart-5: 0 0% 50%;
+    --header-background: 0 0% 95%;
+    --header-foreground: 350 65% 35%;
+    --search-bar-background: 0 0% 60%;
+    --search-bar-placeholder: 0 0% 80%;
+    --search-bar-text: 0 0% 97%;
+  }
+
+  /* 8. Vintage Sepia Light */
+  .light-theme-vintage-sepia {
+    --background: 35 30% 94%;
+    --foreground: 30 40% 20%;
+    --card: 35 25% 97%;
+    --card-foreground: 30 40% 20%;
+    --popover: 35 25% 97%;
+    --popover-foreground: 30 40% 20%;
+    --primary: 30 60% 40%;
+    --primary-foreground: 40 50% 95%;
+    --secondary: 30 30% 88%;
+    --secondary-foreground: 30 50% 30%;
+    --muted: 30 25% 82%;
+    --muted-foreground: 30 35% 45%;
+    --accent: 25 80% 60%;
+    --accent-foreground: 30 60% 15%;
+    --destructive: 15 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 20% 80%;
+    --input: 35 20% 80%;
+    --ring: 30 60% 40%;
+    --chart-1: 30 60% 50%;
+    --chart-2: 25 80% 65%;
+    --chart-3: 45 50% 55%;
+    --chart-4: 35 55% 60%;
+    --chart-5: 20 70% 60%;
+    --header-background: 35 35% 92%;
+    --header-foreground: 30 50% 35%;
+    --search-bar-background: 30 20% 70%;
+    --search-bar-placeholder: 35 15% 80%;
+    --search-bar-text: 30 40% 95%;
+  }
+
+  /* --- CUSTOM DARK THEMES (Applied on top of .dark via JS) --- */
+
+  /* 1. Deep Indigo Dark (This class is for explicit selection, vars are same as .dark) */
+  .dark-theme-deep-indigo {
+    --background: 276 30% 10%;
+    --foreground: 240 67% 97%;
+    --card: 276 30% 15%;
+    --card-foreground: 240 67% 97%;
+    --popover: 276 30% 15%;
+    --popover-foreground: 240 67% 97%;
+    --primary: 276 100% 75%;
+    --primary-foreground: 276 100% 10%;
+    --secondary: 276 30% 25%;
+    --secondary-foreground: 240 50% 85%;
+    --muted: 276 30% 20%;
+    --muted-foreground: 240 40% 70%;
+    --accent: 300 100% 70%;
+    --accent-foreground: 276 100% 10%;
+    --destructive: 0 70% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 276 30% 30%;
+    --input: 276 30% 30%;
+    --ring: 300 100% 70%;
+    --chart-1: 276 100% 65%;
+    --chart-2: 300 100% 75%;
+    --chart-3: 240 70% 60%;
+    --chart-4: 276 60% 75%;
+    --chart-5: 300 80% 65%;
+    --header-background: 270 30% 18%;
+    --header-foreground: 260 70% 88%;
+    --search-bar-background: 270 25% 28%;
+    --search-bar-placeholder: 260 40% 60%;
+    --search-bar-text: 260 70% 90%;
   }
 
   /* 2. Oceanic Depths Dark */
   .dark-theme-oceanic-depths {
-    --background: 210 50% 10%; /* Deep navy/dark teal */
-    --foreground: 190 50% 90%; /* Light cyan/off-white */
+    --background: 210 50% 10%;
+    --foreground: 190 50% 90%;
     --card: 210 45% 15%;
     --card-foreground: 190 50% 90%;
     --popover: 210 45% 15%;
     --popover-foreground: 190 50% 90%;
-    --primary: 210 80% 70%; /* Lighter blue */
+    --primary: 210 80% 70%;
     --primary-foreground: 210 60% 10%;
-    --secondary: 200 40% 20%; /* Darker cyan */
+    --secondary: 200 40% 20%;
     --secondary-foreground: 190 50% 80%;
     --muted: 200 30% 18%;
     --muted-foreground: 190 40% 65%;
-    --accent: 45 90% 70%; /* Brighter sandy yellow/gold */
-    --accent-foreground: 30 70% 10%; /* Dark brown on accent */
+    --accent: 45 90% 70%;
+    --accent-foreground: 30 70% 10%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
     --border: 210 30% 25%;
@@ -336,30 +399,30 @@
     --chart-3: 180 60% 60%;
     --chart-4: 220 70% 75%;
     --chart-5: 35 80% 75%;
-    --header-background: 210 40% 12%; /* Dark ocean blue for header */
-    --header-foreground: 200 60% 85%; /* Light cyan for header text */
-    --search-bar-background: 210 30% 22%; /* Darker water blue */
-    --search-bar-placeholder: 200 25% 55%; /* Muted dark blue placeholder */
-    --search-bar-text: 190 50% 92%; /* Light cyan text */
+    --header-background: 210 40% 12%;
+    --header-foreground: 200 60% 85%;
+    --search-bar-background: 210 30% 22%;
+    --search-bar-placeholder: 200 25% 55%;
+    --search-bar-text: 190 50% 92%;
   }
 
   /* 3. Forest Canopy Dark */
   .dark-theme-forest-canopy {
-    --background: 120 30% 8%; /* Very dark green/charcoal */
-    --foreground: 90 20% 85%; /* Light moss green/beige */
+    --background: 120 30% 8%;
+    --foreground: 90 20% 85%;
     --card: 120 25% 12%;
     --card-foreground: 90 20% 85%;
     --popover: 120 25% 12%;
     --popover-foreground: 90 20% 85%;
-    --primary: 130 50% 60%; /* Lighter earthy green */
+    --primary: 130 50% 60%;
     --primary-foreground: 100 40% 10%;
-    --secondary: 110 25% 18%; /* Darker moss green */
+    --secondary: 110 25% 18%;
     --secondary-foreground: 90 20% 75%;
     --muted: 110 20% 15%;
     --muted-foreground: 90 15% 60%;
-    --accent: 30 80% 65%; /* Brighter orange/amber */
+    --accent: 30 80% 65%;
     --accent-foreground: 20 60% 10%;
-    --destructive: 15 65% 45%; /* Darker earthy red */
+    --destructive: 15 65% 45%;
     --destructive-foreground: 0 0% 98%;
     --border: 120 15% 20%;
     --input: 120 15% 20%;
@@ -369,28 +432,28 @@
     --chart-3: 70 40% 50%;
     --chart-4: 140 45% 60%;
     --chart-5: 40 70% 65%;
-    --header-background: 120 20% 10%; /* Deep forest night */
-    --header-foreground: 100 30% 75%; /* Moonlight on leaves */
-    --search-bar-background: 120 15% 20%; /* Dark bark */
-    --search-bar-placeholder: 100 10% 50%; /* Shadowed moss */
-    --search-bar-text: 90 30% 88%; /* Pale green text */
+    --header-background: 120 20% 10%;
+    --header-foreground: 100 30% 75%;
+    --search-bar-background: 120 15% 20%;
+    --search-bar-placeholder: 100 10% 50%;
+    --search-bar-text: 90 30% 88%;
   }
 
   /* 4. Crimson Night Dark */
   .dark-theme-crimson-night {
-    --background: 0 0% 10%; /* Very dark grey / near black */
-    --foreground: 0 0% 85%; /* Light grey / off-white */
+    --background: 0 0% 10%;
+    --foreground: 0 0% 85%;
     --card: 0 0% 14%;
     --card-foreground: 0 0% 85%;
     --popover: 0 0% 14%;
     --popover-foreground: 0 0% 85%;
-    --primary: 0 70% 60%; /* Brighter crimson */
+    --primary: 0 70% 60%;
     --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 20%; /* Darker grey */
+    --secondary: 0 0% 20%;
     --secondary-foreground: 0 0% 75%;
     --muted: 0 0% 17%;
     --muted-foreground: 0 0% 60%;
-    --accent: 40 80% 65%; /* Brighter gold */
+    --accent: 40 80% 65%;
     --accent-foreground: 30 60% 10%;
     --destructive: 350 60% 55%;
     --destructive-foreground: 0 0% 98%;
@@ -402,28 +465,28 @@
     --chart-3: 0 0% 45%;
     --chart-4: 350 60% 60%;
     --chart-5: 50 70% 70%;
-    --header-background: 0 0% 8%; /* Charcoal black for header */
-    --header-foreground: 0 30% 70%; /* Muted crimson for header text */
-    --search-bar-background: 0 0% 20%; /* Dark grey for search */
-    --search-bar-placeholder: 0 0% 50%; /* Medium dark grey placeholder */
-    --search-bar-text: 0 0% 90%; /* Light grey text */
+    --header-background: 0 0% 8%;
+    --header-foreground: 0 30% 70%;
+    --search-bar-background: 0 0% 20%;
+    --search-bar-placeholder: 0 0% 50%;
+    --search-bar-text: 0 0% 90%;
   }
 
   /* 5. Twilight Blaze Dark (Funky Sunset) */
   .dark-theme-twilight-blaze {
-    --background: 270 40% 12%; /* Deep Indigo/Purple */
-    --foreground: 30 100% 90%; /* Light Peach/Orange */
+    --background: 270 40% 12%;
+    --foreground: 30 100% 90%;
     --card: 270 35% 16%;
     --card-foreground: 30 100% 90%;
     --popover: 270 35% 16%;
     --popover-foreground: 30 100% 90%;
-    --primary: 30 100% 70%; /* Vibrant Orange */
+    --primary: 30 100% 70%;
     --primary-foreground: 270 50% 15%;
-    --secondary: 280 30% 25%; /* Darker Purple */
+    --secondary: 280 30% 25%;
     --secondary-foreground: 35 90% 80%;
     --muted: 280 25% 20%;
     --muted-foreground: 35 70% 70%;
-    --accent: 50 100% 75%; /* Bright Golden Yellow */
+    --accent: 50 100% 75%;
     --accent-foreground: 270 60% 10%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -432,31 +495,31 @@
     --ring: 30 100% 70%;
     --chart-1: 30 100% 65%;
     --chart-2: 50 100% 80%;
-    --chart-3: 15 80% 70%; /* Warm Red/Orange */
+    --chart-3: 15 80% 70%;
     --chart-4: 280 50% 75%;
     --chart-5: 40 90% 70%;
-    --header-background: 270 30% 14%; /* Dark Purple Night */
-    --header-foreground: 30 90% 85%; /* Soft Orange Glow */
-    --search-bar-background: 275 20% 25%; /* Dusky Purple */
-    --search-bar-placeholder: 280 15% 50%; /* Muted Dark Purple */
-    --search-bar-text: 35 100% 92%; /* Pale Yellow */
+    --header-background: 270 30% 14%;
+    --header-foreground: 30 90% 85%;
+    --search-bar-background: 275 20% 25%;
+    --search-bar-placeholder: 280 15% 50%;
+    --search-bar-text: 35 100% 92%;
   }
 
   /* 6. Minty Umbra Dark (Funky Mint) */
   .dark-theme-minty-umbra {
-    --background: 170 40% 10%; /* Dark Teal/Forest Green */
-    --foreground: 150 60% 90%; /* Light Mint/Off-White */
+    --background: 170 40% 10%;
+    --foreground: 150 60% 90%;
     --card: 170 35% 14%;
     --card-foreground: 150 60% 90%;
     --popover: 170 35% 14%;
     --popover-foreground: 150 60% 90%;
-    --primary: 160 70% 65%; /* Brighter Mint Green */
+    --primary: 160 70% 65%;
     --primary-foreground: 170 50% 10%;
-    --secondary: 170 30% 20%; /* Darker Teal */
+    --secondary: 170 30% 20%;
     --secondary-foreground: 150 50% 80%;
     --muted: 170 25% 17%;
     --muted-foreground: 150 40% 65%;
-    --accent: 140 60% 75%; /* Soft Lime Green */
+    --accent: 140 60% 75%;
     --accent-foreground: 170 40% 15%;
     --destructive: 0 65% 45%;
     --destructive-foreground: 0 0% 98%;
@@ -465,31 +528,31 @@
     --ring: 160 70% 65%;
     --chart-1: 160 70% 60%;
     --chart-2: 140 60% 70%;
-    --chart-3: 180 50% 55%; /* Darker Seafoam */
+    --chart-3: 180 50% 55%;
     --chart-4: 170 50% 70%;
     --chart-5: 150 65% 75%;
-    --header-background: 170 30% 12%; /* Deep Forest Teal */
-    --header-foreground: 150 50% 85%; /* Light Mint Text */
-    --search-bar-background: 175 20% 22%; /* Dark Bluish Green */
-    --search-bar-placeholder: 160 15% 50%; /* Muted Dark Mint */
-    --search-bar-text: 150 60% 92%; /* Pale Mint */
+    --header-background: 170 30% 12%;
+    --header-foreground: 150 50% 85%;
+    --search-bar-background: 175 20% 22%;
+    --search-bar-placeholder: 160 15% 50%;
+    --search-bar-text: 150 60% 92%;
   }
 
   /* 7. Garnet Gloom Dark (Funky Ruby) */
   .dark-theme-garnet-gloom {
-    --background: 0 0% 8%; /* Charcoal Black */
-    --foreground: 0 0% 92%; /* Light Gray / Off-White */
+    --background: 0 0% 8%;
+    --foreground: 0 0% 92%;
     --card: 0 0% 12%;
     --card-foreground: 0 0% 92%;
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 92%;
-    --primary: 350 80% 65%; /* Vibrant Ruby Red */
-    --primary-foreground: 0 0% 5%; /* Near Black on Ruby */
-    --secondary: 0 0% 18%; /* Dark Gray */
+    --primary: 350 80% 65%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 18%;
     --secondary-foreground: 0 0% 80%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 80%; /* Light Silver / Bright Gray */
+    --accent: 0 0% 80%;
     --accent-foreground: 0 0% 10%;
     --destructive: 340 70% 55%;
     --destructive-foreground: 0 0% 98%;
@@ -501,51 +564,45 @@
     --chart-3: 10 70% 60%;
     --chart-4: 345 75% 75%;
     --chart-5: 0 0% 40%;
-    --header-background: 0 0% 6%; /* Very Dark Gray Header */
-    --header-foreground: 350 70% 75%; /* Lighter Ruby Header Text */
-    --search-bar-background: 0 0% 18%; /* Dark Gray Search */
-    --search-bar-placeholder: 0 0% 45%; /* Medium Gray Placeholder */
-    --search-bar-text: 0 0% 90%; /* Off-White Text */
+    --header-background: 0 0% 6%;
+    --header-foreground: 350 70% 75%;
+    --search-bar-background: 0 0% 18%;
+    --search-bar-placeholder: 0 0% 45%;
+    --search-bar-text: 0 0% 90%;
   }
 
   /* 8. Neon Pulse Dark (Funky Cyberpunk) */
   .dark-theme-neon-pulse {
-    --background: 260 20% 5%; /* Very Dark Desaturated Blue/Purple */
-    --foreground: 0 0% 96%; /* Off-white */
+    --background: 260 20% 5%;
+    --foreground: 0 0% 96%;
     --card: 260 20% 8%;
     --card-foreground: 0 0% 96%;
     --popover: 260 20% 8%;
     --popover-foreground: 0 0% 96%;
-    --primary: 300 100% 70%; /* Neon Magenta/Pink */
-    --primary-foreground: 300 100% 10%; /* Dark for text on primary */
+    --primary: 300 100% 70%;
+    --primary-foreground: 300 100% 10%;
     --secondary: 260 20% 15%;
     --secondary-foreground: 0 0% 80%;
     --muted: 260 20% 12%;
     --muted-foreground: 0 0% 60%;
-    --accent: 180 100% 55%; /* Neon Cyan */
-    --accent-foreground: 180 100% 10%; /* Dark for text on accent */
-    --destructive: 0 90% 65%; /* Bright Neon Red */
+    --accent: 180 100% 55%;
+    --accent-foreground: 180 100% 10%;
+    --destructive: 0 90% 65%;
     --destructive-foreground: 0 0% 98%;
-    --border: 260 20% 25%; /* Slightly visible border */
+    --border: 260 20% 25%;
     --input: 260 20% 20%;
-    --ring: 180 100% 55%; /* Neon Cyan for focus rings */
-    --chart-1: 300 100% 70%; /* Neon Pink */
-    --chart-2: 180 100% 55%; /* Neon Cyan */
-    --chart-3: 220 100% 65%; /* Neon Blue */
-    --chart-4: 60 100% 50%; /* Neon Yellow/Lime */
-    --chart-5: 320 100% 75%; /* Neon Purple */
+    --ring: 180 100% 55%;
+    --chart-1: 300 100% 70%;
+    --chart-2: 180 100% 55%;
+    --chart-3: 220 100% 65%;
+    --chart-4: 60 100% 50%;
+    --chart-5: 320 100% 75%;
     --header-background: 260 20% 7%;
     --header-foreground: 180 100% 75%;
     --search-bar-background: 260 15% 12%;
     --search-bar-placeholder: 260 10% 40%;
     --search-bar-text: 0 0% 90%;
   }
-
-  /*
-    The ColorThemeContext handles applying ONE of the above theme classes (e.g., 'light-theme-brighter-zen')
-    to the <html> element. The `light` or `dark` class from next-themes will also be on <html>,
-    allowing ShadCN/Tailwind dark: variants to work if needed, though these themes are self-contained.
-  */
 
   * {
     @apply border-border;
@@ -555,4 +612,6 @@
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
   }
 }
+
     
+

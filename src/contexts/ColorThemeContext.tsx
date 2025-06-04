@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useTheme } from 'next-themes'; // Import useTheme from next-themes
+import { useTheme as useNextTheme } from 'next-themes'; // Renamed to avoid conflict
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -32,8 +32,7 @@ interface ColorTheme {
 }
 
 export const availableColorThemes: ColorTheme[] = [
-  // Light Themes
-  { name: 'light-theme-brighter-zen', displayName: 'Brighter Zen (Light)', mode: 'light' },
+  { name: 'light-theme-brighter-zen', displayName: 'Brighter Zen (Light Default)', mode: 'light' },
   { name: 'light-theme-oceanic-bliss', displayName: 'Oceanic Bliss (Light)', mode: 'light' },
   { name: 'light-theme-forest-harmony', displayName: 'Forest Harmony (Light)', mode: 'light' },
   { name: 'light-theme-crimson-royal', displayName: 'Crimson Royal (Light)', mode: 'light' },
@@ -41,8 +40,7 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'light-theme-minty-fresh', displayName: 'Minty Fresh (Light)', mode: 'light' },
   { name: 'light-theme-ruby-radiance', displayName: 'Ruby Radiance (Light)', mode: 'light' },
   { name: 'light-theme-vintage-sepia', displayName: 'Vintage Sepia (Light)', mode: 'light' },
-  // Dark Themes
-  { name: 'dark-theme-deep-indigo', displayName: 'Deep Indigo (Dark)', mode: 'dark' },
+  { name: 'dark-theme-deep-indigo', displayName: 'Deep Indigo (Dark Default)', mode: 'dark' },
   { name: 'dark-theme-oceanic-depths', displayName: 'Oceanic Depths (Dark)', mode: 'dark' },
   { name: 'dark-theme-forest-canopy', displayName: 'Forest Canopy (Dark)', mode: 'dark' },
   { name: 'dark-theme-crimson-night', displayName: 'Crimson Night (Dark)', mode: 'dark' },
@@ -52,100 +50,103 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'dark-theme-neon-pulse', displayName: 'Neon Pulse (Dark)', mode: 'dark' },
 ];
 
-const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme_v2';
-const DEFAULT_LIGHT_THEME: ThemeName = 'light-theme-brighter-zen';
-const DEFAULT_DARK_THEME: ThemeName = 'dark-theme-deep-indigo';
+const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme_v3'; // Incremented version
+const DEFAULT_LIGHT_THEME_NAME: ThemeName = 'light-theme-brighter-zen';
+const DEFAULT_DARK_THEME_NAME: ThemeName = 'dark-theme-deep-indigo';
 
 interface ColorThemeContextType {
-  colorTheme: ThemeName;
+  colorTheme: ThemeName; // The name of the currently active custom theme
   setColorTheme: (themeName: ThemeName) => void;
-  availableThemes: ColorTheme[]; // This will be all themes
-  currentModeThemes: ColorTheme[]; // Themes filtered for current light/dark mode
+  currentModeThemes: ColorTheme[]; // Themes filtered for current light/dark mode (from next-themes)
 }
 
 const ColorThemeContext = createContext<ColorThemeContextType | undefined>(undefined);
 
 export function ColorThemeProvider({ children }: { children: React.ReactNode }) {
-  const { resolvedTheme } = useTheme(); // From next-themes
-  const [colorTheme, _setColorTheme] = useState<ThemeName>(DEFAULT_LIGHT_THEME);
+  const { resolvedTheme: actualResolvedMode } = useNextTheme(); // e.g., 'light' or 'dark'
+  const [colorTheme, _setColorTheme] = useState<ThemeName>(DEFAULT_LIGHT_THEME_NAME);
   const [currentModeThemes, setCurrentModeThemes] = useState<ColorTheme[]>([]);
   const [mounted, setMounted] = useState(false);
 
-  const applyThemeClass = useCallback((themeName: ThemeName) => {
-    availableColorThemes.forEach(t => {
-      document.documentElement.classList.remove(t.name);
-    });
-    document.documentElement.classList.add(themeName);
+  const applyCustomThemeClass = useCallback((themeNameToApply: ThemeName) => {
+    if (typeof window !== 'undefined') {
+      availableColorThemes.forEach(t => {
+        document.documentElement.classList.remove(t.name);
+      });
+      // Only add the class if it's not one of the base themes handled by :root or .dark
+      // Or, always add it for consistency, as it won't hurt if vars are identical.
+      // For simplicity and explicit state, always add the chosen theme class.
+      document.documentElement.classList.add(themeNameToApply);
+    }
   }, []);
 
   useEffect(() => {
     setMounted(true);
-    if (!resolvedTheme) return; // Wait for next-themes to resolve
-
-    try {
-      const storedThemeName = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
-      const storedTheme = availableColorThemes.find(t => t.name === storedThemeName);
-
-      let themeToApply: ThemeName;
-
-      if (storedTheme && storedTheme.mode === resolvedTheme) {
-        themeToApply = storedTheme.name;
-      } else {
-        themeToApply = resolvedTheme === 'dark' ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-      }
-      
-      _setColorTheme(themeToApply);
-      applyThemeClass(themeToApply);
-      localStorage.setItem(COLOR_THEME_STORAGE_KEY, themeToApply);
-
-    } catch (error) {
-      console.error("Error loading color theme from localStorage", error);
-      const defaultThemeForMode = resolvedTheme === 'dark' ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-      _setColorTheme(defaultThemeForMode);
-      applyThemeClass(defaultThemeForMode);
-    }
-  }, [resolvedTheme, applyThemeClass]);
+  }, []);
 
   useEffect(() => {
-    if (mounted && resolvedTheme) {
-      setCurrentModeThemes(availableColorThemes.filter(t => t.mode === resolvedTheme));
-      
-      // Auto-switch to default theme if current colorTheme is not compatible with resolvedTheme
-      const currentAppliedTheme = availableColorThemes.find(t => t.name === colorTheme);
-      if (currentAppliedTheme && currentAppliedTheme.mode !== resolvedTheme) {
-        const newDefaultTheme = resolvedTheme === 'dark' ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-        _setColorTheme(newDefaultTheme);
-        applyThemeClass(newDefaultTheme);
-        localStorage.setItem(COLOR_THEME_STORAGE_KEY, newDefaultTheme);
-      }
+    if (!mounted || !actualResolvedMode) return; // Wait for mount and next-themes to resolve mode
+
+    let initialThemeName: ThemeName;
+    const storedThemeName = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
+    const storedThemeDetails = storedThemeName ? availableColorThemes.find(t => t.name === storedThemeName) : null;
+
+    if (storedThemeDetails && storedThemeDetails.mode === actualResolvedMode) {
+      initialThemeName = storedThemeDetails.name;
+    } else {
+      initialThemeName = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
     }
-  }, [resolvedTheme, mounted, colorTheme, applyThemeClass]);
+
+    _setColorTheme(initialThemeName);
+    applyCustomThemeClass(initialThemeName);
+    localStorage.setItem(COLOR_THEME_STORAGE_KEY, initialThemeName);
+    setCurrentModeThemes(availableColorThemes.filter(t => t.mode === actualResolvedMode));
+
+  }, [mounted, actualResolvedMode, applyCustomThemeClass]);
+
+
+  useEffect(() => {
+    if (!mounted || !actualResolvedMode) return;
+
+    // Update available themes for the current mode
+    setCurrentModeThemes(availableColorThemes.filter(t => t.mode === actualResolvedMode));
+
+    // If the current custom theme (`colorTheme`) is not compatible with the OS/next-themes mode, switch to default for that mode.
+    const currentCustomThemeDetails = availableColorThemes.find(t => t.name === colorTheme);
+    if (currentCustomThemeDetails && currentCustomThemeDetails.mode !== actualResolvedMode) {
+      const newDefaultForMode = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
+      _setColorTheme(newDefaultForMode);
+      applyCustomThemeClass(newDefaultForMode);
+      localStorage.setItem(COLOR_THEME_STORAGE_KEY, newDefaultForMode);
+    }
+  }, [actualResolvedMode, colorTheme, mounted, applyCustomThemeClass]);
 
 
   const setColorTheme = useCallback((newThemeName: ThemeName) => {
-    if (!mounted) return;
+    if (!mounted || !actualResolvedMode) return;
     
     const themeDetails = availableColorThemes.find(t => t.name === newThemeName);
-    if (themeDetails && themeDetails.mode !== resolvedTheme) {
-      // This case should ideally be prevented by the UI, but as a safeguard:
-      console.warn(`Attempted to set theme ${newThemeName} which is for ${themeDetails.mode} mode, but current mode is ${resolvedTheme}.`);
-      const fallbackTheme = resolvedTheme === 'dark' ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-       _setColorTheme(fallbackTheme);
-      applyThemeClass(fallbackTheme);
-      localStorage.setItem(COLOR_THEME_STORAGE_KEY, fallbackTheme);
-      return;
-    }
 
-    applyThemeClass(newThemeName);
-    _setColorTheme(newThemeName);
-    localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName);
-  }, [mounted, resolvedTheme, applyThemeClass]);
+    // Ensure the selected theme is compatible with the current light/dark mode
+    if (themeDetails && themeDetails.mode === actualResolvedMode) {
+      _setColorTheme(newThemeName);
+      applyCustomThemeClass(newThemeName);
+      localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName);
+    } else {
+      // This case should ideally be prevented by the UI (ProfileClientView filters themes)
+      // If it happens, fall back to the default for the current mode
+      console.warn(`Theme ${newThemeName} is not compatible with current mode ${actualResolvedMode}. Falling back to default.`);
+      const fallbackTheme = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
+      _setColorTheme(fallbackTheme);
+      applyCustomThemeClass(fallbackTheme);
+      localStorage.setItem(COLOR_THEME_STORAGE_KEY, fallbackTheme);
+    }
+  }, [mounted, actualResolvedMode, applyCustomThemeClass]);
 
   const value = {
     colorTheme,
     setColorTheme,
-    availableThemes: availableColorThemes, // All themes
-    currentModeThemes, // Themes filtered for the current light/dark mode
+    currentModeThemes,
   };
 
   return (
@@ -162,3 +163,5 @@ export function useColorTheme() {
   }
   return context;
 }
+
+    
