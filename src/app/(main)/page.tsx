@@ -8,7 +8,7 @@ import SearchBar from '@/components/commerce/SearchBar';
 import { mockProducts } from '@/lib/data'; 
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Dialog } from '@/components/ui/dialog'; // Only Dialog is needed, DialogTrigger will be removed from card buttons
+import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -83,7 +83,7 @@ export default function HomePage() {
         <Card className="mx-auto max-w-xl bg-gradient-to-br from-primary/5 via-background to-background shadow-xl border-primary/20 p-4 sm:p-6 md:p-8">
           <CardHeader className="items-center text-center p-0 mb-6">
             <UserCircle className="h-14 w-14 sm:h-16 sm:h-16 text-accent mb-3" />
-            <CardTitle className="text-3xl sm:text-4xl font-headline text-primary">Welcome Back, {user.email}!</CardTitle>
+            <CardTitle className="text-3xl sm:text-4xl font-headline text-primary">Welcome Back, {user.name || user.email}!</CardTitle>
             <CardDescription className="text-md sm:text-lg text-muted-foreground font-body max-w-md mt-2">
               You are currently logged in. Explore our products or manage your account settings.
             </CardDescription>

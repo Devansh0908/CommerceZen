@@ -7,14 +7,14 @@ import { useToast } from "@/hooks/use-toast";
 
 interface AuthUser {
   email: string;
-  // Add other user properties here if needed
+  name?: string; // Added name field
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   isLoggedIn: boolean;
-  login: (email: string, pass: string) => Promise<boolean>; // pass is unused in mock
-  signup: (email: string, pass: string) => Promise<boolean>; // pass is unused in mock
+  login: (email: string, pass: string) => Promise<boolean>;
+  signup: (email: string, pass: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -41,37 +41,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  const deriveNameFromEmail = (email: string): string => {
+    const namePart = email.split('@')[0];
+    return namePart.charAt(0).toUpperCase() + namePart.slice(1);
+  };
+
   const login = useCallback(async (email: string, _password?: string): Promise<boolean> => {
-    // Mock login: In a real app, verify credentials against a backend.
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-    const mockUser = { email };
+    const name = deriveNameFromEmail(email);
+    const mockUser: AuthUser = { email, name };
     setUser(mockUser);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(mockUser));
-    toast({ title: "Logged In", description: `Welcome back, ${email}!` });
+    toast({ title: "Logged In", description: `Welcome back, ${name}!` });
     setIsLoading(false);
     return true;
   }, [toast]);
 
   const signup = useCallback(async (email: string, _password?: string): Promise<boolean> => {
-    // Mock signup: In a real app, create user in backend.
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-    const mockUser = { email };
+    const name = deriveNameFromEmail(email);
+    const mockUser: AuthUser = { email, name };
     setUser(mockUser);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(mockUser));
-    toast({ title: "Signed Up", description: `Welcome, ${email}! You are now logged in.` });
+    toast({ title: "Signed Up", description: `Welcome, ${name}! You are now logged in.` });
     setIsLoading(false);
     return true;
   }, [toast]);
 
   const logout = useCallback(() => {
     setIsLoading(true);
+    const currentUserName = user?.name || 'User';
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    toast({ title: "Logged Out", description: "You have been successfully logged out." });
+    toast({ title: "Logged Out", description: `Goodbye, ${currentUserName}! You have been successfully logged out.` });
     setIsLoading(false);
-  }, [toast]);
+  }, [toast, user]);
 
   const value = {
     user,
