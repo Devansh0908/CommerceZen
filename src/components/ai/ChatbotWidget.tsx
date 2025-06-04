@@ -123,6 +123,9 @@ export default function ChatbotWidget() {
   const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     const trimmedInput = inputValue.trim();
+    
+    console.log('User input for chat (trimmed):', `"${trimmedInput}"`); // DEBUG LOG
+
     if (!trimmedInput || isLoading) return;
 
     const newUserMessage: ChatMessage = {
@@ -130,21 +133,19 @@ export default function ChatbotWidget() {
       role: 'user',
       content: trimmedInput,
     };
+    console.log('New user message object to be added to state:', newUserMessage); // DEBUG LOG
+
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsLoading(true);
 
     const conversationHistoryForAI = messages.map(msg => ({ role: msg.role, content: msg.content }));
-    // Add the current user message to the history being sent to the AI
-    // Note: `messages` state here might not be updated yet from the `setMessages` call above
-    // So, explicitly add the newUserMessage content to the history being sent.
     const currentTurnHistory = [...conversationHistoryForAI, { role: 'user' as const, content: trimmedInput }];
 
 
     try {
       const input: ChatWithSupportInput = {
         userInput: trimmedInput,
-        // Send the updated history, including the latest user message
         conversationHistory: currentTurnHistory.slice(-10), 
       };
       const result: ChatWithSupportOutput = await chatWithSupport(input);
@@ -214,10 +215,10 @@ export default function ChatbotWidget() {
               <div
                 key={msg.id}
                 className={cn(
-                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words",
+                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words border-2", // Added border-2
                   msg.role === 'user'
-                    ? "ml-auto bg-blue-600 text-white" // <-- MODIFIED FOR DEBUGGING
-                    : "bg-muted text-muted-foreground"
+                    ? "ml-auto bg-blue-600 text-white border-red-500" // User: blue bg, white text, red border
+                    : "bg-muted text-muted-foreground border-green-500" // AI: muted bg, muted text, green border
                 )}
               >
                 {msg.content}
@@ -225,7 +226,7 @@ export default function ChatbotWidget() {
             ))}
              {isLoading && (
               <div className="flex items-center justify-start">
-                <div className="bg-muted text-muted-foreground rounded-lg px-3 py-2 text-sm flex items-center">
+                <div className="bg-muted text-muted-foreground rounded-lg px-3 py-2 text-sm flex items-center border-2 border-yellow-500">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Thinking...
                 </div>
@@ -263,4 +264,3 @@ export default function ChatbotWidget() {
     </Popover>
   );
 }
-
