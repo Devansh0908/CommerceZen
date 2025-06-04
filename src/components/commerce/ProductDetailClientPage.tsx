@@ -17,12 +17,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
 
-const staticReviewData = {
-  reviewCount: 15,
-  averageRating: '4.5',
-};
+const getReviewsStorageKey = (productId: string) => `commercezen_reviews_${productId}`;
 
 const getInitialMockReviews = (productId: string): Review[] => [
+  // These can be kept as a fallback if no reviews are in localStorage for this product,
+  // or removed if you prefer to start fresh.
   { id: 'review-1', productId, author: 'Alice Wonderland', rating: 5, text: 'Absolutely fantastic product! Exceeded my expectations.', date: new Date(Date.now() - 86400000 * 2).toISOString() },
   { id: 'review-2', productId, author: 'Bob The Builder', rating: 4, text: 'Very good quality, though a bit pricey. Would recommend.', date: new Date(Date.now() - 86400000 * 5).toISOString() },
 ];
@@ -46,27 +45,61 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [averageRating, setAverageRating] = useState('0.0');
+  const [totalReviews, setTotalReviews] = useState(0);
 
   useEffect(() => {
     if (product) {
-      setReviews(getInitialMockReviews(product.id));
+      const storageKey = getReviewsStorageKey(product.id);
+      const storedReviewsJson = localStorage.getItem(storageKey);
+      let loadedReviews: Review[] = [];
+      if (storedReviewsJson) {
+        try {
+          loadedReviews = JSON.parse(storedReviewsJson);
+        } catch (e) {
+          console.error("Error parsing reviews from localStorage", e);
+          // Potentially fallback to initial mocks or clear corrupted data
+          localStorage.removeItem(storageKey);
+          loadedReviews = getInitialMockReviews(product.id);
+        }
+      } else {
+        // No reviews in storage, use initial mocks as a base (optional)
+        loadedReviews = getInitialMockReviews(product.id);
+        // Optionally save these initial mocks to localStorage for future consistency
+        // localStorage.setItem(storageKey, JSON.stringify(loadedReviews));
+      }
+      setReviews(loadedReviews);
     }
   }, [product]);
 
   useEffect(() => {
-    if (isLoggedIn && user?.name) { // Use user.name for prefill
+    if (reviews.length > 0) {
+      const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+      setAverageRating((sum / reviews.length).toFixed(1));
+      setTotalReviews(reviews.length);
+    } else {
+      setAverageRating('0.0');
+      setTotalReviews(0);
+    }
+  }, [reviews]);
+
+  useEffect(() => {
+    if (isLoggedIn && user?.name) {
       setReviewerName(user.name);
     } else if (isLoggedIn && user?.email) {
       const namePart = user.email.split('@')[0];
       setReviewerName(namePart.charAt(0).toUpperCase() + namePart.slice(1));
-    }
-     else {
+    } else {
       setReviewerName('');
     }
   }, [isLoggedIn, user]);
 
   const handleReviewSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!isLoggedIn) {
+      toast({ title: 'Login Required', description: 'Please log in to submit a review.', variant: 'destructive' });
+      return;
+    }
     if (rating === 0) {
       toast({ title: 'Rating Required', description: 'Please select a star rating.', variant: 'destructive' });
       return;
@@ -78,7 +111,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
     setIsSubmitting(true);
 
     const newReview: Review = {
-      id: `review-${Date.now()}`,
+      id: `review-${Date.now()}-${Math.random().toString(36).substring(2,7)}`,
       productId: product.id,
       author: reviewerName.trim() || 'Anonymous',
       rating,
@@ -86,20 +119,24 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
       date: new Date().toISOString(),
     };
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
 
-    setReviews(prevReviews => [newReview, ...prevReviews]);
+    const updatedReviews = [newReview, ...reviews];
+    setReviews(updatedReviews);
+    const storageKey = getReviewsStorageKey(product.id);
+    localStorage.setItem(storageKey, JSON.stringify(updatedReviews));
+
     toast({ title: 'Review Submitted!', description: 'Thank you for your feedback.' });
 
     setRating(0);
     setReviewText('');
+    // Keep reviewerName prefilled if user is logged in
+    if (!isLoggedIn) {
+        setReviewerName('');
+    }
     setIsSubmitting(false);
   };
   
-  const { reviewCount, averageRating } = staticReviewData;
-  const totalReviews = reviewCount + reviews.filter(r => !getInitialMockReviews(product.id).find(mr => mr.id === r.id)).length;
-
-
   return (
     <div className="py-8 space-y-12">
       <Card className="shadow-xl overflow-hidden">
@@ -139,12 +176,18 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
             <h1 className="text-3xl lg:text-4xl font-headline font-bold text-primary">{product.name}</h1>
             
             <div className="flex items-center gap-2">
-              <div className="flex items-center text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 ${i < Math.floor(parseFloat(averageRating)) ? 'fill-current' : 'stroke-current opacity-50'}`} />
-                ))}
-              </div>
-              <span className="text-sm text-muted-foreground font-body">({averageRating} based on {totalReviews} reviews)</span>
+              {totalReviews > 0 ? (
+                <>
+                  <div className="flex items-center text-amber-500">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`h-5 w-5 ${i < Math.round(parseFloat(averageRating)) ? 'fill-current' : 'stroke-current opacity-50'}`} />
+                    ))}
+                  </div>
+                  <span className="text-sm text-muted-foreground font-body">({averageRating} based on {totalReviews} review{totalReviews !== 1 ? 's' : ''})</span>
+                </>
+              ) : (
+                <span className="text-sm text-muted-foreground font-body">No reviews yet.</span>
+              )}
             </div>
 
             <p className="text-3xl font-headline font-semibold text-accent">INR {product.price.toFixed(2)}</p>
@@ -189,7 +232,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
                 onChange={(e) => setReviewerName(e.target.value)} 
                 placeholder="e.g., Jane Doe or Anonymous" 
                 className="font-body"
-                disabled={isSubmitting || (isLoggedIn && !!user?.name)} // Disable if logged in and name is prefilled from auth
+                disabled={isSubmitting || (isLoggedIn && !!user?.name)}
               />
             </div>
             <div>
@@ -221,8 +264,8 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
                 disabled={isSubmitting}
               />
             </div>
-            <Button type="submit" size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-headline" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit Review'}
+            <Button type="submit" size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-headline" disabled={isSubmitting || !isLoggedIn}>
+              {isSubmitting ? 'Submitting...' : (isLoggedIn ? 'Submit Review' : 'Login to Review')}
             </Button>
           </form>
         </CardContent>
@@ -230,7 +273,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl text-primary">Customer Reviews</CardTitle>
+          <CardTitle className="font-headline text-2xl text-primary">Customer Reviews ({totalReviews})</CardTitle>
           {reviews.length === 0 && <CardDescription className="font-body">No reviews yet for this product. Be the first to write one!</CardDescription>}
         </CardHeader>
         {reviews.length > 0 && (
@@ -251,7 +294,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
                   </div>
                   <div className="flex items-center text-xs text-muted-foreground pt-1">
                       <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-                      {new Date(review.date).toLocaleDateString()}
+                      {new Date(review.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -265,3 +308,4 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
     </div>
   );
 }
+
