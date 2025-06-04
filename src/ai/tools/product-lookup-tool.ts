@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview A Genkit tool to retrieve product information.
  *
@@ -9,7 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 import { mockProducts } from '@/lib/data';
 import type { Product } from '@/lib/types'; // Ensure Product type is available if needed for strong typing, though direct usage is minimal here
 
@@ -55,3 +54,4 @@ export const getProductInformation = ai.defineTool(
     return null;
   }
 );
+
