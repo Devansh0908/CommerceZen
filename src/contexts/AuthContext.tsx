@@ -7,88 +7,106 @@ import { useToast } from "@/hooks/use-toast";
 
 interface AuthUser {
   email: string;
-  name: string; // Name is now mandatory and will be provided at signup
+  name: string; 
+}
+
+// This interface will be used for storing in our "simulated text file" (localStorage)
+interface StoredUser extends AuthUser {
+  password_DO_NOT_USE_IN_PROD: string; // Storing plain text password for simulation only. Highly insecure.
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   isLoggedIn: boolean;
   login: (email: string, pass: string) => Promise<boolean>;
-  signup: (email: string, pass: string, name: string) => Promise<boolean>; // Added name parameter
+  signup: (email: string, pass: string, name: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'commercezen_auth_user';
+const CURRENT_USER_SESSION_KEY = 'commercezen_auth_user_session'; // Stores the currently logged-in user
+const USERS_DB_KEY = 'commercezen_users_db'; // Simulates our "text file" of all registered users
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
+  // Load current user session on initial load
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        // Ensure name exists, provide fallback if migrating from old structure
+      const storedUserSession = localStorage.getItem(CURRENT_USER_SESSION_KEY);
+      if (storedUserSession) {
+        const parsedUser = JSON.parse(storedUserSession) as AuthUser;
+         // Ensure name exists, provide fallback if migrating (less likely now but good practice)
         if (!parsedUser.name && parsedUser.email) {
             parsedUser.name = parsedUser.email.split('@')[0];
             parsedUser.name = parsedUser.name.charAt(0).toUpperCase() + parsedUser.name.slice(1);
-            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(parsedUser)); // Update stored user
         }
         setUser(parsedUser);
       }
     } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+      console.error("Failed to parse current user session from localStorage", error);
+      localStorage.removeItem(CURRENT_USER_SESSION_KEY);
     }
     setIsLoading(false);
   }, []);
 
-  const login = useCallback(async (email: string, _password?: string): Promise<boolean> => {
+  const getStoredUsers = (): StoredUser[] => {
+    try {
+      const usersDb = localStorage.getItem(USERS_DB_KEY);
+      return usersDb ? JSON.parse(usersDb) : [];
+    } catch (error) {
+      console.error("Failed to parse users_db from localStorage", error);
+      return [];
+    }
+  };
+
+  const saveStoredUsers = (users: StoredUser[]): void => {
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+  };
+
+  const login = useCallback(async (email: string, pass: string): Promise<boolean> => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500)); 
     
-    // In a real app, you'd fetch user data from a backend.
-    // For this mock, we assume if a user tries to log in, their data (including name)
-    // should have been stored during a previous signup via localStorage.
-    // If they clear localStorage and try to log in, the storedUser would be null.
-    // Let's retrieve from localStorage for this mock.
-    const storedUserJSON = localStorage.getItem(AUTH_STORAGE_KEY);
-    let nameToDisplay = "User"; // Default
-    let userToStore: AuthUser | null = null;
+    const usersDb = getStoredUsers();
+    const foundUser = usersDb.find(u => u.email === email && u.password_DO_NOT_USE_IN_PROD === pass);
 
-    if (storedUserJSON) {
-        const storedUser: AuthUser = JSON.parse(storedUserJSON);
-        // We find the user by email. In a real app, password would be checked too.
-        if (storedUser.email === email) {
-            userToStore = storedUser;
-            nameToDisplay = storedUser.name;
-        }
-    }
-    
-    if (userToStore) {
-        setUser(userToStore);
-        toast({ title: "Logged In", description: `Welcome back, ${nameToDisplay}!` });
-        setIsLoading(false);
-        return true;
+    if (foundUser) {
+      const currentUser: AuthUser = { email: foundUser.email, name: foundUser.name };
+      setUser(currentUser);
+      localStorage.setItem(CURRENT_USER_SESSION_KEY, JSON.stringify(currentUser));
+      toast({ title: "Logged In", description: `Welcome back, ${currentUser.name}!` });
+      setIsLoading(false);
+      return true;
     } else {
-        // If user not found in localStorage or email doesn't match (mock scenario)
-        toast({ title: "Login Failed", description: "User not found or credentials incorrect.", variant: "destructive" });
-        setIsLoading(false);
-        return false;
+      toast({ title: "Login Failed", description: "Invalid email or password.", variant: "destructive" });
+      setIsLoading(false);
+      return false;
     }
   }, [toast]);
 
-  const signup = useCallback(async (email: string, _password?: string, name: string): Promise<boolean> => {
+  const signup = useCallback(async (email: string, pass: string, name: string): Promise<boolean> => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500)); 
-    const mockUser: AuthUser = { email, name }; // Use the provided name
-    setUser(mockUser);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(mockUser));
+    
+    const usersDb = getStoredUsers();
+    if (usersDb.find(u => u.email === email)) {
+      toast({ title: "Signup Failed", description: "Email already exists. Please try logging in or use a different email.", variant: "destructive" });
+      setIsLoading(false);
+      return false;
+    }
+
+    const newUser: StoredUser = { email, name, password_DO_NOT_USE_IN_PROD: pass };
+    const updatedUsersDb = [...usersDb, newUser];
+    saveStoredUsers(updatedUsersDb);
+
+    const currentUser: AuthUser = { email: newUser.email, name: newUser.name };
+    setUser(currentUser);
+    localStorage.setItem(CURRENT_USER_SESSION_KEY, JSON.stringify(currentUser));
     toast({ title: "Signed Up", description: `Welcome, ${name}! You are now logged in.` });
     setIsLoading(false);
     return true;
@@ -98,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     const currentUserName = user?.name || 'User';
     setUser(null);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(CURRENT_USER_SESSION_KEY); // Clear only the current session
     toast({ title: "Logged Out", description: `Goodbye, ${currentUserName}! You have been successfully logged out.` });
     setIsLoading(false);
   }, [toast, user]);
