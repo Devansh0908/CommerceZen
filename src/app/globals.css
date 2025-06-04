@@ -69,7 +69,6 @@
     --search-bar-background: 270 25% 28%;
     --search-bar-placeholder: 260 40% 60%;
     --search-bar-text: 260 70% 90%;
-    /* --radius: 0.5rem; /* Radius is already in :root */ */
   }
 
   /* --- CUSTOM LIGHT THEMES (Applied on top of .light via JS) --- */
@@ -614,4 +613,5 @@
 }
 
     
+
 
