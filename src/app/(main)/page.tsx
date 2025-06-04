@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useRef } from 'react'; // Added useRef
-import { useRouter } from 'next/navigation'; // Added useRouter
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import FeaturedProducts from '@/components/commerce/FeaturedProducts';
 import ProductGrid from '@/components/commerce/ProductGrid';
 import SearchBar from '@/components/commerce/SearchBar';
@@ -12,13 +12,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Zap, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered } from 'lucide-react'; // Added new icons
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen } from 'lucide-react';
 
 export default function HomePage() {
   const products = mockProducts;
   const { user, isLoggedIn, isLoading: isAuthLoading, logout } = useAuth();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
   
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
@@ -53,91 +52,110 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-12">
-      {!isAuthLoading && !isLoggedIn && (
-        <>
-          <Card className="mx-auto max-w-xl bg-gradient-to-br from-primary/10 via-background to-background shadow-2xl border-primary/30 p-4 sm:p-6 md:p-8">
-            <CardHeader className="items-center text-center p-0 mb-6">
-              <Zap className="h-14 w-14 sm:h-16 sm:w-16 text-accent mb-4" />
-              <CardTitle className="text-3xl sm:text-4xl font-headline text-primary">Welcome to CommerceZen!</CardTitle>
-              <CardDescription className="text-md sm:text-lg text-muted-foreground font-body max-w-md mt-2">
-                Unlock exclusive deals, manage orders, and enjoy a personalized shopping experience.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col sm:flex-row items-center justify-center gap-4 p-0">
+    <div>
+      {/* Full Screen Welcome Section */}
+      <section className="min-h-screen flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-12">
+        {!isAuthLoading && !isLoggedIn && (
+          <div className="animate-subtle-fade-in">
+            <Store className="h-24 w-24 sm:h-28 md:h-32 text-accent mb-6 mx-auto" />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold text-primary">
+              Welcome to CommerceZen
+            </h1>
+            <p className="text-md sm:text-lg md:text-xl text-muted-foreground mt-4 max-w-lg md:max-w-xl mx-auto font-body">
+              Your journey to amazing products starts here. Sign up for exclusive deals or log in to continue.
+            </p>
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button 
                 size="lg" 
                 onClick={openLoginModal} 
-                className="bg-accent text-accent-foreground hover:bg-accent/90 font-headline w-full sm:w-auto text-base py-3 px-6"
+                variant="outline"
+                className="font-headline w-full sm:w-auto text-base py-3 px-6 border-primary/50 hover:border-primary text-primary hover:bg-primary/5"
               >
                 <LogIn className="mr-2 h-5 w-5" /> Login
               </Button>
               <Button 
-                variant="outline" 
                 size="lg" 
                 onClick={openSignupModal} 
+                className="bg-accent text-accent-foreground hover:bg-accent/90 font-headline w-full sm:w-auto text-base py-3 px-6"
+              >
+                <UserPlus className="mr-2 h-5 w-5" /> Create Account
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isAuthLoading && isLoggedIn && user && (
+          <div className="animate-subtle-fade-in">
+            <UserCircle className="h-24 w-24 sm:h-28 md:h-32 text-accent mb-6 mx-auto" />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold text-primary">
+              Welcome Back, {user.name || user.email}!
+            </h1>
+            <p className="text-md sm:text-lg md:text-xl text-muted-foreground mt-4 max-w-lg md:max-w-xl mx-auto font-body">
+              Ready to continue your shopping journey or manage your account?
+            </p>
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Button 
+                size="lg" 
+                onClick={handleScrollToAllProducts} 
+                className="bg-accent text-accent-foreground hover:bg-accent/90 font-headline w-full sm:w-auto text-base py-3 px-6"
+              >
+                <ShoppingBag className="mr-2 h-5 w-5" /> Start Shopping
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                onClick={() => router.push('/order-history')} 
                 className="font-headline w-full sm:w-auto text-base py-3 px-6 border-primary/50 hover:border-primary text-primary hover:bg-primary/5"
               >
-                  <UserPlus className="mr-2 h-5 w-5" /> Create Account
+                <ListOrdered className="mr-2 h-5 w-5" /> My Orders
               </Button>
-            </CardContent>
-          </Card>
-
-          <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
-            <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToSignup={openSignupModal} />
-          </Dialog>
-          <Dialog open={showSignupModal} onOpenChange={setShowSignupModal}>
-            <SignupForm onSignupSuccess={handleSignupSuccess} onSwitchToLogin={openLoginModal} />
-          </Dialog>
-        </>
-      )}
-
-      {!isAuthLoading && isLoggedIn && user && (
-        <Card className="mx-auto max-w-xl bg-gradient-to-br from-primary/5 via-background to-background shadow-xl border-primary/20 p-4 sm:p-6 md:p-8">
-          <CardHeader className="items-center text-center p-0 mb-6">
-            <UserCircle className="h-14 w-14 sm:h-16 sm:w-16 text-accent mb-3" />
-            <CardTitle className="text-3xl sm:text-4xl font-headline text-primary">Welcome Back, {user.name || user.email}!</CardTitle>
-            <CardDescription className="text-md sm:text-lg text-muted-foreground font-body max-w-md mt-2">
-              You are currently logged in. Explore our products or manage your account settings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col sm:flex-row items-center justify-center gap-4 p-0">
-            <Button
-              size="lg"
-              onClick={logout}
-              variant="outline" 
-              className="font-headline w-full sm:w-auto text-base py-3 px-6 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
-            >
-              <LogOut className="mr-2 h-5 w-5" /> Logout
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="flex justify-center py-8">
-        <SearchBar />
-      </div>
-
-      {/* New Functionality Buttons Section */}
-      <div className="my-2 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 -mt-4 mb-8">
-        <Button variant="outline" size="default" onClick={handleScrollToFeatured} className="font-body w-full sm:w-auto">
-          <Sparkles className="mr-2 h-4 w-4 text-accent" /> Explore Featured
-        </Button>
-        <Button variant="outline" size="default" onClick={handleScrollToAllProducts} className="font-body w-full sm:w-auto">
-          <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> Shop All Products
-        </Button>
-        {isLoggedIn && (
-          <Button variant="outline" size="default" onClick={() => router.push('/order-history')} className="font-body w-full sm:w-auto">
-            <ListOrdered className="mr-2 h-4 w-4 text-accent" /> Check Order Status
-          </Button>
+              <Button
+                size="lg"
+                onClick={logout}
+                variant="destructive" 
+                className="font-headline w-full sm:w-auto text-base py-3 px-6"
+              >
+                <LogOut className="mr-2 h-5 w-5" /> Logout
+              </Button>
+            </div>
+          </div>
         )}
-      </div>
 
-      <div ref={featuredSectionRef}>
-        <FeaturedProducts products={products} />
-      </div>
-      <div ref={allProductsSectionRef}>
-        <ProductGrid products={products} />
+        {/* Dialogs for Login and Signup - remain unchanged */}
+        <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+          <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToSignup={openSignupModal} />
+        </Dialog>
+        <Dialog open={showSignupModal} onOpenChange={setShowSignupModal}>
+          <SignupForm onSignupSuccess={handleSignupSuccess} onSwitchToLogin={openLoginModal} />
+        </Dialog>
+      </section>
+
+      {/* Rest of the Page Content */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 space-y-10 sm:space-y-12">
+        <div className="flex justify-center pt-4 sm:pt-8">
+          <SearchBar />
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 -mt-2 mb-6 sm:mb-8">
+          <Button variant="outline" size="default" onClick={handleScrollToFeatured} className="font-body w-full sm:w-auto">
+            <Sparkles className="mr-2 h-4 w-4 text-accent" /> Explore Featured
+          </Button>
+          <Button variant="outline" size="default" onClick={handleScrollToAllProducts} className="font-body w-full sm:w-auto">
+            <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> Shop All Products
+          </Button>
+          {isLoggedIn && (
+            <Button variant="outline" size="default" onClick={() => router.push('/order-history')} className="font-body w-full sm:w-auto">
+              <ListOrdered className="mr-2 h-4 w-4 text-accent" /> Check Order Status
+            </Button>
+          )}
+        </div>
+
+        <div ref={featuredSectionRef}>
+          <FeaturedProducts products={products} />
+        </div>
+        <div ref={allProductsSectionRef}>
+          <ProductGrid products={products} />
+        </div>
       </div>
     </div>
   );
