@@ -37,55 +37,48 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
     setMounted(true);
     try {
       const storedTheme = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
+      
+      // Always remove any existing theme-* classes first to ensure a clean slate
+      availableColorThemes.forEach(t => {
+        document.documentElement.classList.remove(t.name);
+      });
+
       if (storedTheme && availableColorThemes.some(t => t.name === storedTheme)) {
         _setColorTheme(storedTheme);
-        document.documentElement.className = document.documentElement.className.replace(/theme-\w+/g, '').trim();
         document.documentElement.classList.add(storedTheme);
       } else {
-        // Apply default if nothing stored or invalid
-        document.documentElement.classList.add('theme-default');
+        _setColorTheme('theme-default');
+        document.documentElement.classList.add('theme-default'); // Apply default if nothing stored or invalid
       }
     } catch (error) {
       console.error("Error loading color theme from localStorage", error);
+      _setColorTheme('theme-default');
+      // Ensure cleanup and default class on error
+      availableColorThemes.forEach(t => {
+        document.documentElement.classList.remove(t.name);
+      });
       document.documentElement.classList.add('theme-default');
     }
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount
 
-  const setColorTheme = useCallback((themeName: ThemeName) => {
+  const setColorTheme = useCallback((newThemeName: ThemeName) => {
     if (!mounted) return;
     
-    const currentThemeIsDark = document.documentElement.classList.contains('dark');
-
-    // Remove any existing theme-class
+    // Remove all known theme classes from <html>
     availableColorThemes.forEach(t => {
       document.documentElement.classList.remove(t.name);
     });
     
-    // Add the new theme class
-    document.documentElement.classList.add(themeName);
+    // Add the newly selected theme class to <html>
+    document.documentElement.classList.add(newThemeName);
     
-    // Re-apply .dark if it was there, as removing all theme classes might remove it too if it was part of a combined class
-    // next-themes handles .dark separately, but good to be safe.
-    // Or ensure next-themes adds its .dark class *after* our theme class manipulation.
-    // Simpler: next-themes manages .dark, we manage theme-*.
-    // So, we just need to set our theme class.
-
-    _setColorTheme(themeName);
-    localStorage.setItem(COLOR_THEME_STORAGE_KEY, themeName);
+    _setColorTheme(newThemeName); // Update React state
+    localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName); // Persist the choice
   }, [mounted]);
 
-  // Effect to apply theme class when colorTheme state changes (e.g., from initial load)
-  useEffect(() => {
-    if (mounted) {
-      // Remove any existing theme-class
-      availableColorThemes.forEach(t => {
-        document.documentElement.classList.remove(t.name);
-      });
-      // Add the new theme class
-      document.documentElement.classList.add(colorTheme);
-    }
-  }, [colorTheme, mounted]);
-
+  // The useEffect that was previously here (listening to [colorTheme, mounted])
+  // has been removed as its logic is now handled by the initial load useEffect
+  // and the setColorTheme callback. This prevents potential conflicts.
 
   const value = {
     colorTheme,
