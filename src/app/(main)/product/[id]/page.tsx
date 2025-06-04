@@ -18,13 +18,11 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
    };
 }
 
-// Helper function to generate mock reviews
-const generateMockReviews = () => {
-  const reviewCount = Math.floor(Math.random() * 5) + 1; // 1 to 5 reviews
-  const averageRating = (Math.random() * 1.5 + 3.5).toFixed(1); // 3.5 to 5.0
-  return { reviewCount, averageRating };
+// Simplified review data
+const staticReviewData = {
+  reviewCount: 15,
+  averageRating: '4.5',
 };
-
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const product = mockProducts.find(p => p.id === params.id);
@@ -33,7 +31,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     notFound();
   }
 
-  const { reviewCount, averageRating } = generateMockReviews();
+  const { reviewCount, averageRating } = staticReviewData; // Using static data
 
   return (
     <div className="py-8">

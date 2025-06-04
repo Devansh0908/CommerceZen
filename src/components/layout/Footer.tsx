@@ -1,7 +1,13 @@
+
+"use client"; // Add use client for hooks
+
+import * as React from 'react'; // Moved import to the top
+
 export default function Footer() {
   const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
 
   React.useEffect(() => {
+    // This effect will only run on the client after hydration
     setCurrentYear(new Date().getFullYear());
   }, []);
   
@@ -16,6 +22,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-// Added React import for useEffect and useState
-import * as React from 'react';
