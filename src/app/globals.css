@@ -9,37 +9,37 @@
     --radius: 0.5rem;
   }
 
-  /* Theme: Default Zen (Lavender/Indigo/Magenta) - Light mode adjusted to PRD */
+  /* Theme: Default Zen (Now Brighter Zen Light Mode) */
   .theme-default {
-    --background: 240 67% 97%; /* Light Lavender - PRD */
-    --foreground: 276 100% 10%; /* Dark Indigo */
-    --card: 240 60% 99%;
-    --card-foreground: 276 100% 10%;
-    --popover: 240 60% 99%;
-    --popover-foreground: 276 100% 10%;
-    --primary: 276 100% 25%; /* Deep Indigo - PRD */
+    --background: 0 0% 100%; /* White */
+    --foreground: 240 10% 3.9%; /* Near Black */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 265 80% 50%; /* Vibrant Indigo/Purple */
     --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 240 50% 92%;
-    --secondary-foreground: 276 100% 15%;
-    --muted: 240 40% 88%;
-    --muted-foreground: 276 50% 35%;
-    --accent: 300 100% 50%; /* Vibrant Magenta - PRD */
-    --accent-foreground: 0 0% 100%; /* White (for contrast on Magenta) */
+    --secondary: 240 4.8% 95.9%; /* Very Light Gray */
+    --secondary-foreground: 240 5.9% 10%; /* Dark Gray */
+    --muted: 240 4.8% 95.9%; /* Very Light Gray */
+    --muted-foreground: 240 3.8% 46.1%; /* Medium Gray */
+    --accent: 330 90% 55%; /* Bright Pink/Rose */
+    --accent-foreground: 0 0% 100%; /* White */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 20% 90%;
-    --input: 240 20% 90%;
-    --ring: 300 100% 50%; /* Ring color to match new accent */
-    --chart-1: 276 100% 45%;
-    --chart-2: 300 100% 70%; /* Adjusted chart color for new accent */
+    --border: 240 5.9% 90%; /* Light Gray Border */
+    --input: 240 5.9% 90%;
+    --ring: 330 90% 55%; /* Pink/Rose ring */
+    --chart-1: 265 80% 50%;
+    --chart-2: 330 90% 65%;
     --chart-3: 240 70% 70%;
-    --chart-4: 276 60% 55%;
-    --chart-5: 300 80% 55%; /* Adjusted chart color for new accent */
-    --header-background: 260 80% 92%;
-    --header-foreground: 270 60% 25%;
-    --search-bar-background: 265 35% 65%;
-    --search-bar-placeholder: 260 50% 85%;
-    --search-bar-text: 270 80% 95%;
+    --chart-4: 265 60% 60%;
+    --chart-5: 330 80% 60%;
+    --header-background: 0 0% 98%; /* Off-white header */
+    --header-foreground: 265 80% 30%; /* Darker Indigo/Purple for header text */
+    --search-bar-background: 0 0% 95%; /* Light gray for search bar */
+    --search-bar-placeholder: 240 3.8% 60%; /* Medium gray placeholder */
+    --search-bar-text: 240 10% 3.9%; /* Near black text */
   }
 
   .theme-default.dark {
@@ -611,3 +611,4 @@
 }
 
     
+
