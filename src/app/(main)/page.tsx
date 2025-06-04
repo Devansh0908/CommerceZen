@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import FeaturedProducts from '@/components/commerce/FeaturedProducts';
@@ -13,10 +13,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon, User } from 'lucide-react';
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, PackageOpen, ShoppingCart, Sun, Moon, User, Filter } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { Product } from '@/lib/types';
 
 export default function HomePage() {
-  const products = mockProducts;
+  const allProducts = mockProducts;
   const { user, isLoggedIn, isLoading: isAuthLoading, logout } = useAuth();
   const router = useRouter();
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -25,12 +27,43 @@ export default function HomePage() {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+
   const featuredSectionRef = useRef<HTMLDivElement>(null);
   const allProductsSectionRef = useRef<HTMLDivElement>(null);
+
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set<string>();
+    allProducts.forEach(product => uniqueCategories.add(product.category));
+    return ["All Categories", ...Array.from(uniqueCategories).sort()];
+  }, [allProducts]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    let productsToFilter = allProducts;
+
+    if (selectedCategory && selectedCategory !== "All Categories") {
+      productsToFilter = productsToFilter.filter(
+        product => product.category === selectedCategory
+      );
+    }
+
+    if (searchQuery) {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      productsToFilter = productsToFilter.filter(
+        product =>
+          product.name.toLowerCase().includes(lowerCaseQuery) ||
+          product.description.toLowerCase().includes(lowerCaseQuery)
+      );
+    }
+    setFilteredProducts(productsToFilter);
+  }, [searchQuery, selectedCategory, allProducts]);
+
 
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
@@ -56,6 +89,8 @@ export default function HomePage() {
 
   const handleScrollToAllProducts = () => {
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setSearchQuery('');
+    setSelectedCategory("All Categories");
   };
 
   const toggleTheme = () => {
@@ -140,7 +175,6 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Dialogs for Login and Signup - remain unchanged */}
         <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
           <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToSignup={openSignupModal} />
         </Dialog>
@@ -149,10 +183,24 @@ export default function HomePage() {
         </Dialog>
       </section>
 
-      {/* Rest of the Page Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-10">
-        <div className="flex justify-center pt-4 sm:pt-6">
-          <SearchBar />
+        <div className="flex flex-col md:flex-row justify-center items-center gap-3 pt-4 sm:pt-6">
+          <SearchBar value={searchQuery} onValueChange={setSearchQuery} />
+          <div className="w-full md:w-auto">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full md:w-[220px] bg-card font-body text-sm h-9">
+                <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Filter by category..." />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category} className="font-body">
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 -mt-2 mb-4 sm:mb-6">
@@ -183,13 +231,12 @@ export default function HomePage() {
         </div>
 
         <div ref={featuredSectionRef}>
-          <FeaturedProducts products={products} />
+          <FeaturedProducts products={allProducts} /> {/* Consider if featured should also be filtered, for now, it shows all featured from allProducts */}
         </div>
         <div ref={allProductsSectionRef}>
-          <ProductGrid products={products} />
+          <ProductGrid products={filteredProducts} />
         </div>
       </div>
     </div>
   );
 }
-
