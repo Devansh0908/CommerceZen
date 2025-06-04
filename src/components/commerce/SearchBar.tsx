@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search as SearchIcon } from 'lucide-react'; // Renamed to avoid conflict if Search component is imported
+import { Search as SearchIcon } from 'lucide-react';
 
 export default function SearchBar() {
   const [query, setQuery] = useState('');
