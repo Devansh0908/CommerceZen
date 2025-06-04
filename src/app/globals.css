@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,9 +9,9 @@
     --radius: 0.5rem;
   }
 
-  /* Theme: Default Zen (Lavender/Indigo/Teal) */
+  /* Theme: Default Zen (Lavender/Indigo/Teal) - Light mode adjusted */
   .theme-default {
-    --background: 240 67% 97%; /* Light Lavender */
+    --background: 220 20% 98%; /* Very Light Cool Gray */
     --foreground: 276 100% 10%; /* Dark Indigo */
     --card: 240 60% 99%;
     --card-foreground: 276 100% 10%;
@@ -22,7 +23,7 @@
     --secondary-foreground: 276 100% 15%;
     --muted: 240 40% 88%;
     --muted-foreground: 276 50% 35%;
-    --accent: 180 70% 45%; /* Vibrant Teal */
+    --accent: 210 80% 60%; /* Soft Blue */
     --accent-foreground: 0 0% 100%; /* White */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -30,10 +31,10 @@
     --input: 240 20% 90%;
     --ring: 276 100% 25%;
     --chart-1: 276 100% 45%;
-    --chart-2: 180 70% 55%;
+    --chart-2: 210 80% 70%; /* Adjusted chart color to match new accent */
     --chart-3: 240 70% 70%;
     --chart-4: 276 60% 55%;
-    --chart-5: 180 70% 40%;
+    --chart-5: 210 80% 55%; /* Adjusted chart color */
     --header-background: 260 80% 92%;
     --header-foreground: 270 60% 25%;
     --search-bar-background: 265 35% 65%;
@@ -54,7 +55,7 @@
     --secondary-foreground: 240 50% 85%;
     --muted: 276 30% 20%;
     --muted-foreground: 240 40% 70%;
-    --accent: 180 70% 65%; /* Lighter Teal */
+    --accent: 180 70% 65%; /* Lighter Teal (original dark accent) */
     --accent-foreground: 276 100% 10%;
     --destructive: 0 70% 40%;
     --destructive-foreground: 0 0% 98%;
@@ -282,3 +283,5 @@
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
   }
 }
+
+    
