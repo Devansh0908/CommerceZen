@@ -13,7 +13,8 @@ export type ThemeName =
   'theme-sunset' |
   'theme-minty' |
   'theme-ruby' |
-  'theme-sepia';
+  'theme-sepia' |
+  'theme-cyberpunk'; // Added new theme
 
 interface ColorTheme {
   name: ThemeName;
@@ -29,6 +30,7 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'theme-minty', displayName: 'Minty Fresh' },
   { name: 'theme-ruby', displayName: 'Ruby Radiance' },
   { name: 'theme-sepia', displayName: 'Vintage Sepia' },
+  { name: 'theme-cyberpunk', displayName: 'Cyberpunk Neon' }, // Added new theme
 ];
 
 const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme';
@@ -61,7 +63,8 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
         _setColorTheme('theme-default');
         document.documentElement.classList.add('theme-default'); 
       }
-    } catch (error) {
+    } catch (error)
+{
       console.error("Error loading color theme from localStorage", error);
       _setColorTheme('theme-default');
       availableColorThemes.forEach(t => {
