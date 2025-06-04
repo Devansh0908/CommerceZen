@@ -136,14 +136,16 @@ export default function ChatbotWidget() {
 
     const conversationHistoryForAI = messages.map(msg => ({ role: msg.role, content: msg.content }));
     // Add the current user message to the history being sent to the AI
-    conversationHistoryForAI.push({ role: 'user', content: trimmedInput });
+    // Note: `messages` state here might not be updated yet from the `setMessages` call above
+    // So, explicitly add the newUserMessage content to the history being sent.
+    const currentTurnHistory = [...conversationHistoryForAI, { role: 'user' as const, content: trimmedInput }];
 
 
     try {
       const input: ChatWithSupportInput = {
         userInput: trimmedInput,
         // Send the updated history, including the latest user message
-        conversationHistory: conversationHistoryForAI.slice(-10), 
+        conversationHistory: currentTurnHistory.slice(-10), 
       };
       const result: ChatWithSupportOutput = await chatWithSupport(input);
       
@@ -214,7 +216,7 @@ export default function ChatbotWidget() {
                 className={cn(
                   "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words",
                   msg.role === 'user'
-                    ? "ml-auto bg-primary text-primary-foreground"
+                    ? "ml-auto bg-blue-600 text-white" // <-- MODIFIED FOR DEBUGGING
                     : "bg-muted text-muted-foreground"
                 )}
               >
@@ -261,3 +263,4 @@ export default function ChatbotWidget() {
     </Popover>
   );
 }
+
