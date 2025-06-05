@@ -3,7 +3,8 @@ import type React from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ChatbotWidget from '@/components/ai/ChatbotWidget'; // Import the chatbot widget
-import ScrollToTopButton from '@/components/layout/ScrollToTopButton'; // New import
+import ScrollToTopButton from '@/components/layout/ScrollToTopButton'; 
+import QuickAccessMenu from '@/components/layout/QuickAccessMenu'; // New import
 
 export default function MainLayout({
   children,
@@ -19,6 +20,7 @@ export default function MainLayout({
       <Footer />
       <ChatbotWidget /> {/* Add the chatbot widget here */}
       <ScrollToTopButton /> {/* Add the scroll to top button here */}
+      <QuickAccessMenu /> {/* Add the Quick Access Menu here */}
     </div>
   );
 }
