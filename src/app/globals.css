@@ -269,6 +269,73 @@
   --search-bar-text: 30 40% 95%;
 }
 
+/* 9. NEW: Sakura Bloom Light */
+.light-theme-sakura-bloom {
+  --background: 350 100% 98%; 
+  --foreground: 30 10% 20%; 
+  --card: 350 100% 99%;
+  --card-foreground: 30 10% 20%;
+  --popover: 350 100% 99%;
+  --popover-foreground: 30 10% 20%;
+  --primary: 340 80% 65%; 
+  --primary-foreground: 0 0% 100%; 
+  --secondary: 350 60% 94%; 
+  --secondary-foreground: 340 50% 30%;
+  --muted: 350 50% 90%;
+  --muted-foreground: 30 10% 45%;
+  --accent: 150 60% 60%; 
+  --accent-foreground: 150 70% 15%; 
+  --destructive: 0 80% 55%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 350 50% 90%;
+  --input: 350 50% 90%;
+  --ring: 340 80% 65%;
+  --chart-1: 340 80% 70%;
+  --chart-2: 150 60% 70%;
+  --chart-3: 330 70% 75%;
+  --chart-4: 160 50% 65%;
+  --chart-5: 350 75% 80%;
+  --header-background: 350 100% 97%;
+  --header-foreground: 340 70% 40%;
+  --search-bar-background: 350 40% 92%; 
+  --search-bar-placeholder: 350 30% 75%;
+  --search-bar-text: 30 10% 25%;
+}
+
+/* 10. NEW: Desert Mirage Light */
+.light-theme-desert-mirage {
+  --background: 40 50% 96%; 
+  --foreground: 30 40% 15%; 
+  --card: 40 45% 98%;
+  --card-foreground: 30 40% 15%;
+  --popover: 40 45% 98%;
+  --popover-foreground: 30 40% 15%;
+  --primary: 25 80% 55%; 
+  --primary-foreground: 0 0% 100%; 
+  --secondary: 35 60% 90%; 
+  --secondary-foreground: 25 60% 30%;
+  --muted: 35 50% 85%;
+  --muted-foreground: 30 30% 40%;
+  --accent: 190 75% 50%; 
+  --accent-foreground: 0 0% 100%; 
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 40 30% 88%;
+  --input: 40 30% 88%;
+  --ring: 25 80% 55%;
+  --chart-1: 25 80% 60%;
+  --chart-2: 190 75% 55%;
+  --chart-3: 50 70% 65%;
+  --chart-4: 30 65% 70%;
+  --chart-5: 200 60% 60%;
+  --header-background: 40 60% 94%;
+  --header-foreground: 25 70% 35%;
+  --search-bar-background: 35 30% 88%; 
+  --search-bar-placeholder: 35 25% 70%;
+  --search-bar-text: 30 40% 20%;
+}
+
+
 /* --- CUSTOM DARK THEMES --- */
 
 /* 1. Deep Indigo Dark (Base Dark Theme, explicitly selectable) */
@@ -533,6 +600,72 @@
   --search-bar-background: 260 15% 12%;
   --search-bar-placeholder: 260 10% 40%;
   --search-bar-text: 0 0% 90%;
+}
+
+/* 9. NEW: Cyber Dusk Dark */
+.dark-theme-cyber-dusk {
+  --background: 260 30% 8%; 
+  --foreground: 180 30% 90%; 
+  --card: 260 28% 12%;
+  --card-foreground: 180 30% 90%;
+  --popover: 260 28% 12%;
+  --popover-foreground: 180 30% 90%;
+  --primary: 320 100% 65%; 
+  --primary-foreground: 320 100% 10%; 
+  --secondary: 250 25% 18%; 
+  --secondary-foreground: 180 30% 80%;
+  --muted: 250 20% 15%;
+  --muted-foreground: 180 25% 65%;
+  --accent: 180 100% 55%; 
+  --accent-foreground: 180 100% 10%; 
+  --destructive: 0 80% 50%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 260 20% 22%;
+  --input: 260 20% 22%;
+  --ring: 320 100% 65%;
+  --chart-1: 320 100% 70%;
+  --chart-2: 180 100% 60%;
+  --chart-3: 280 80% 65%;
+  --chart-4: 200 90% 70%;
+  --chart-5: 300 70% 75%;
+  --header-background: 260 25% 10%;
+  --header-foreground: 190 50% 85%;
+  --search-bar-background: 260 20% 18%; 
+  --search-bar-placeholder: 250 15% 50%;
+  --search-bar-text: 180 40% 92%;
+}
+
+/* 10. NEW: Enchanted Forest Dark */
+.dark-theme-enchanted-forest {
+  --background: 120 25% 7%; 
+  --foreground: 90 25% 88%; 
+  --card: 120 23% 11%;
+  --card-foreground: 90 25% 88%;
+  --popover: 120 23% 11%;
+  --popover-foreground: 90 25% 88%;
+  --primary: 140 60% 55%; 
+  --primary-foreground: 140 60% 10%; 
+  --secondary: 110 20% 16%; 
+  --secondary-foreground: 90 25% 78%;
+  --muted: 110 18% 13%;
+  --muted-foreground: 90 20% 60%;
+  --accent: 45 80% 60%; 
+  --accent-foreground: 45 80% 15%; 
+  --destructive: 10 70% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 120 15% 18%;
+  --input: 120 15% 18%;
+  --ring: 140 60% 55%;
+  --chart-1: 140 60% 60%;
+  --chart-2: 45 80% 65%;
+  --chart-3: 100 50% 50%;
+  --chart-4: 150 40% 65%;
+  --chart-5: 50 70% 70%;
+  --header-background: 120 20% 9%;
+  --header-foreground: 100 35% 80%;
+  --search-bar-background: 120 18% 15%; 
+  --search-bar-placeholder: 110 12% 45%;
+  --search-bar-text: 90 30% 90%;
 }
 
 

@@ -23,7 +23,11 @@ export type ThemeName =
   | 'dark-theme-twilight-blaze'
   | 'dark-theme-minty-umbra'
   | 'dark-theme-garnet-gloom'
-  | 'dark-theme-neon-pulse';
+  | 'dark-theme-neon-pulse'
+  | 'light-theme-sakura-bloom' 
+  | 'light-theme-desert-mirage' 
+  | 'dark-theme-cyber-dusk'     
+  | 'dark-theme-enchanted-forest'; 
 
 interface ColorTheme {
   name: ThemeName;
@@ -40,6 +44,8 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'light-theme-minty-fresh', displayName: 'Minty Fresh (Light)', mode: 'light' },
   { name: 'light-theme-ruby-radiance', displayName: 'Ruby Radiance (Light)', mode: 'light' },
   { name: 'light-theme-vintage-sepia', displayName: 'Vintage Sepia (Light)', mode: 'light' },
+  { name: 'light-theme-sakura-bloom', displayName: 'Sakura Bloom (Light)', mode: 'light' },
+  { name: 'light-theme-desert-mirage', displayName: 'Desert Mirage (Light)', mode: 'light' },
   { name: 'dark-theme-deep-indigo', displayName: 'Deep Indigo (Dark Default)', mode: 'dark' },
   { name: 'dark-theme-oceanic-depths', displayName: 'Oceanic Depths (Dark)', mode: 'dark' },
   { name: 'dark-theme-forest-canopy', displayName: 'Forest Canopy (Dark)', mode: 'dark' },
@@ -48,6 +54,8 @@ export const availableColorThemes: ColorTheme[] = [
   { name: 'dark-theme-minty-umbra', displayName: 'Minty Umbra (Dark)', mode: 'dark' },
   { name: 'dark-theme-garnet-gloom', displayName: 'Garnet Gloom (Dark)', mode: 'dark' },
   { name: 'dark-theme-neon-pulse', displayName: 'Neon Pulse (Dark)', mode: 'dark' },
+  { name: 'dark-theme-cyber-dusk', displayName: 'Cyber Dusk (Dark)', mode: 'dark' },
+  { name: 'dark-theme-enchanted-forest', displayName: 'Enchanted Forest (Dark)', mode: 'dark' },
 ];
 
 const COLOR_THEME_STORAGE_KEY = 'commercezen_color_theme_v3';
