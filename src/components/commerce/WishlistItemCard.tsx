@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useCart } from '@/hooks/useCart';
 import { X, ShoppingCart } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface WishlistItemCardProps {
   item: Product;
@@ -18,7 +19,10 @@ export default function WishlistItemCard({ item }: WishlistItemCardProps) {
   const { addToCart } = useCart();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-card rounded-lg shadow animate-subtle-fade-in">
+    <div className={cn(
+        "flex flex-col sm:flex-row items-center gap-4 p-4 bg-card rounded-lg shadow animate-subtle-fade-in",
+        "transition-shadow duration-300 ease-in-out hover:shadow-xl"
+      )}>
       <Link href={`/product/${item.id}`} className="shrink-0">
         <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-md overflow-hidden">
           <Image

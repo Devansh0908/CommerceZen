@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCart } from '@/hooks/useCart';
 import { Trash2, Plus, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface CartItemCardProps {
   item: CartItem;
@@ -38,7 +39,10 @@ export default function CartItemCard({ item }: CartItemCardProps) {
 
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-card rounded-lg shadow animate-subtle-fade-in">
+    <div className={cn(
+        "flex flex-col sm:flex-row items-center gap-4 p-4 bg-card rounded-lg shadow animate-subtle-fade-in",
+        "transition-shadow duration-300 ease-in-out hover:shadow-xl"
+      )}>
       <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-md overflow-hidden shrink-0">
         <Image
           src={item.image}

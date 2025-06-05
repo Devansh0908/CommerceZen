@@ -17,6 +17,7 @@ import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListO
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Product } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 const sortOptions = [
   { value: 'default', label: 'Default Sorting' },
@@ -155,8 +156,8 @@ export default function HomePage() {
   };
 
   return (
-    <div>
-      <section className="min-h-[20vh] flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-4">
+    <>
+      <section className="min-h-[20vh] flex flex-col items-center justify-center text-center relative bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-4"> {/* Removed overflow-hidden */}
         {!isAuthLoading && !isLoggedIn && (
           <div className="animate-subtle-fade-in">
             <Store className="h-8 w-8 sm:h-10 text-accent mb-2 mx-auto" />
@@ -261,7 +262,7 @@ export default function HomePage() {
 
         <Separator />
 
-        <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-3">
+        <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-3 animate-subtle-fade-in" style={{animationDelay: '0.1s'}}>
           <SearchBar value={searchQuery} onValueChange={setSearchQuery} />
           <div className="w-full md:w-auto">
             <Select value={sortOption} onValueChange={setSortOption}>
@@ -295,7 +296,7 @@ export default function HomePage() {
           </div>
         </div>
         
-        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 pt-2">
+        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 pt-2 animate-subtle-fade-in" style={{animationDelay: '0.2s'}}>
           <Button variant="ghost" size="sm" onClick={handleScrollToFeatured} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <Sparkles className="mr-2 h-4 w-4 text-accent" /> View Featured
           </Button>
@@ -332,7 +333,6 @@ export default function HomePage() {
           <ProductGrid products={filteredProducts} />
         </div>
       </div>
-    </div>
+    </>
   );
 }
-
