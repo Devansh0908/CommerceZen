@@ -16,12 +16,11 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'; // Import the new hook
 
 const getReviewsStorageKey = (productId: string) => `commercezen_reviews_${productId}`;
 
 const getInitialMockReviews = (productId: string): Review[] => [
-  // These can be kept as a fallback if no reviews are in localStorage for this product,
-  // or removed if you prefer to start fresh.
   { id: 'review-1', productId, author: 'Alice Wonderland', rating: 5, text: 'Absolutely fantastic product! Exceeded my expectations.', date: new Date(Date.now() - 86400000 * 2).toISOString() },
   { id: 'review-2', productId, author: 'Bob The Builder', rating: 4, text: 'Very good quality, though a bit pricey. Would recommend.', date: new Date(Date.now() - 86400000 * 5).toISOString() },
 ];
@@ -34,7 +33,8 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
   const { toast } = useToast();
   const { user, isLoggedIn } = useAuth();
   const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
-  
+  const { addRecentlyViewedProduct, isInitialized: isRecentlyViewedInitialized } = useRecentlyViewed(); // Use the hook
+
   const isWishlisted = React.useMemo(() => {
       if (!isLoggedIn || !isWishlistInitialized) return false;
       return isInWishlist(product.id);
@@ -49,6 +49,12 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
   const [totalReviews, setTotalReviews] = useState(0);
 
   useEffect(() => {
+    if (product && product.id && isRecentlyViewedInitialized) {
+      addRecentlyViewedProduct(product.id);
+    }
+  }, [product, addRecentlyViewedProduct, isRecentlyViewedInitialized]);
+
+  useEffect(() => {
     if (product) {
       const storageKey = getReviewsStorageKey(product.id);
       const storedReviewsJson = localStorage.getItem(storageKey);
@@ -58,15 +64,11 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
           loadedReviews = JSON.parse(storedReviewsJson);
         } catch (e) {
           console.error("Error parsing reviews from localStorage", e);
-          // Potentially fallback to initial mocks or clear corrupted data
           localStorage.removeItem(storageKey);
           loadedReviews = getInitialMockReviews(product.id);
         }
       } else {
-        // No reviews in storage, use initial mocks as a base (optional)
         loadedReviews = getInitialMockReviews(product.id);
-        // Optionally save these initial mocks to localStorage for future consistency
-        // localStorage.setItem(storageKey, JSON.stringify(loadedReviews));
       }
       setReviews(loadedReviews);
     }
@@ -119,7 +121,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
       date: new Date().toISOString(),
     };
 
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500)); 
 
     const updatedReviews = [newReview, ...reviews];
     setReviews(updatedReviews);
@@ -130,7 +132,6 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
 
     setRating(0);
     setReviewText('');
-    // Keep reviewerName prefilled if user is logged in
     if (!isLoggedIn) {
         setReviewerName('');
     }
@@ -308,4 +309,3 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
     </div>
   );
 }
-

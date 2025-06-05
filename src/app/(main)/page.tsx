@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Product } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import RecentlyViewedProducts from '@/components/commerce/RecentlyViewedProducts'; // Import the new component
 
 const sortOptions = [
   { value: 'default', label: 'Default Sorting' },
@@ -57,6 +58,7 @@ export default function HomePage() {
 
   const featuredSectionRef = useRef<HTMLDivElement>(null);
   const allProductsSectionRef = useRef<HTMLDivElement>(null);
+  const recentlyViewedSectionRef = useRef<HTMLDivElement>(null);
 
   const categories = useMemo(() => {
     const uniqueCategories = new Set<string>();
@@ -106,7 +108,7 @@ export default function HomePage() {
         sortedProducts.sort((a, b) => {
           if (a.featured && !b.featured) return -1;
           if (!a.featured && b.featured) return 1;
-          return 0; // Maintain original order for non-featured or same-featured items
+          return 0; 
         });
         break;
     }
@@ -136,17 +138,21 @@ export default function HomePage() {
   const handleScrollToFeatured = () => {
     featuredSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+  
+  const handleScrollToRecentlyViewed = () => {
+    recentlyViewedSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleScrollToAllProducts = () => {
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setSearchQuery(''); // Reset search
-    setSelectedCategory("All Categories"); // Reset category
-    setSortOption("default"); // Reset sort
+    setSearchQuery(''); 
+    setSelectedCategory("All Categories"); 
+    setSortOption("default"); 
   };
 
   const handleQuickCategorySelect = (categoryName: string) => {
     setSelectedCategory(categoryName);
-    setSearchQuery(''); // Clear search query when a category is selected
+    setSearchQuery(''); 
     setSortOption("default");
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -157,7 +163,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="min-h-[20vh] flex flex-col items-center justify-center text-center relative bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-4"> {/* Removed overflow-hidden */}
+      <section className="min-h-[20vh] flex flex-col items-center justify-center text-center relative bg-gradient-to-br from-background via-primary/5 to-secondary/10 px-4 sm:px-6 lg:px-8 py-4">
         {!isAuthLoading && !isLoggedIn && (
           <div className="animate-subtle-fade-in">
             <Store className="h-8 w-8 sm:h-10 text-accent mb-2 mx-auto" />
@@ -300,6 +306,9 @@ export default function HomePage() {
           <Button variant="ghost" size="sm" onClick={handleScrollToFeatured} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <Sparkles className="mr-2 h-4 w-4 text-accent" /> View Featured
           </Button>
+          <Button variant="ghost" size="sm" onClick={handleScrollToRecentlyViewed} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
+            <Watch className="mr-2 h-4 w-4 text-accent" /> View Recently Viewed
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleScrollToAllProducts} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> View All Products
           </Button>
@@ -327,6 +336,10 @@ export default function HomePage() {
 
         <div ref={featuredSectionRef}>
           <FeaturedProducts products={allProducts} /> 
+        </div>
+        <Separator />
+        <div ref={recentlyViewedSectionRef}> {/* Added ref for Recently Viewed */}
+          <RecentlyViewedProducts />
         </div>
         <Separator />
         <div ref={allProductsSectionRef}>
