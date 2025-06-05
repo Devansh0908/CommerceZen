@@ -2,11 +2,16 @@
 "use client";
 
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import type { Product } from '@/lib/types'; // Import Product type
 import ProductCard from './ProductCard';
 import { Eye } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function RecentlyViewedProducts() {
+interface RecentlyViewedProductsProps {
+  onQuickView?: (product: Product) => void; // New prop
+}
+
+export default function RecentlyViewedProducts({ onQuickView }: RecentlyViewedProductsProps) {
   const { recentlyViewedItems, isInitialized } = useRecentlyViewed();
 
   if (!isInitialized) {
@@ -42,7 +47,7 @@ export default function RecentlyViewedProducts() {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {recentlyViewedItems.map(product => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} onQuickView={onQuickView} />
         ))}
       </div>
     </section>

@@ -1,11 +1,13 @@
+
 import type { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
 
 interface FeaturedProductsProps {
   products: Product[];
+  onQuickView?: (product: Product) => void; // New prop
 }
 
-export default function FeaturedProducts({ products }: FeaturedProductsProps) {
+export default function FeaturedProducts({ products, onQuickView }: FeaturedProductsProps) {
   const featured = products.filter(p => p.featured);
   if (featured.length === 0) return null;
 
@@ -16,7 +18,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {featured.map(product => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} onQuickView={onQuickView} />
         ))}
       </div>
     </section>

@@ -13,12 +13,13 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
-import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, ShoppingCart, Sun, Moon, User, Filter, ArrowUpDown, Laptop, Shirt, Home, Watch } from 'lucide-react';
+import { Store, UserPlus, LogIn, UserCircle, LogOut, Sparkles, LayoutGrid, ListOrdered, ShoppingBag, ShoppingCart, Sun, Moon, User, Filter, ArrowUpDown, Laptop, Shirt, Home, Watch, Eye } from 'lucide-react'; // Added Eye icon
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Product } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import RecentlyViewedProducts from '@/components/commerce/RecentlyViewedProducts'; // Import the new component
+import RecentlyViewedProducts from '@/components/commerce/RecentlyViewedProducts';
+import ProductQuickViewModal from '@/components/commerce/ProductQuickViewModal'; // New import
 
 const sortOptions = [
   { value: 'default', label: 'Default Sorting' },
@@ -55,6 +56,9 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [sortOption, setSortOption] = useState<string>('default');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
   const featuredSectionRef = useRef<HTMLDivElement>(null);
   const allProductsSectionRef = useRef<HTMLDivElement>(null);
@@ -155,6 +159,11 @@ export default function HomePage() {
     setSearchQuery(''); 
     setSortOption("default");
     allProductsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleOpenQuickView = (product: Product) => {
+    setQuickViewProduct(product);
+    setIsQuickViewOpen(true);
   };
 
   const toggleTheme = () => {
@@ -307,7 +316,7 @@ export default function HomePage() {
             <Sparkles className="mr-2 h-4 w-4 text-accent" /> View Featured
           </Button>
           <Button variant="ghost" size="sm" onClick={handleScrollToRecentlyViewed} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
-            <Watch className="mr-2 h-4 w-4 text-accent" /> View Recently Viewed
+            <Eye className="mr-2 h-4 w-4 text-accent" /> View Recently Viewed 
           </Button>
           <Button variant="ghost" size="sm" onClick={handleScrollToAllProducts} className="font-body text-muted-foreground hover:text-accent-foreground w-full sm:w-auto">
             <LayoutGrid className="mr-2 h-4 w-4 text-accent" /> View All Products
@@ -335,17 +344,22 @@ export default function HomePage() {
         <Separator />
 
         <div ref={featuredSectionRef}>
-          <FeaturedProducts products={allProducts} /> 
+          <FeaturedProducts products={allProducts} onQuickView={handleOpenQuickView} /> 
         </div>
         <Separator />
-        <div ref={recentlyViewedSectionRef}> {/* Added ref for Recently Viewed */}
-          <RecentlyViewedProducts />
+        <div ref={recentlyViewedSectionRef}>
+          <RecentlyViewedProducts onQuickView={handleOpenQuickView} />
         </div>
         <Separator />
         <div ref={allProductsSectionRef}>
-          <ProductGrid products={filteredProducts} />
+          <ProductGrid products={filteredProducts} onQuickView={handleOpenQuickView} />
         </div>
       </div>
+      <ProductQuickViewModal 
+        product={quickViewProduct} 
+        isOpen={isQuickViewOpen}
+        onOpenChange={setIsQuickViewOpen} 
+      />
     </>
   );
 }

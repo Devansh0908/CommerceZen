@@ -7,17 +7,18 @@ import type { Product, Review } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import { ShoppingCart, Heart, Star } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Eye } from 'lucide-react'; // Added Eye icon
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProductCardProps {
   product: Product;
+  onQuickView?: (product: Product) => void; // New prop
 }
 
 // Wrapped with React.memo
-const ProductCard = React.memo(function ProductCard({ product }: ProductCardProps) {
+const ProductCard = React.memo(function ProductCard({ product, onQuickView }: ProductCardProps) {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
   const { isLoggedIn } = useAuth();
@@ -64,6 +65,11 @@ const ProductCard = React.memo(function ProductCard({ product }: ProductCardProp
       return isInWishlist(product.id);
   }, [isLoggedIn, isWishlistInitialized, product.id, isInWishlist]);
 
+  const handleQuickViewClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onQuickView?.(product);
+  };
 
   return (
     <Link href={`/product/${product.id}`} className="block group h-full" aria-label={`View details for ${product.name}`}>
@@ -78,21 +84,34 @@ const ProductCard = React.memo(function ProductCard({ product }: ProductCardProp
             className="transition-transform duration-500 group-hover:scale-105"
             data-ai-hint={product.imageHint}
           />
-          {isLoggedIn && isWishlistInitialized && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-2 right-2 bg-card/70 hover:bg-card text-primary rounded-full h-9 w-9 z-10"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleWishlist(product);
-              }}
-              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-            >
-              <Heart className={`h-5 w-5 transition-colors duration-200 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-primary hover:text-red-400'}`} />
-            </Button>
-          )}
+          <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
+            {isLoggedIn && isWishlistInitialized && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-card/70 hover:bg-card text-primary rounded-full h-9 w-9"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleWishlist(product);
+                }}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart className={`h-5 w-5 transition-colors duration-200 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-primary hover:text-red-400'}`} />
+              </Button>
+            )}
+            {onQuickView && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-card/70 hover:bg-card text-primary rounded-full h-9 w-9"
+                onClick={handleQuickViewClick}
+                aria-label={`Quick view ${product.name}`}
+              >
+                <Eye className="h-5 w-5 text-primary hover:text-accent" />
+              </Button>
+            )}
+          </div>
         </div>
         <div className="p-5 flex flex-col flex-grow">
           <h3 className="text-lg font-headline font-semibold text-primary mb-1.5 truncate group-hover:text-accent transition-colors">
