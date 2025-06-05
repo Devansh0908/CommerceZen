@@ -12,7 +12,7 @@ export default function Footer() {
   }, []);
   
   return (
-    <footer className="bg-card text-card-foreground py-8 border-t mt-auto">
+    <footer className="bg-card text-card-foreground py-8 border-t mt-auto animate-subtle-fade-in">
       <div className="container mx-auto px-4 text-center">
         <p className="text-sm font-body">&copy; {currentYear} CommerceZen. All rights reserved.</p>
         <p className="text-xs font-body mt-1 text-muted-foreground">
