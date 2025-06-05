@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ShoppingCart, Zap, LogIn, UserPlus, LogOut, UserCircle, Loader2, ListOrdered, User, Heart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import React, { useEffect, useState } from 'react';
-import SearchBar from '@/components/commerce/SearchBar'; // Assuming SearchBar doesn't need router, keep it simple
+import SearchBar from '@/components/commerce/SearchBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import LoginForm from '@/components/auth/LoginForm';
@@ -43,17 +43,17 @@ export default function Header() {
     if (mounted && isCartReady) {
         setCurrentCartItemCount(getCartItemCount());
     }
-  }, [getCartItemCount, mounted, isCartReady, cartItems]); // Added cartItems
+  }, [getCartItemCount, mounted, isCartReady, cartItems]); 
 
   useEffect(() => {
     if (mounted && isWishlistReady) {
       if (isLoggedIn) {
         setCurrentWishlistItemCount(getWishlistItemCount());
       } else {
-        setCurrentWishlistItemCount(0); // Clear count if logged out
+        setCurrentWishlistItemCount(0); 
       }
     }
-  }, [getWishlistItemCount, mounted, isWishlistReady, isLoggedIn, currentWishlistItems]); // Added currentWishlistItems
+  }, [getWishlistItemCount, mounted, isWishlistReady, isLoggedIn, currentWishlistItems]); 
 
 
   const handleLoginSuccess = () => {
@@ -84,7 +84,7 @@ export default function Header() {
         </Link>
         
         <div className="flex-grow flex justify-center items-center px-2 sm:px-4">
-          <SearchBar value="" onValueChange={() => {}} /> {/* Simplified SearchBar for header */}
+          <SearchBar value="" onValueChange={() => {}} /> 
         </div>
         
         <nav className="flex items-center gap-1 sm:gap-2">

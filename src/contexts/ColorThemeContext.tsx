@@ -80,25 +80,17 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
 
   const applyCustomThemeClass = useCallback((themeNameToApply: ThemeName | null) => {
     if (typeof window !== 'undefined') {
-      // console.log('[ColorThemeContext] Attempting to apply theme class:', themeNameToApply);
-      // console.log('[ColorThemeContext] HTML classes BEFORE:', document.documentElement.className);
-      
       if (lastAppliedCustomTheme && lastAppliedCustomTheme !== themeNameToApply) {
         document.documentElement.classList.remove(lastAppliedCustomTheme);
-        // console.log('[ColorThemeContext] Removed old custom theme:', lastAppliedCustomTheme);
       }
       
       if (themeNameToApply) {
         document.documentElement.classList.add(themeNameToApply);
-        setLastAppliedCustomTheme(themeNameToApply); // Track the currently applied custom theme
-        // console.log('[ColorThemeContext] Added new custom theme:', themeNameToApply);
+        setLastAppliedCustomTheme(themeNameToApply); 
       } else if (lastAppliedCustomTheme) {
-        // If no new theme to apply (e.g. reverting to pure light/dark), remove the last custom one
         document.documentElement.classList.remove(lastAppliedCustomTheme);
         setLastAppliedCustomTheme(null);
-        // console.log('[ColorThemeContext] No new custom theme, removed:', lastAppliedCustomTheme);
       }
-      // console.log('[ColorThemeContext] HTML classes AFTER:', document.documentElement.className);
     }
   }, [lastAppliedCustomTheme]);
 
@@ -106,7 +98,6 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
     setMounted(true);
   }, []);
 
-  // Effect for initial theme load and when OS/next-themes mode changes
   useEffect(() => {
     if (!mounted || !actualResolvedMode) return;
 
@@ -116,16 +107,12 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
     const storedThemeName = localStorage.getItem(COLOR_THEME_STORAGE_KEY) as ThemeName | null;
     const storedThemeDetails = storedThemeName ? availableColorThemes.find(t => t.name === storedThemeName) : null;
 
-    // console.log(`[ColorThemeContext] Mode/Initial Load. Current Mode: ${actualResolvedMode}, Stored: ${storedThemeName}`);
-
     if (storedThemeDetails && storedThemeDetails.mode === actualResolvedMode) {
       themeToSetInState = storedThemeDetails.name;
       themeToApplyToHtml = storedThemeDetails.name;
-      // console.log(`[ColorThemeContext] Using stored theme: ${themeToApplyToHtml}`);
     } else {
       themeToSetInState = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
-      themeToApplyToHtml = themeToSetInState; // Apply the default theme class
-      // console.log(`[ColorThemeContext] Stored theme incompatible or missing. Applying default: ${themeToApplyToHtml}`);
+      themeToApplyToHtml = themeToSetInState; 
       if(themeToApplyToHtml) localStorage.setItem(COLOR_THEME_STORAGE_KEY, themeToApplyToHtml);
     }
     
@@ -139,7 +126,6 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
 
   const setColorTheme = useCallback((newThemeName: ThemeName) => {
     if (!mounted || !actualResolvedMode) return;
-    // console.log(`[ColorThemeContext] User selected theme: ${newThemeName}. Current mode: ${actualResolvedMode}`);
     
     const themeDetails = availableColorThemes.find(t => t.name === newThemeName);
 
@@ -148,8 +134,7 @@ export function ColorThemeProvider({ children }: { children: React.ReactNode }) 
       applyCustomThemeClass(newThemeName);
       localStorage.setItem(COLOR_THEME_STORAGE_KEY, newThemeName);
     } else {
-      console.warn(`Attempted to set theme ${newThemeName} which is incompatible with current mode ${actualResolvedMode}. This shouldn't happen if UI is correct.`);
-      // Fallback to default for the current mode if somehow an incompatible theme is selected
+      // console.warn(`Attempted to set theme ${newThemeName} which is incompatible with current mode ${actualResolvedMode}.`);
       const fallbackTheme = actualResolvedMode === 'dark' ? DEFAULT_DARK_THEME_NAME : DEFAULT_LIGHT_THEME_NAME;
       _setColorTheme(fallbackTheme);
       applyCustomThemeClass(fallbackTheme);

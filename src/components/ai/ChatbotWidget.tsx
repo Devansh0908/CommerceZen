@@ -25,8 +25,8 @@ interface WidgetPosition {
 
 const MIN_CHAT_WIDTH = 280;
 const MIN_CHAT_HEIGHT = 300;
-const MAX_CHAT_WIDTH_PERCENT = 0.9; // 90% of viewport width
-const MAX_CHAT_HEIGHT_PERCENT = 0.85; // 85% of viewport height
+const MAX_CHAT_WIDTH_PERCENT = 0.9; 
+const MAX_CHAT_HEIGHT_PERCENT = 0.85; 
 const INITIAL_CHAT_WIDTH = 350;
 const INITIAL_CHAT_HEIGHT = 500;
 
@@ -93,24 +93,27 @@ export default function ChatbotWidget() {
 
     const handleWidgetMouseUp = () => {
       setIsDraggingWidget(false);
+      if (document.body) {
+        document.body.style.userSelect = '';
+        document.body.style.cursor = '';
+      }
     };
 
     if (isDraggingWidget) {
       document.addEventListener('mousemove', handleWidgetMouseMove);
       document.addEventListener('mouseup', handleWidgetMouseUp);
-      document.body.style.userSelect = 'none';
-      document.body.style.cursor = 'grabbing'; 
-    } else {
-      document.body.style.userSelect = '';
-      document.body.style.cursor = ''; 
+      if (document.body) {
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'grabbing';
+      }
     }
 
     return () => {
       document.removeEventListener('mousemove', handleWidgetMouseMove);
       document.removeEventListener('mouseup', handleWidgetMouseUp);
-      if(document.body) {
+      if (document.body) { // Check if body exists during cleanup
         document.body.style.userSelect = '';
-        document.body.style.cursor = ''; 
+        document.body.style.cursor = '';
       }
     };
   }, [isDraggingWidget]);
@@ -151,24 +154,25 @@ export default function ChatbotWidget() {
     const handleResizeMouseUp = () => {
       setIsResizing(false);
       initialResizeState.current = null;
+      if (document.body && !isDraggingWidget) { // Only reset if not also dragging
+        document.body.style.userSelect = '';
+        document.body.style.cursor = '';
+      }
     };
 
     if (isResizing) {
       document.addEventListener('mousemove', handleResizeMouseMove);
       document.addEventListener('mouseup', handleResizeMouseUp);
-      document.body.style.userSelect = 'none';
-      document.body.style.cursor = 'nwse-resize';
-    } else {
-       if(document.body && !isDraggingWidget) {
-        document.body.style.userSelect = '';
-        document.body.style.cursor = '';
-       }
+      if (document.body) {
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'nwse-resize';
+      }
     }
 
     return () => {
       document.removeEventListener('mousemove', handleResizeMouseMove);
       document.removeEventListener('mouseup', handleResizeMouseUp);
-      if(document.body && !isDraggingWidget) {
+      if (document.body && !isDraggingWidget) { // Check if body exists during cleanup
          document.body.style.userSelect = '';
          document.body.style.cursor = ''; 
       }
@@ -231,7 +235,7 @@ export default function ChatbotWidget() {
       };
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
-      console.error("Error calling chat flow:", error);
+      // console.error("Error calling chat flow:", error);
       const errorResponse: ChatMessage = {
         id: `error-${Date.now()}`,
         role: 'model',

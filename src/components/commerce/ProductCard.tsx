@@ -7,16 +7,17 @@ import type { Product, Review } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import { ShoppingCart, Heart, Star } from 'lucide-react'; // Added Star
+import { ShoppingCart, Heart, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { Skeleton } from '@/components/ui/skeleton'; // For loading state
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProductCardProps {
   product: Product;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+// Wrapped with React.memo
+const ProductCard = React.memo(function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
   const { isLoggedIn } = useAuth();
@@ -46,13 +47,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           setReviewCount(0);
         }
       } else {
-        // No reviews in localStorage, could also fetch initial mock ones if needed
-        // For now, treat as no reviews
         setAverageRating(0);
         setReviewCount(0);
       }
     } catch (error) {
-      console.error(`Error loading reviews for product card ${product.id}:`, error);
+      // console.error(`Error loading reviews for product card ${product.id}:`, error);
       setAverageRating(0);
       setReviewCount(0);
     } finally {
@@ -103,7 +102,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </p>
 
-          {/* Star Rating Section */}
           {isLoadingRatings ? (
             <div className="flex items-center gap-1.5 mb-2">
               <Skeleton className="h-4 w-20" /> 
@@ -119,10 +117,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               <span className="text-xs text-muted-foreground font-body">({reviewCount})</span>
             </div>
           ) : (
-            <div className="h-5 mb-2"></div> // Placeholder for height consistency if no reviews
+            <div className="h-5 mb-2"></div> 
           )}
 
-          <div className="flex justify-between items-center mt-auto pt-2"> {/* Changed my-auto to mt-auto for ratings */}
+          <div className="flex justify-between items-center mt-auto pt-2"> 
             <p className="text-xl font-headline font-bold text-primary">
               INR {product.price.toFixed(2)}
             </p>
@@ -146,4 +144,6 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
     </Link>
   );
-}
+});
+
+export default ProductCard;
