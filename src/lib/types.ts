@@ -40,6 +40,8 @@ export interface OrderItem {
   priceAtPurchase: number; // Price of the item when the order was placed
 }
 
+export type OrderStatus = "Processing" | "Shipped" | "Out for Delivery" | "Delivered";
+
 export interface Order {
   id: string; // Unique order ID
   userId: string; // To associate order with a user (e.g., user's email)
@@ -47,4 +49,7 @@ export interface Order {
   items: OrderItem[];
   totalAmount: number;
   shippingAddress: UserData; // Capture shipping address used for this order
+  status: OrderStatus; // Mock delivery status
+  estimatedDeliveryDate: string; // Mock estimated delivery date
 }
+

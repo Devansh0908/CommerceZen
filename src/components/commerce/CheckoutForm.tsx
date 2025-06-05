@@ -22,7 +22,9 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useEffect } from "react";
 import { Sparkles } from "lucide-react";
-import type { Order, OrderItem, UserData } from "@/lib/types";
+import type { Order, OrderItem, UserData, OrderStatus } from "@/lib/types";
+import { addDays, formatISO } from 'date-fns';
+
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -90,11 +92,13 @@ export default function CheckoutForm() {
     }
 
     const orderShippingAddress: UserData = values;
+    const orderDate = new Date();
+    const estimatedDelivery = addDays(orderDate, 5); // Mock: 5 days for delivery
 
     const newOrder: Order = {
       id: `order_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       userId: user.email, // Associate order with logged-in user's email
-      date: new Date().toISOString(),
+      date: orderDate.toISOString(),
       items: cartItems.map(item => ({
         productId: item.id,
         name: item.name,
@@ -103,6 +107,8 @@ export default function CheckoutForm() {
       })),
       totalAmount: getCartTotal(),
       shippingAddress: orderShippingAddress,
+      status: "Processing" as OrderStatus,
+      estimatedDeliveryDate: formatISO(estimatedDelivery, { representation: 'date' }),
     };
 
     try {
@@ -270,3 +276,4 @@ export default function CheckoutForm() {
     </div>
   );
 }
+
