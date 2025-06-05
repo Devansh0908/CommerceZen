@@ -1,7 +1,7 @@
 
 "use client";
 
-import * as React from 'react';
+import React from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -179,7 +179,7 @@ export default function ProfileClientView() {
   const currentDisplayTheme = resolvedTheme === 'system' ? 'System Default' : (resolvedTheme === 'dark' ? 'Dark' : 'Light');
 
   return (
-    <div className="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10 animate-subtle-fade-in">
       <div className="text-center">
         <h1 className="text-4xl font-headline font-bold text-primary">Your Profile</h1>
         <p className="mt-2 text-lg text-muted-foreground font-body">Manage your account settings and preferences.</p>
@@ -393,3 +393,4 @@ export default function ProfileClientView() {
     </div>
   );
 }
+

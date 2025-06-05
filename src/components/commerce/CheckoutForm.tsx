@@ -155,7 +155,7 @@ export default function CheckoutForm() {
   return (
     <div className="grid lg:grid-cols-5 gap-8">
       <div className="lg:col-span-3">
-        <Card className="shadow-lg">
+        <Card className="shadow-lg animate-subtle-fade-in">
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary">Shipping Information</CardTitle>
             <CardDescription className="font-body text-muted-foreground">Please enter your shipping details.</CardDescription>
@@ -252,7 +252,7 @@ export default function CheckoutForm() {
         </Card>
       </div>
       <div className="lg:col-span-2 space-y-6">
-        <Card className="shadow-lg sticky top-24">
+        <Card className="shadow-lg sticky top-24 animate-subtle-fade-in" style={{animationDelay: '0.1s'}}>
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary">Order Summary</CardTitle>
           </CardHeader>

@@ -139,7 +139,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
   
   return (
     <div className="py-8 space-y-12">
-      <Card className="shadow-xl overflow-hidden">
+      <Card className="shadow-xl overflow-hidden animate-subtle-fade-in">
         <div className="grid md:grid-cols-2 items-start">
           <div className="relative aspect-square group bg-muted/30">
             <Image
@@ -217,7 +217,7 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
         </div>
       </Card>
 
-      <Card className="shadow-lg">
+      <Card className="shadow-lg animate-subtle-fade-in" style={{animationDelay: '0.1s'}}>
         <CardHeader>
           <CardTitle className="font-headline text-2xl text-primary flex items-center"><MessageSquare className="mr-3 h-6 w-6 text-accent" />Write a Review</CardTitle>
           <CardDescription className="font-body">Share your thoughts about {product.name}.</CardDescription>
@@ -271,15 +271,15 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
         </CardContent>
       </Card>
 
-      <Card className="shadow-lg">
+      <Card className="shadow-lg animate-subtle-fade-in" style={{animationDelay: '0.2s'}}>
         <CardHeader>
           <CardTitle className="font-headline text-2xl text-primary">Customer Reviews ({totalReviews})</CardTitle>
           {reviews.length === 0 && <CardDescription className="font-body">No reviews yet for this product. Be the first to write one!</CardDescription>}
         </CardHeader>
         {reviews.length > 0 && (
           <CardContent className="space-y-6">
-            {reviews.map(review => (
-              <Card key={review.id} className="bg-muted/30 p-4 rounded-md shadow-sm animate-subtle-fade-in">
+            {reviews.map((review, index) => (
+              <Card key={review.id} className="bg-muted/30 p-4 rounded-md shadow-sm animate-subtle-fade-in" style={{animationDelay: `${index * 0.05}s`}}>
                 <CardHeader className="p-0 mb-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

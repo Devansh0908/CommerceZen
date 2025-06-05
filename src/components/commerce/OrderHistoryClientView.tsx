@@ -219,7 +219,7 @@ export default function OrderHistoryClientView() {
       
       <ScrollArea className="h-[calc(100vh-250px)]">
         <div className="space-y-6 pr-4">
-          {orders.map((order) => {
+          {orders.map((order, index) => {
             const statusProps = getStatusProps(order.status);
             const StatusIcon = statusProps.icon;
             
@@ -238,7 +238,7 @@ export default function OrderHistoryClientView() {
             }
 
             return (
-              <Card key={order.id} className="shadow-lg animate-subtle-fade-in bg-card">
+              <Card key={order.id} className="shadow-lg animate-subtle-fade-in bg-card" style={{animationDelay: `${index * 0.05}s`}}>
                 <CardHeader className="pb-3 border-b">
                   <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2">
                       <div>
@@ -273,8 +273,8 @@ export default function OrderHistoryClientView() {
                   <div>
                     <h4 className="font-body font-semibold text-md text-primary mb-2">Items:</h4>
                     <ul className="space-y-3">
-                      {order.items.map((item, index) => (
-                        <li key={`${item.productId}-${index}`} className="flex justify-between items-start text-sm font-body border-b border-border/50 pb-3 last:border-b-0 last:pb-0">
+                      {order.items.map((item, itemIndex) => (
+                        <li key={`${item.productId}-${itemIndex}`} className="flex justify-between items-start text-sm font-body border-b border-border/50 pb-3 last:border-b-0 last:pb-0">
                           <div className="flex-grow pr-2">
                             <Link href={`/product/${item.productId}`} className="font-medium text-primary hover:text-accent transition-colors">{item.name}</Link>
                             <span className="text-muted-foreground ml-1">(x{item.quantity})</span>
