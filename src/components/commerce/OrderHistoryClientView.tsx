@@ -29,26 +29,28 @@ const getStatusProps = (status: OrderStatus): { icon: React.ElementType, color: 
 };
 
 const calculateOrderStatus = (order: Order, currentTime: Date): OrderStatus => {
-  if (order.status === "Delivered") return "Delivered"; // Already delivered
+  if (order.status === "Delivered") return "Delivered";
+
+  if (!order.estimatedDeliveryDate || typeof order.estimatedDeliveryDate !== 'string') {
+    // console.warn(`Order ID ${order.id} is missing a valid estimatedDeliveryDate. Current status: ${order.status}`);
+    return order.status; 
+  }
 
   const orderCreationDate = parseISO(order.date);
-  // Ensure estimatedDeliveryDate is parsed correctly. It's stored as 'YYYY-MM-DD'.
-  // parseISO can handle this directly.
   const estimatedDeliveryDate = parseISO(order.estimatedDeliveryDate);
 
+  if (isNaN(estimatedDeliveryDate.getTime())) {
+      // console.warn(`Order ID ${order.id} has an invalid estimatedDeliveryDate format: ${order.estimatedDeliveryDate}. Current status: ${order.status}`);
+      return order.status;
+  }
 
   if (isAfter(currentTime, estimatedDeliveryDate) || isEqual(currentTime, estimatedDeliveryDate)) {
     return "Delivered";
   }
-  // Example: 5 day delivery window
-  // Day 0: Order placed (Processing)
-  // Day 1-2: Shipped (e.g., if diffInDays >= 1 from creation)
-  // Day 3-4: Out for Delivery (e.g., if diffInDays >=3 from creation OR 2 days before ETA)
 
   const daysSinceCreation = differenceInDays(currentTime, orderCreationDate);
 
   if (daysSinceCreation >= 3 && differenceInDays(estimatedDeliveryDate, currentTime) <= 2) {
-     // If it's within 2 days of ETA and at least 3 days have passed since creation
     return "Out for Delivery";
   }
   if (daysSinceCreation >= 1) {
@@ -68,21 +70,14 @@ export default function OrderHistoryClientView() {
     setOrders(updatedOrders);
     if (user?.email) {
       const storageKey = `commercezen_orders_${user.email}`;
-      // To ensure we save the absolute latest, we should read, merge, and write.
-      // However, for simulation, if this component is the only one modifying, direct save is okay.
-      // For robustness in a real app, fetch from storage, apply these specific updates, then save.
-      // For this prototype, direct save of the component's full `updatedOrders` list is simpler.
       const allUserOrdersFromStorage = localStorage.getItem(storageKey);
       let finalOrdersToSave: Order[];
       if (allUserOrdersFromStorage) {
           const parsedStoredOrders: Order[] = JSON.parse(allUserOrdersFromStorage);
-          // Create a map of updated orders for quick lookup
           const updatedOrdersMap = new Map(updatedOrders.map(o => [o.id, o]));
-          // Merge: update existing, keep others
           finalOrdersToSave = parsedStoredOrders.map(storedOrder => 
               updatedOrdersMap.get(storedOrder.id) || storedOrder
           );
-          // Add any new orders from updatedOrders that weren't in storage (should not happen in this flow)
           updatedOrders.forEach(uo => {
               if (!finalOrdersToSave.find(fo => fo.id === uo.id)) {
                   finalOrdersToSave.push(uo);
@@ -103,7 +98,7 @@ export default function OrderHistoryClientView() {
       const currentTime = new Date();
       let hasChanges = false;
       const newUpdatedOrders = currentOrders.map(order => {
-        if (order.status === "Delivered") return order; // Skip already delivered
+        if (order.status === "Delivered") return order; 
 
         const newStatus = calculateOrderStatus(order, currentTime);
         if (newStatus !== order.status) {
@@ -114,10 +109,10 @@ export default function OrderHistoryClientView() {
       });
 
       if (hasChanges) {
-        updateAndPersistOrders(newUpdatedOrders); // Persist if changes were made
-        return newUpdatedOrders; // Return updated state for setOrders
+        updateAndPersistOrders(newUpdatedOrders); 
+        return newUpdatedOrders; 
       }
-      return currentOrders; // No changes, return current state
+      return currentOrders; 
     });
   }, [updateAndPersistOrders]);
 
@@ -133,8 +128,8 @@ export default function OrderHistoryClientView() {
           loadedOrders = JSON.parse(storedOrdersJson);
           loadedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         }
-        setOrders(loadedOrders); // Set initial orders
-        // Perform initial status check and update
+        setOrders(loadedOrders); 
+        
         if (loadedOrders.length > 0) {
             const currentTime = new Date();
             let hasInitialChanges = false;
@@ -148,7 +143,7 @@ export default function OrderHistoryClientView() {
                  return order;
             });
             if (hasInitialChanges) {
-                updateAndPersistOrders(initiallyUpdatedOrders); // Persist if changes were made on load
+                updateAndPersistOrders(initiallyUpdatedOrders); 
             }
         }
 
@@ -166,10 +161,10 @@ export default function OrderHistoryClientView() {
 
   useEffect(() => {
     if (isLoggedIn && user?.email && orders.some(o => o.status !== "Delivered")) {
-      if (intervalRef.current) clearInterval(intervalRef.current); // Clear existing interval
+      if (intervalRef.current) clearInterval(intervalRef.current); 
       intervalRef.current = setInterval(() => {
         checkAndUpdateAllOrderStatuses();
-      }, 30000); // Check every 30 seconds
+      }, 30000); 
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
@@ -231,10 +226,14 @@ export default function OrderHistoryClientView() {
             let formattedEstimatedDelivery = "N/A";
             if (order.estimatedDeliveryDate) {
                 try {
-                    // Stored as YYYY-MM-DD, format for display
-                    formattedEstimatedDelivery = format(parseISO(order.estimatedDeliveryDate), 'EEE, MMM d, yyyy');
+                    const parsedDate = parseISO(order.estimatedDeliveryDate);
+                     if (!isNaN(parsedDate.getTime())) {
+                        formattedEstimatedDelivery = format(parsedDate, 'EEE, MMM d, yyyy');
+                    } else {
+                         // console.warn("Could not parse estimatedDeliveryDate for display (invalid format):", order.estimatedDeliveryDate);
+                    }
                 } catch (e) {
-                    console.warn("Could not parse estimatedDeliveryDate:", order.estimatedDeliveryDate, e);
+                    // console.warn("Could not parse estimatedDeliveryDate for display (error):", order.estimatedDeliveryDate, e);
                 }
             }
 
@@ -258,14 +257,14 @@ export default function OrderHistoryClientView() {
                   </div>
                   <div className="mt-3">
                     <Progress value={statusProps.progress} className="h-2 [&>div]:bg-accent" />
-                    {order.status !== "Delivered" && order.estimatedDeliveryDate && (
+                    {order.status !== "Delivered" && order.estimatedDeliveryDate && formattedEstimatedDelivery !== "N/A" && (
                       <p className="text-xs text-muted-foreground font-body mt-1.5 text-right">
                         Estimated Delivery: {formattedEstimatedDelivery}
                       </p>
                     )}
-                     {order.status === "Delivered" && (
+                     {order.status === "Delivered" && formattedEstimatedDelivery !== "N/A" && (
                       <p className="text-xs text-green-600 dark:text-green-400 font-body mt-1.5 text-right">
-                        Delivered on: {formattedEstimatedDelivery} (Actual or Estimated)
+                        Delivered on: {formattedEstimatedDelivery}
                       </p>
                     )}
                   </div>
