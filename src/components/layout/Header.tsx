@@ -25,7 +25,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 
 export default function Header() {
   const { getItemCount: getCartItemCount, isCartInitialized: isCartReady, cartItems } = useCart();
-  const { getWishlistItemCount, isWishlistInitialized: isWishlistReady, wishlistItems: currentWishlistItems } = useWishlist(); // Use wishlistItems for dependency
+  const { getWishlistItemCount, isWishlistInitialized: isWishlistReady, wishlistItems: currentWishlistItems } = useWishlist();
   const { user, isLoggedIn, logout, isLoading: isAuthLoading } = useAuth();
   
   const [mounted, setMounted] = useState(false);
@@ -43,15 +43,17 @@ export default function Header() {
     if (mounted && isCartReady) {
         setCurrentCartItemCount(getCartItemCount());
     }
-  }, [getCartItemCount, mounted, isCartReady, cartItems]);
+  }, [getCartItemCount, mounted, isCartReady, cartItems]); // Added cartItems
 
   useEffect(() => {
-    if (mounted && isWishlistReady && isLoggedIn) {
+    if (mounted && isWishlistReady) {
+      if (isLoggedIn) {
         setCurrentWishlistItemCount(getWishlistItemCount());
-    } else if (mounted && !isLoggedIn) {
-        setCurrentWishlistItemCount(0);
+      } else {
+        setCurrentWishlistItemCount(0); // Clear count if logged out
+      }
     }
-  }, [getWishlistItemCount, mounted, isWishlistReady, isLoggedIn, currentWishlistItems]); // Added currentWishlistItems as dep
+  }, [getWishlistItemCount, mounted, isWishlistReady, isLoggedIn, currentWishlistItems]); // Added currentWishlistItems
 
 
   const handleLoginSuccess = () => {
