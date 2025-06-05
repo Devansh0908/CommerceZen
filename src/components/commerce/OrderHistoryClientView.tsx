@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { Order, OrderStatus } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from "@/components/ui/progress";
 import { ListOrdered, ShoppingBag, LogIn, CalendarDays, User, Clock, Truck, PackageSearch, PackageCheck, AlertCircle } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, addDays, differenceInDays, isAfter, isEqual } from 'date-fns';
 
 const getStatusProps = (status: OrderStatus): { icon: React.ElementType, color: string, progress: number, label: string } => {
   switch (status) {
@@ -28,10 +28,99 @@ const getStatusProps = (status: OrderStatus): { icon: React.ElementType, color: 
   }
 };
 
+const calculateOrderStatus = (order: Order, currentTime: Date): OrderStatus => {
+  if (order.status === "Delivered") return "Delivered"; // Already delivered
+
+  const orderCreationDate = parseISO(order.date);
+  // Ensure estimatedDeliveryDate is parsed correctly. It's stored as 'YYYY-MM-DD'.
+  // parseISO can handle this directly.
+  const estimatedDeliveryDate = parseISO(order.estimatedDeliveryDate);
+
+
+  if (isAfter(currentTime, estimatedDeliveryDate) || isEqual(currentTime, estimatedDeliveryDate)) {
+    return "Delivered";
+  }
+  // Example: 5 day delivery window
+  // Day 0: Order placed (Processing)
+  // Day 1-2: Shipped (e.g., if diffInDays >= 1 from creation)
+  // Day 3-4: Out for Delivery (e.g., if diffInDays >=3 from creation OR 2 days before ETA)
+
+  const daysSinceCreation = differenceInDays(currentTime, orderCreationDate);
+
+  if (daysSinceCreation >= 3 && differenceInDays(estimatedDeliveryDate, currentTime) <= 2) {
+     // If it's within 2 days of ETA and at least 3 days have passed since creation
+    return "Out for Delivery";
+  }
+  if (daysSinceCreation >= 1) {
+    return "Shipped";
+  }
+  return "Processing";
+};
+
+
 export default function OrderHistoryClientView() {
   const { user, isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const updateAndPersistOrders = useCallback((updatedOrders: Order[]) => {
+    setOrders(updatedOrders);
+    if (user?.email) {
+      const storageKey = `commercezen_orders_${user.email}`;
+      // To ensure we save the absolute latest, we should read, merge, and write.
+      // However, for simulation, if this component is the only one modifying, direct save is okay.
+      // For robustness in a real app, fetch from storage, apply these specific updates, then save.
+      // For this prototype, direct save of the component's full `updatedOrders` list is simpler.
+      const allUserOrdersFromStorage = localStorage.getItem(storageKey);
+      let finalOrdersToSave: Order[];
+      if (allUserOrdersFromStorage) {
+          const parsedStoredOrders: Order[] = JSON.parse(allUserOrdersFromStorage);
+          // Create a map of updated orders for quick lookup
+          const updatedOrdersMap = new Map(updatedOrders.map(o => [o.id, o]));
+          // Merge: update existing, keep others
+          finalOrdersToSave = parsedStoredOrders.map(storedOrder => 
+              updatedOrdersMap.get(storedOrder.id) || storedOrder
+          );
+          // Add any new orders from updatedOrders that weren't in storage (should not happen in this flow)
+          updatedOrders.forEach(uo => {
+              if (!finalOrdersToSave.find(fo => fo.id === uo.id)) {
+                  finalOrdersToSave.push(uo);
+              }
+          });
+
+      } else {
+          finalOrdersToSave = updatedOrders;
+      }
+       finalOrdersToSave.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      localStorage.setItem(storageKey, JSON.stringify(finalOrdersToSave));
+    }
+  }, [user?.email]);
+
+
+  const checkAndUpdateAllOrderStatuses = useCallback(() => {
+    setOrders(currentOrders => {
+      const currentTime = new Date();
+      let hasChanges = false;
+      const newUpdatedOrders = currentOrders.map(order => {
+        if (order.status === "Delivered") return order; // Skip already delivered
+
+        const newStatus = calculateOrderStatus(order, currentTime);
+        if (newStatus !== order.status) {
+          hasChanges = true;
+          return { ...order, status: newStatus };
+        }
+        return order;
+      });
+
+      if (hasChanges) {
+        updateAndPersistOrders(newUpdatedOrders); // Persist if changes were made
+        return newUpdatedOrders; // Return updated state for setOrders
+      }
+      return currentOrders; // No changes, return current state
+    });
+  }, [updateAndPersistOrders]);
+
 
   useEffect(() => {
     if (isLoggedIn && user?.email) {
@@ -39,14 +128,30 @@ export default function OrderHistoryClientView() {
       try {
         const storageKey = `commercezen_orders_${user.email}`;
         const storedOrdersJson = localStorage.getItem(storageKey);
+        let loadedOrders: Order[] = [];
         if (storedOrdersJson) {
-          const parsedOrders: Order[] = JSON.parse(storedOrdersJson);
-          // Sort orders by date, newest first
-          parsedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          setOrders(parsedOrders);
-        } else {
-          setOrders([]);
+          loadedOrders = JSON.parse(storedOrdersJson);
+          loadedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         }
+        setOrders(loadedOrders); // Set initial orders
+        // Perform initial status check and update
+        if (loadedOrders.length > 0) {
+            const currentTime = new Date();
+            let hasInitialChanges = false;
+            const initiallyUpdatedOrders = loadedOrders.map(order => {
+                 if (order.status === "Delivered") return order;
+                 const newStatus = calculateOrderStatus(order, currentTime);
+                 if (newStatus !== order.status) {
+                     hasInitialChanges = true;
+                     return { ...order, status: newStatus };
+                 }
+                 return order;
+            });
+            if (hasInitialChanges) {
+                updateAndPersistOrders(initiallyUpdatedOrders); // Persist if changes were made on load
+            }
+        }
+
       } catch (error) {
         console.error("Failed to load or parse orders from localStorage", error);
         setOrders([]); 
@@ -54,11 +159,25 @@ export default function OrderHistoryClientView() {
         setIsLoadingOrders(false);
       }
     } else if (!isAuthLoading) { 
-      // If not loading auth and not logged in, then stop loading orders
       setIsLoadingOrders(false);
       setOrders([]);
     }
-  }, [isLoggedIn, user, isAuthLoading]);
+  }, [isLoggedIn, user, isAuthLoading, updateAndPersistOrders]);
+
+  useEffect(() => {
+    if (isLoggedIn && user?.email && orders.some(o => o.status !== "Delivered")) {
+      if (intervalRef.current) clearInterval(intervalRef.current); // Clear existing interval
+      intervalRef.current = setInterval(() => {
+        checkAndUpdateAllOrderStatuses();
+      }, 30000); // Check every 30 seconds
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isLoggedIn, user?.email, orders, checkAndUpdateAllOrderStatuses]);
+
 
   if (isAuthLoading || isLoadingOrders) {
     return (
@@ -112,6 +231,7 @@ export default function OrderHistoryClientView() {
             let formattedEstimatedDelivery = "N/A";
             if (order.estimatedDeliveryDate) {
                 try {
+                    // Stored as YYYY-MM-DD, format for display
                     formattedEstimatedDelivery = format(parseISO(order.estimatedDeliveryDate), 'EEE, MMM d, yyyy');
                 } catch (e) {
                     console.warn("Could not parse estimatedDeliveryDate:", order.estimatedDeliveryDate, e);
@@ -138,9 +258,14 @@ export default function OrderHistoryClientView() {
                   </div>
                   <div className="mt-3">
                     <Progress value={statusProps.progress} className="h-2 [&>div]:bg-accent" />
-                    {order.estimatedDeliveryDate && (
+                    {order.status !== "Delivered" && order.estimatedDeliveryDate && (
                       <p className="text-xs text-muted-foreground font-body mt-1.5 text-right">
                         Estimated Delivery: {formattedEstimatedDelivery}
+                      </p>
+                    )}
+                     {order.status === "Delivered" && (
+                      <p className="text-xs text-green-600 dark:text-green-400 font-body mt-1.5 text-right">
+                        Delivered on: {formattedEstimatedDelivery} (Actual or Estimated)
                       </p>
                     )}
                   </div>
