@@ -78,8 +78,8 @@ export default function Header() {
   return (
     <header className="bg-header text-header-foreground shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 sm:gap-6">
-        <Link href="/" className="flex items-center gap-2 text-xl sm:text-2xl font-headline font-bold hover:opacity-80 transition-opacity">
-          <Zap className="h-7 w-7 sm:h-8 sm:w-8 text-accent" />
+        <Link href="/" className="group flex items-center gap-2 text-xl sm:text-2xl font-headline font-bold hover:opacity-80 transition-opacity">
+          <Zap className="h-7 w-7 sm:h-8 sm:w-8 text-accent group-hover:scale-110 transition-transform duration-200" />
           <span className="text-primary">CommerceZen</span>
         </Link>
         

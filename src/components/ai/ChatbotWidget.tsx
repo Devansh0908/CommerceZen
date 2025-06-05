@@ -301,7 +301,7 @@ export default function ChatbotWidget() {
               <div
                 key={msg.id}
                 className={cn(
-                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words",
+                  "flex w-max max-w-[85%] flex-col gap-1 rounded-lg px-3 py-2 text-sm break-words animate-subtle-fade-in",
                   msg.role === 'user'
                     ? "ml-auto bg-primary text-primary-foreground" 
                     : "bg-muted text-muted-foreground" 
@@ -311,7 +311,7 @@ export default function ChatbotWidget() {
               </div>
             ))}
              {isLoading && (
-              <div className="flex items-center justify-start">
+              <div className="flex items-center justify-start animate-subtle-fade-in">
                 <div className="bg-muted text-muted-foreground rounded-lg px-3 py-2 text-sm flex items-center">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Thinking...
