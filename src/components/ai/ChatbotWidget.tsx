@@ -277,15 +277,15 @@ export default function ChatbotWidget() {
         side="top" 
         align="end" 
         className={cn(
-            "p-0 flex flex-col rounded-lg shadow-xl border-border mr-2 mb-1 overflow-hidden",
-            isResizing ? "cursor-nwse-resize" : ""
+            "p-0 flex flex-col rounded-lg border-border mr-2 mb-1 overflow-hidden transition-shadow duration-200",
+            isResizing ? "cursor-nwse-resize ring-2 ring-accent shadow-2xl" : "shadow-xl"
         )}
         style={{
             width: `${chatWindowSize.width}px`,
             height: `${chatWindowSize.height}px`,
         }}
         onOpenAutoFocus={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => { // Allow clicking on resize handle without closing popover
+        onPointerDownOutside={(e) => { 
             if ((e.target as HTMLElement)?.closest('.resize-handle')) {
                 e.preventDefault();
             }
@@ -359,5 +359,3 @@ export default function ChatbotWidget() {
     </Popover>
   );
 }
-
-    
