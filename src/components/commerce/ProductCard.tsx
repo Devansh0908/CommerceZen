@@ -1,15 +1,16 @@
 
 "use client";
 
-import React from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import Image from 'next/image';
-import type { Product } from '@/lib/types';
+import type { Product, Review } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart, Heart, Star } from 'lucide-react'; // Added Star
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { Skeleton } from '@/components/ui/skeleton'; // For loading state
 
 interface ProductCardProps {
   product: Product;
@@ -20,6 +21,45 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { isInWishlist, toggleWishlist, isWishlistInitialized } = useWishlist();
   const { isLoggedIn } = useAuth();
   
+  const [averageRating, setAverageRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [isLoadingRatings, setIsLoadingRatings] = useState(true);
+
+  useEffect(() => {
+    if (!product.id) {
+      setIsLoadingRatings(false);
+      return;
+    }
+
+    setIsLoadingRatings(true);
+    try {
+      const reviewsStorageKey = `commercezen_reviews_${product.id}`;
+      const storedReviewsJson = localStorage.getItem(reviewsStorageKey);
+      if (storedReviewsJson) {
+        const loadedReviews: Review[] = JSON.parse(storedReviewsJson);
+        if (loadedReviews.length > 0) {
+          const sum = loadedReviews.reduce((acc, review) => acc + review.rating, 0);
+          setAverageRating(sum / loadedReviews.length);
+          setReviewCount(loadedReviews.length);
+        } else {
+          setAverageRating(0);
+          setReviewCount(0);
+        }
+      } else {
+        // No reviews in localStorage, could also fetch initial mock ones if needed
+        // For now, treat as no reviews
+        setAverageRating(0);
+        setReviewCount(0);
+      }
+    } catch (error) {
+      console.error(`Error loading reviews for product card ${product.id}:`, error);
+      setAverageRating(0);
+      setReviewCount(0);
+    } finally {
+      setIsLoadingRatings(false);
+    }
+  }, [product.id]);
+
   const isWishlisted = React.useMemo(() => {
       if (!isLoggedIn || !isWishlistInitialized) return false;
       return isInWishlist(product.id);
@@ -59,10 +99,30 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-lg font-headline font-semibold text-primary mb-1.5 truncate group-hover:text-accent transition-colors">
             {product.name}
           </h3>
-          <p className="text-muted-foreground font-body text-sm mb-3 h-10 text-ellipsis leading-relaxed overflow-hidden line-clamp-2">
+          <p className="text-muted-foreground font-body text-sm mb-2 h-10 text-ellipsis leading-relaxed overflow-hidden line-clamp-2">
             {product.description}
           </p>
-          <div className="flex justify-between items-center my-auto pt-2">
+
+          {/* Star Rating Section */}
+          {isLoadingRatings ? (
+            <div className="flex items-center gap-1.5 mb-2">
+              <Skeleton className="h-4 w-20" /> 
+              <Skeleton className="h-4 w-8" />
+            </div>
+          ) : reviewCount > 0 ? (
+            <div className="flex items-center gap-1.5 mb-2" title={`Rated ${averageRating.toFixed(1)} out of 5 stars by ${reviewCount} review${reviewCount !== 1 ? 's' : ''}`}>
+              <div className="flex items-center text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={`h-4 w-4 ${i < Math.round(averageRating) ? 'fill-current' : 'stroke-current opacity-60'}`} />
+                ))}
+              </div>
+              <span className="text-xs text-muted-foreground font-body">({reviewCount})</span>
+            </div>
+          ) : (
+            <div className="h-5 mb-2"></div> // Placeholder for height consistency if no reviews
+          )}
+
+          <div className="flex justify-between items-center mt-auto pt-2"> {/* Changed my-auto to mt-auto for ratings */}
             <p className="text-xl font-headline font-bold text-primary">
               INR {product.price.toFixed(2)}
             </p>
