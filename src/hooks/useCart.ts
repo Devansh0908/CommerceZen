@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -42,16 +43,23 @@ export function useCart(): UseCartReturn {
   }, [cartItems, isCartInitialized]);
 
   const addToCart = useCallback((product: Product, quantity: number = 1) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
+    setCartItems(currentItems => {
+      const existingItemIndex = currentItems.findIndex(item => item.id === product.id);
+
+      let newCartItems;
+      if (existingItemIndex > -1) {
+        // Item exists, update its quantity
+        newCartItems = currentItems.map((item, index) => {
+          if (index === existingItemIndex) {
+            return { ...item, quantity: item.quantity + quantity };
+          }
+          return item;
+        });
+      } else {
+        // Item is new, add it
+        newCartItems = [...currentItems, { ...product, quantity }];
       }
-      return [...prevItems, { ...product, quantity }];
+      return newCartItems;
     });
     toast({
       title: "Added to Cart",
@@ -64,7 +72,7 @@ export function useCart(): UseCartReturn {
     toast({
       title: "Removed from Cart",
       description: `Item has been removed from your cart.`,
-      variant: "default", // Changed from destructive for a softer notification
+      variant: "default", 
     });
   }, [toast]);
 
