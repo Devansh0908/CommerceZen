@@ -17,14 +17,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/hooks/useCart";
-import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { useEffect } from "react";
-import { Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Loader2, Sparkles } from "lucide-react";
 import type { Order, OrderItem, UserData, OrderStatus } from "@/lib/types";
 import { addDays, formatISO } from 'date-fns';
 
+const PENDING_ORDER_SESSION_KEY = 'commercezen_pending_order';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -37,9 +38,10 @@ const formSchema = z.object({
 
 export default function CheckoutForm() {
   const { toast } = useToast();
-  const { cartItems, getCartTotal, clearCart, isCartInitialized } = useCart();
-  const { user, isLoggedIn } = useAuth(); // Get user from AuthContext
+  const { cartItems, getCartTotal, isCartInitialized } = useCart();
+  const { user, isLoggedIn } = useAuth();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,13 +66,11 @@ export default function CheckoutForm() {
     }
   }, [isCartInitialized, cartItems, router, toast]);
 
-  // Pre-fill form with logged-in user's details if available
    useEffect(() => {
     if (isLoggedIn && user) {
       form.reset({
         name: user.name || "",
         email: user.email || "",
-        // Address details are not in AuthUser, so these remain blank or could be fetched if stored elsewhere
         address: "", 
         city: "",
         postalCode: "",
@@ -81,23 +81,34 @@ export default function CheckoutForm() {
 
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     if (!isLoggedIn || !user?.email) {
       toast({
         title: "Login Required",
         description: "Please log in to place an order.",
         variant: "destructive",
       });
-      // Optionally redirect to login or show login modal
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      toast({
+        title: "Cart is Empty",
+        description: "Cannot proceed to payment with an empty cart.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      router.push("/cart");
       return;
     }
 
     const orderShippingAddress: UserData = values;
     const orderDate = new Date();
-    // Simulate estimated delivery: 5-7 days for processing/shipping
-    const deliveryDays = Math.floor(Math.random() * 3) + 5; // Randomly 5, 6, or 7 days
+    const deliveryDays = Math.floor(Math.random() * 3) + 5;
     const estimatedDelivery = addDays(orderDate, deliveryDays); 
 
-    const newOrder: Order = {
+    const pendingOrder: Order = {
       id: `order_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       userId: user.email, 
       date: orderDate.toISOString(),
@@ -109,32 +120,27 @@ export default function CheckoutForm() {
       })),
       totalAmount: getCartTotal(),
       shippingAddress: orderShippingAddress,
-      status: "Processing" as OrderStatus, // Initial status
-      estimatedDeliveryDate: formatISO(estimatedDelivery, { representation: 'date' }), // Store as 'YYYY-MM-DD'
+      status: "Processing" as OrderStatus,
+      estimatedDeliveryDate: formatISO(estimatedDelivery, { representation: 'date' }),
     };
 
     try {
-      const storageKey = `commercezen_orders_${user.email}`;
-      const existingOrdersJson = localStorage.getItem(storageKey);
-      const existingOrders: Order[] = existingOrdersJson ? JSON.parse(existingOrdersJson) : [];
-      existingOrders.push(newOrder);
-      localStorage.setItem(storageKey, JSON.stringify(existingOrders));
-      
-      console.log("Simulated Order Data Saved:", newOrder);
+      sessionStorage.setItem(PENDING_ORDER_SESSION_KEY, JSON.stringify(pendingOrder));
       toast({
-        title: "Order Placed (Simulated)!",
-        description: "Thank you! Your order details have been saved. You can track its progress in your order history.",
+        title: "Proceeding to Payment",
+        description: "Please complete your payment on the next page.",
       });
-      clearCart();
-      router.push("/order-history"); 
+      router.push("/payment"); 
     } catch (error) {
-        console.error("Failed to save order to localStorage", error);
+        console.error("Failed to save pending order to sessionStorage", error);
         toast({
-            title: "Order Error",
-            description: "There was an issue saving your order. Please try again.",
+            title: "Checkout Error",
+            description: "There was an issue proceeding to payment. Please try again.",
             variant: "destructive",
         });
+        setIsSubmitting(false);
     }
+    // setIsSubmitting will be handled by page navigation or error
   }
 
   if (!isCartInitialized) {
@@ -157,7 +163,7 @@ export default function CheckoutForm() {
   return (
     <div className="grid lg:grid-cols-5 gap-8">
       <div className="lg:col-span-3">
-        <Card className="shadow-lg animate-subtle-fade-in">
+        <Card className="shadow-xl animate-subtle-fade-in">
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary">Shipping Information</CardTitle>
             <CardDescription className="font-body text-muted-foreground">Please enter your shipping details.</CardDescription>
@@ -172,7 +178,7 @@ export default function CheckoutForm() {
                     <FormItem>
                       <FormLabel className="font-body">Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Amelia Pond" {...field} className="font-body" />
+                        <Input placeholder="Amelia Pond" {...field} className="font-body" disabled={isSubmitting} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -185,7 +191,7 @@ export default function CheckoutForm() {
                     <FormItem>
                       <FormLabel className="font-body">Email Address</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="thegirlwhowaited@example.com" {...field} className="font-body" />
+                        <Input type="email" placeholder="thegirlwhowaited@example.com" {...field} className="font-body" disabled={isSubmitting} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -198,7 +204,7 @@ export default function CheckoutForm() {
                     <FormItem>
                       <FormLabel className="font-body">Street Address</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Leadworth, UK" {...field} className="font-body" />
+                        <Textarea placeholder="Leadworth, UK" {...field} className="font-body" disabled={isSubmitting} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -212,7 +218,7 @@ export default function CheckoutForm() {
                         <FormItem>
                           <FormLabel className="font-body">City</FormLabel>
                           <FormControl>
-                            <Input placeholder="London" {...field} className="font-body" />
+                            <Input placeholder="London" {...field} className="font-body" disabled={isSubmitting} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -225,7 +231,7 @@ export default function CheckoutForm() {
                         <FormItem>
                           <FormLabel className="font-body">Postal Code</FormLabel>
                           <FormControl>
-                            <Input placeholder="SW1A 1AA" {...field} className="font-body" />
+                            <Input placeholder="SW1A 1AA" {...field} className="font-body" disabled={isSubmitting} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -239,14 +245,15 @@ export default function CheckoutForm() {
                     <FormItem>
                       <FormLabel className="font-body">Country</FormLabel>
                       <FormControl>
-                        <Input placeholder="United Kingdom" {...field} className="font-body" />
+                        <Input placeholder="United Kingdom" {...field} className="font-body" disabled={isSubmitting} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-headline">
-                  Place Simulated Order
+                <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-headline" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Proceed to Payment
                 </Button>
               </form>
             </Form>
@@ -279,3 +286,4 @@ export default function CheckoutForm() {
   );
 }
 
+    
