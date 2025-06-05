@@ -49,13 +49,21 @@ const calculateOrderStatus = (order: Order, currentTime: Date): OrderStatus => {
   }
 
   const daysSinceCreation = differenceInDays(currentTime, orderCreationDate);
+  const totalDeliveryDuration = differenceInDays(estimatedDeliveryDate, orderCreationDate);
 
-  if (daysSinceCreation >= 3 && differenceInDays(estimatedDeliveryDate, currentTime) <= 2) {
-    return "Out for Delivery";
+  // More granular progression
+  if (totalDeliveryDuration <= 0) { // If estimated delivery is same day or past
+      if (daysSinceCreation >= 0) return "Out for Delivery"; // Or directly to Delivered if logic allows
+  } else {
+    const progressPercentage = daysSinceCreation / totalDeliveryDuration;
+    if (progressPercentage >= 0.75 && differenceInDays(estimatedDeliveryDate, currentTime) <= 1) { // Last 25% of time, or last day
+        return "Out for Delivery";
+    }
+    if (progressPercentage >= 0.25) { // After 25% of time has passed
+        return "Shipped";
+    }
   }
-  if (daysSinceCreation >= 1) {
-    return "Shipped";
-  }
+  
   return "Processing";
 };
 
@@ -164,7 +172,7 @@ export default function OrderHistoryClientView() {
       if (intervalRef.current) clearInterval(intervalRef.current); 
       intervalRef.current = setInterval(() => {
         checkAndUpdateAllOrderStatuses();
-      }, 30000); 
+      }, 30000); // Check every 30 seconds
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }

@@ -93,22 +93,24 @@ export default function CheckoutForm() {
 
     const orderShippingAddress: UserData = values;
     const orderDate = new Date();
-    const estimatedDelivery = addDays(orderDate, 5); // Mock: 5 days for delivery
+    // Simulate estimated delivery: 5-7 days for processing/shipping
+    const deliveryDays = Math.floor(Math.random() * 3) + 5; // Randomly 5, 6, or 7 days
+    const estimatedDelivery = addDays(orderDate, deliveryDays); 
 
     const newOrder: Order = {
       id: `order_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      userId: user.email, // Associate order with logged-in user's email
+      userId: user.email, 
       date: orderDate.toISOString(),
       items: cartItems.map(item => ({
         productId: item.id,
         name: item.name,
         quantity: item.quantity,
-        priceAtPurchase: item.price, // Capture price at time of order
+        priceAtPurchase: item.price, 
       })),
       totalAmount: getCartTotal(),
       shippingAddress: orderShippingAddress,
-      status: "Processing" as OrderStatus,
-      estimatedDeliveryDate: formatISO(estimatedDelivery, { representation: 'date' }),
+      status: "Processing" as OrderStatus, // Initial status
+      estimatedDeliveryDate: formatISO(estimatedDelivery, { representation: 'date' }), // Store as 'YYYY-MM-DD'
     };
 
     try {
@@ -121,10 +123,10 @@ export default function CheckoutForm() {
       console.log("Simulated Order Data Saved:", newOrder);
       toast({
         title: "Order Placed (Simulated)!",
-        description: "Thank you! Your order details have been saved to your mock order history.",
+        description: "Thank you! Your order details have been saved. You can track its progress in your order history.",
       });
       clearCart();
-      router.push("/order-history"); // Redirect to order history page
+      router.push("/order-history"); 
     } catch (error) {
         console.error("Failed to save order to localStorage", error);
         toast({
@@ -144,7 +146,7 @@ export default function CheckoutForm() {
     );
   }
   
-  if (cartItems.length === 0 && isCartInitialized) { // Check isCartInitialized here too
+  if (cartItems.length === 0 && isCartInitialized) { 
     return (
        <div className="text-center py-10">
         <p className="mt-4 text-lg font-body text-muted-foreground">Your cart is empty. Redirecting...</p>
