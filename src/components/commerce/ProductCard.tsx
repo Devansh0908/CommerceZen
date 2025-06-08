@@ -48,6 +48,10 @@ const ProductCard = React.memo(function ProductCard({ product, onQuickView }: Pr
           setReviewCount(0);
         }
       } else {
+        // If no reviews in LS, try to set from mock "default" on product detail page might create them,
+        // but for cards, we'll assume 0 if not found for simplicity on initial load.
+        // Or, we could trigger a "fetch" or default them here too.
+        // For now, if not in LS, assume 0 for cards.
         setAverageRating(0);
         setReviewCount(0);
       }
@@ -56,7 +60,8 @@ const ProductCard = React.memo(function ProductCard({ product, onQuickView }: Pr
       setAverageRating(0);
       setReviewCount(0);
     } finally {
-      setIsLoadingRatings(false);
+      // Add a small delay for skeleton visibility for demo purposes
+      setTimeout(() => setIsLoadingRatings(false), 300 + Math.random() * 400);
     }
   }, [product.id]);
 
@@ -122,12 +127,12 @@ const ProductCard = React.memo(function ProductCard({ product, onQuickView }: Pr
           </p>
 
           {isLoadingRatings ? (
-            <div className="flex items-center gap-1.5 mb-2">
+            <div className="flex items-center gap-1.5 mb-2 h-5">
               <Skeleton className="h-4 w-20" /> 
               <Skeleton className="h-4 w-8" />
             </div>
           ) : reviewCount > 0 ? (
-            <div className="flex items-center gap-1.5 mb-2" title={`Rated ${averageRating.toFixed(1)} out of 5 stars by ${reviewCount} review${reviewCount !== 1 ? 's' : ''}`}>
+            <div className="flex items-center gap-1.5 mb-2 h-5" title={`Rated ${averageRating.toFixed(1)} out of 5 stars by ${reviewCount} review${reviewCount !== 1 ? 's' : ''}`}>
               <div className="flex items-center text-amber-500">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className={`h-4 w-4 ${i < Math.round(averageRating) ? 'fill-current' : 'stroke-current opacity-60'}`} />
@@ -136,7 +141,9 @@ const ProductCard = React.memo(function ProductCard({ product, onQuickView }: Pr
               <span className="text-xs text-muted-foreground font-body">({reviewCount})</span>
             </div>
           ) : (
-            <div className="h-5 mb-2"></div> 
+            <div className="h-5 mb-2">
+               <span className="text-xs text-muted-foreground font-body">No reviews yet</span>
+            </div> 
           )}
 
           <div className="flex justify-between items-center mt-auto pt-2"> 

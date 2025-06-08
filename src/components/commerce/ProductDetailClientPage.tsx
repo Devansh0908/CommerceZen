@@ -66,10 +66,14 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
           console.error("Error parsing reviews from localStorage", e);
           localStorage.removeItem(storageKey);
           loadedReviews = getInitialMockReviews(product.id);
+          localStorage.setItem(storageKey, JSON.stringify(loadedReviews)); // Save mock if needed
         }
       } else {
         loadedReviews = getInitialMockReviews(product.id);
+        localStorage.setItem(storageKey, JSON.stringify(loadedReviews)); // Save mock if none exist
       }
+      // Sort reviews by date, most recent first
+      loadedReviews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       setReviews(loadedReviews);
     }
   }, [product]);
@@ -124,6 +128,8 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
     const updatedReviews = [newReview, ...reviews];
+    // Sort reviews by date, most recent first
+    updatedReviews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setReviews(updatedReviews);
     const storageKey = getReviewsStorageKey(product.id);
     localStorage.setItem(storageKey, JSON.stringify(updatedReviews));
@@ -132,9 +138,10 @@ export default function ProductDetailClientPage({ product }: ProductDetailClient
 
     setRating(0);
     setReviewText('');
-    if (!isLoggedIn) {
-        setReviewerName('');
-    }
+    // Don't reset reviewerName if user is logged in
+    // if (!isLoggedIn) {
+    //     setReviewerName('');
+    // }
     setIsSubmitting(false);
   };
   

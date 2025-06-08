@@ -52,4 +52,3 @@ export interface Order {
   status: OrderStatus; // Mock delivery status
   estimatedDeliveryDate: string; // Mock estimated delivery date
 }
-
