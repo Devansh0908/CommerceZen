@@ -1,7 +1,7 @@
-#CommerceZen
+# CommerceZen
 
 
-##E-Commerce Website with AI Integration
+## E-Commerce Website with AI Integration
 
 This is a comprehensive e-commerce platform built with Next.js and React, featuring integrated AI capabilities for enhanced customer interaction and personalized shopping experiences.
 
